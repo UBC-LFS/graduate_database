@@ -5,6 +5,7 @@
         "fields": {
             "last_name": "User1",
             "first_name": "Prof",
+            "username": "user1.prof",
             "title": 1,
             "position": 1,
             "program": 1,
@@ -22,6 +23,7 @@
         "fields": {
             "last_name": "User2",
             "first_name": "Prof",
+            "username": "user2.prof",
             "title": 2,
             "position": 2,
             "program": 3,
@@ -39,6 +41,7 @@
         "fields": {
             "last_name": "User3",
             "first_name": "Prof",
+            "username": "user3.prof",
             "title": 3,
             "position": 3,
             "program": 2,
@@ -56,6 +59,7 @@
         "fields": {
             "last_name": "User4",
             "first_name": "Prof",
+            "username": "user4.prof",
             "title": 4,
             "position": 3,
             "program": 4,
@@ -73,6 +77,7 @@
         "fields": {
             "last_name": "User5",
             "first_name": "Prof",
+            "username": "user5.prof",
             "title": 2,
             "position": 3,
             "program": 5,
@@ -90,6 +95,7 @@
         "fields": {
             "last_name": "User6",
             "first_name": "Prof",
+            "username": "user6.prof",
             "title": 2,
             "position": 2,
             "program": 4,

@@ -108,6 +108,7 @@ class Professor_Role(models.Model):
 class Professor(models.Model):
     last_name = models.CharField(max_length=150)
     first_name = models.CharField(max_length=150)
+    username = models.CharField(max_length=150, unique=True)
     title = models.ForeignKey(Title, on_delete=models.SET_NULL, null=True, blank=True)
     position = models.ForeignKey(Position, on_delete=models.SET_NULL, null=True, blank=True)
     program = models.ForeignKey(Program, on_delete=models.SET_NULL, null=True, blank=True)

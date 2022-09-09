@@ -15,6 +15,11 @@ def get_professors():
     return Professor.objects.all()
 
 
+def get_professor_by_username(username):
+    ''' Get a professor by username '''
+    return get_object_or_404(Professor, username=username)
+
+
 def get_students():
     ''' Get all students '''
     return Student.objects.all()
@@ -27,9 +32,9 @@ def get_sis_students():
 
 # --- User Role ---
 
-def get_user_role_by_name(name):
+def get_role_by_name(name):
     ''' Get a role by name '''
-    return get_object_or_404(User_Role, name=name)
+    return get_object_or_404(Role, name=name)
 
 
 def get_roles(user):
@@ -55,7 +60,7 @@ def get_roles(user):
 # --- User ---
 
 def create_user(username, first_name, last_name):
-    ''' Create a new user with user roles '''
+    ''' Create a new user with roles '''
 
     user = User.objects.create(
         username = username,
@@ -63,7 +68,7 @@ def create_user(username, first_name, last_name):
         last_name = last_name
     )
 
-    profile = profile.objects.create(user_id=user.id)
-    user_profile.roles.add( get_user_role_by_name('Guest') )
+    profile = Profile.objects.create(user_id=user.id)
+    profile.roles.add( get_role_by_name('Guest') )
 
     return user

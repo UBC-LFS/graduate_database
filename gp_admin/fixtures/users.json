@@ -4,10 +4,10 @@
         "pk": 1,
         "fields": {
             "password": "pbkdf2_sha256$150000$o40PKWhQTyaC$8LXfzmFRqlwYH0C2ckjaQfAiYeDy3BKWeBYLerdTiDs=",
-            "username": "user.superadmin",
-            "last_name": "User",
+            "username": "hey1.superadmin",
+            "last_name": "Hey1",
             "first_name": "Superadmin",
-            "email": "user1.superadmin@example.com",
+            "email": "hey1.superadmin@example.com",
             "is_superuser": true
         }
     },
@@ -16,10 +16,10 @@
         "pk": 2,
         "fields": {
             "password": "pbkdf2_sha256$150000$o40PKWhQTyaC$8LXfzmFRqlwYH0C2ckjaQfAiYeDy3BKWeBYLerdTiDs=",
-            "username": "user2.admin",
-            "last_name": "User2",
+            "username": "hey2.admin",
+            "last_name": "Hey2",
             "first_name": "Admin",
-            "email": "user2.admin@example.com",
+            "email": "hey2.admin@example.com",
             "is_superuser": false
         }
     },
