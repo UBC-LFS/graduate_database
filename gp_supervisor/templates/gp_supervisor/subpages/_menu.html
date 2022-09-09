@@ -1,0 +1,9 @@
+<nav class="container menu">
+
+  <div class="dropdown">
+    <a class="btn dropdown-item" href="{% url 'gp_supervisor:index' %}">Home</a>
+  </div>
+
+</nav>
+
+{% include 'core/subpages/_return_messages.html' with data=messages %}

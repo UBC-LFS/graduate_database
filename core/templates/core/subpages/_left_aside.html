@@ -7,10 +7,10 @@
     <div class="bg-prompt">
       <div class="prompt p-3 mb-4">
         <h5>{{ data.get_full_name }}</h5>
-        <p class="my-2">{{ data.username }}</p>
+        <p class="my-1">{{ data.username }}</p>
 
         {% for role in data.profile.roles.all %}
-          {% include 'core/subpages/_user_role.html' with data=role.name %}
+          {% include 'core/subpages/_role.html' with data=role.name %}
         {% empty %}
           None
         {% endfor %}

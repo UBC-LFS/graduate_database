@@ -4,7 +4,6 @@ from datetime import datetime
 from .models import *
 
 
-
 class ProfessorCreateForm(forms.ModelForm):
     class Meta:
         model = Professor
@@ -146,3 +145,42 @@ class CompExamForm(forms.ModelForm):
     class Meta:
         model = Comprehensive_Exam
         fields = ['exam_date', 'note']
+
+
+# Users
+
+
+class RoleForm(forms.ModelForm):
+    class Meta:
+        model = Role
+        fields = ['name']
+        widgets = {
+            'name': forms.TextInput(attrs={ 'class':'form-control' })
+        }
+
+# Preparation
+
+class TitleForm(forms.ModelForm):
+    class Meta:
+        model = Title
+        fields = ['name']
+        widgets = {
+            'name': forms.TextInput(attrs={ 'class':'form-control' })
+        }
+
+class PositionForm(forms.ModelForm):
+    class Meta:
+        model = Position
+        fields = ['name']
+        widgets = {
+            'name': forms.TextInput(attrs={ 'class':'form-control' })
+        }
+
+class ProgramForm(forms.ModelForm):
+    class Meta:
+        model = Program
+        fields = ['name', 'code']
+        widgets = {
+            'name': forms.TextInput(attrs={ 'class':'form-control' }),
+            'code': forms.TextInput(attrs={ 'class':'form-control' })
+        }

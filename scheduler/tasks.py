@@ -102,6 +102,8 @@ def read_new_excel(f, stud_nos, items):
     return stud_nos, items
 
 def main():
+    print(BASE_DIR)
+    print(PATH)
     stud_nos = []
     items = []
     for f in listdir(PATH):
@@ -157,7 +159,6 @@ def main():
     if len(create_students) > 0:
         created = SIS_Student.objects.bulk_create(create_students)
         print('===== created', created)
-
 
 
     # json_item = json.dumps(items[0])

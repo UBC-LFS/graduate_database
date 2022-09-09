@@ -13,74 +13,10 @@ from scheduler import tasks
 
 
 def index(request):
+    tasks.main()
     print( request.session.get('loggedin_user') )
     
     return render(request, 'gp_admin/index.html')
-
-
-class GetUsers(View):
-    def get(self, request, *args, **kwargs):
-        users = User.objects.all().order_by('last_name', 'first_name')
-
-        return render(request, 'gp_admin/get_users.html', {
-            'users': users,
-            'total_users': len(users)
-        })
-    
-    def post(self, request, *args, **kwargs):
-        pass
-    
-
-
-class GetProfessors(View):
-    def get(self, request, *args, **kwargs):
-        # tasks.main()
-
-        professor_list =  api.get_professors()
-
-        last_name_q = request.GET.get('last_name')
-        first_name_q = request.GET.get('first_name')
-        email_q = request.GET.get('email')
-
-        if bool(last_name_q):
-            professor_list = professor_list.filter(last_name__icontains=last_name_q)
-        if bool(first_name_q):
-            professor_list = professor_list.filter(first_name__icontains=first_name_q)
-        if bool(email_q):
-            professor_list = professor_list.filter(email__icontains=email_q)
-
-        page = request.GET.get('page', 1)
-        paginator = Paginator(professor_list, settings.PAGE_SIZE)
-
-        try:
-            professors = paginator.page(page)
-        except PageNotAnInteger:
-            professors = paginator.page(1)
-        except EmptyPage:
-            professors = paginator.page(paginator.num_pages)
-
-        for prof in professors:
-            print(prof.supervision_set.count())
-
-        return render(request, 'gp_admin/get_professors.html', {
-            'professors': professors,
-            'total_professors': len(professor_list)
-        })
-
-    def post(self, request, *args, **kwargs):
-        pass
-
-
-class AddProfessor(View):
-    form_class = ProfessorCreateForm
-
-    def get(self, request, *args, **kwargs):
-        return render(request, 'gp_admin/add_professor.html', {
-            'professors': api.get_professors(),
-            'form': self.form_class()
-        })
-
-
 
 
 class GetStudents(View):
@@ -133,6 +69,51 @@ class AddStudent(View):
         })
 
 
+class GetProfessors(View):
+    def get(self, request, *args, **kwargs):
+        professor_list =  api.get_professors()
+
+        last_name_q = request.GET.get('last_name')
+        first_name_q = request.GET.get('first_name')
+        email_q = request.GET.get('email')
+
+        if bool(last_name_q):
+            professor_list = professor_list.filter(last_name__icontains=last_name_q)
+        if bool(first_name_q):
+            professor_list = professor_list.filter(first_name__icontains=first_name_q)
+        if bool(email_q):
+            professor_list = professor_list.filter(email__icontains=email_q)
+
+        page = request.GET.get('page', 1)
+        paginator = Paginator(professor_list, settings.PAGE_SIZE)
+
+        try:
+            professors = paginator.page(page)
+        except PageNotAnInteger:
+            professors = paginator.page(1)
+        except EmptyPage:
+            professors = paginator.page(paginator.num_pages)
+
+        for prof in professors:
+            print(prof.supervision_set.count())
+
+        return render(request, 'gp_admin/get_professors.html', {
+            'professors': professors,
+            'total_professors': len(professor_list)
+        })
+
+    def post(self, request, *args, **kwargs):
+        pass
+
+
+class AddProfessor(View):
+    form_class = ProfessorCreateForm
+
+    def get(self, request, *args, **kwargs):
+        return render(request, 'gp_admin/add_professor.html', {
+            'professors': api.get_professors(),
+            'form': self.form_class()
+        })
 
 
 class GetGradSupervision(View):
@@ -251,3 +232,76 @@ def get_sis_students(request):
         'students': student_json,
         'total_students': len(student_json)
     })
+
+
+# Users
+
+class GetUsers(View):
+    def get(self, request, *args, **kwargs):
+        users = User.objects.all().order_by('last_name', 'first_name')
+
+        return render(request, 'gp_admin/get_users.html', {
+            'users': users,
+            'total_users': len(users)
+        })
+    
+    def post(self, request, *args, **kwargs):
+        pass
+    
+
+class GetRoles(View):
+    form_class = RoleForm
+
+    def get(self, request, *args, **kwargs):
+        return render(request, 'gp_admin/get_roles.html', {
+            'roles': Role.objects.all().order_by('id'),
+            'form': self.form_class()
+        })
+    
+    def post(self, request, *args, **kwargs):
+        pass
+    
+
+
+# Preparation
+
+
+class GetTitles(View):
+    form_class = TitleForm
+
+    def get(self, request, *args, **kwargs):
+        return render(request, 'gp_admin/get_titles.html', {
+            'titles': Title.objects.all().order_by('id'),
+            'form': self.form_class()
+        })
+    
+    def post(self, request, *args, **kwargs):
+        pass
+
+
+class GetPositions(View):
+    form_class = PositionForm
+
+    def get(self, request, *args, **kwargs):
+        return render(request, 'gp_admin/get_positions.html', {
+            'positions': Position.objects.all().order_by('id'),
+            'form': self.form_class()
+        })
+    
+    def post(self, request, *args, **kwargs):
+        pass
+
+
+class GetPrograms(View):
+    form_class = ProgramForm
+
+    def get(self, request, *args, **kwargs):
+        return render(request, 'gp_admin/get_programs.html', {
+            'programs': Program.objects.all().order_by('id'),
+            'form': self.form_class()
+        })
+    
+    def post(self, request, *args, **kwargs):
+        pass
+
+

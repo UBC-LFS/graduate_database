@@ -80,11 +80,11 @@ def ldap_auth(cwl, password):
 def redirect_to_index_page(roles):
     ''' Redirect to an index page given roles '''
 
-    if 'superadmin' in roles or 'admin' in roles:
+    if 'Superadmin' in roles or 'Admin' in roles:
         return '/admin/'
 
-    elif 'supervisor' in roles:
-        return 'supervisor/'
+    elif 'Supervisor' in roles:
+        return '/supervisor/'
     
     return '/guest/'
 

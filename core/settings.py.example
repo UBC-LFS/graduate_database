@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'accounts',
     'gp_admin',
     'gp_supervisor',
+    'gp_guest',
     'scheduler.apps.SchedulerConfig'
 ]
 

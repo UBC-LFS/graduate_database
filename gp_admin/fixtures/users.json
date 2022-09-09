@@ -4,8 +4,8 @@
         "pk": 1,
         "fields": {
             "password": "pbkdf2_sha256$150000$o40PKWhQTyaC$8LXfzmFRqlwYH0C2ckjaQfAiYeDy3BKWeBYLerdTiDs=",
-            "username": "user1.superadmin",
-            "last_name": "User1",
+            "username": "user.superadmin",
+            "last_name": "User",
             "first_name": "Superadmin",
             "email": "user1.superadmin@example.com",
             "is_superuser": true
@@ -28,10 +28,10 @@
         "pk": 3,
         "fields": {
             "password": "pbkdf2_sha256$150000$o40PKWhQTyaC$8LXfzmFRqlwYH0C2ckjaQfAiYeDy3BKWeBYLerdTiDs=",
-            "username": "user3.supervisor",
-            "last_name": "User3",
-            "first_name": "Supervisor",
-            "email": "user3.supervisor@example.com",
+            "username": "user1.prof",
+            "last_name": "User1",
+            "first_name": "Prof",
+            "email": "user1.prof@example.com",
             "is_superuser": false
         }
     }

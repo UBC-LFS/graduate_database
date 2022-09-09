@@ -1,0 +1,111 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+{% include 'gp_admin/subpages/_menu.html' %}
+
+<div class="container mt-2rem">
+
+  <div class="row">
+  <div class="col-md-5">
+
+    <div class="bg-prompt">
+      <div class="prompt p-4 mb-4">
+        <h4>Create Position</h4>
+
+        <form action="" method="post">
+          {% csrf_token %}
+
+          {% for field in form.visible_fields  %}
+            <div class="field-wrapper">
+              {{ field.label_tag }}
+              {% if field.help_text %}
+                <div class="help">{{ field.help_text|safe }}</div>
+              {% endif %}
+              {{ field }}
+            </div>
+          {% endfor %}
+
+          {% for field in form.hidden_fields %}
+            {{ field }}
+          {% endfor %}
+
+          <input class="btn btn-primary mt-3" type="submit" value="Create" />
+        </form>
+
+      </div>
+    </div>
+
+  </div>
+  <div class="col-md-7">
+
+    <table
+      class="table table-bordered table-hover table-striped table-responsive-md text-center fs-sm"
+      data-toggle="table"
+      data-sortable="true"
+      data-classes=""
+      data-pagination="true"
+      data-search="true"
+    >
+      <thead>
+        <tr>
+          <th>PID</th>
+          <th>Name</th>
+          <th>Created on</th>
+          <th>Updated on</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for position in positions %}
+          <tr>
+            <td>{{ position.id }}</td>
+            <td>{{ position.name }}</td>
+            <td>{{ position.created_on }}</td>
+            <td>{{ position.updated_on }}</td>
+            <td>
+              <div class="btn-toolbar">
+                <button class="btn btn-xs btn-primary fs-sm mr-2" type="button" data-toggle="modal" data-target="#position-edit-modal-{{ position.id }}">Edit</button>
+
+                <div class="modal fade" id="position-edit-modal-{{ position.id }}" tabindex="-1" role="dialog" aria-labelledby="position-edit-modal-label-{{ position.id }}" aria-hidden="true">
+                  <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title text-info" id="position-edit-modal-label-{{ position.id }}">Edit Position</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                      </div>
+                      <div class="modal-body text-left">
+                        <div class="modal-item">
+                          <form action="#" method="post">
+                            {% csrf_token %}
+
+                            <div class="field-wrapper">
+                              <label for="id_name_{{ position.id }}">Name:</label>
+                              <input id="id_name_{{ position.id }}" type="text" name="name" maxlength="256" value="{{ position.name }}" class="form-control" />
+                            </div>
+                            <input class="btn btn-primary mt-3" type="submit" value="Update" />
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <form action="#" method="post" onsubmit="return confirm('Are you sure to delete {{ position.name }}?');">
+                  {% csrf_token %}
+
+                  <input type="hidden" name="position" value="{{ position.id }}" />
+                  <input class="btn btn-xs btn-danger fs-sm" type="submit" value="Delete" />
+                </form>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  </div>
+</div>
+
+</div>
+
+{% endblock %}
