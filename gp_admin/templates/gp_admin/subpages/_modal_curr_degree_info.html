@@ -1,0 +1,34 @@
+<button class="btn btn-xs btn-link fs-sm" type="button" data-toggle="modal" data-target="#curr-degree-info-modal-{{ data.id }}">
+  View
+</button>
+
+<div class="modal fade" id="curr-degree-info-modal-{{ data.id }}" tabindex="-1" role="dialog" aria-labelledby="curr-degree-info-modal-label-{{ data.id }}" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-info" id="curr-degree-info-modal-label-{{ data.id }}">Confidential Information</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body text-left">
+        <div class="modal-item">
+          <div>
+            <h6>Current Degree (MSc/PhD):</h6>
+            <span>{{ data.current_degree }}</span>
+          </div>
+          <div>
+            <h6>Program Code:</h6>
+            <span>{{ data.program_code }}</span>
+          </div>
+          <div>
+            <h6>Status:</h6>
+            <span>{{ data.status }}</span>
+          </div>
+          <div>
+            <h6>Start Date:</h6>
+            <span>{{ data.start_date }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

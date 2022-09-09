@@ -1,0 +1,52 @@
+[
+    {
+        "model": "gp_admin.title",
+        "pk": 1,
+        "fields": {
+            "name": "Dr.",
+            "slug": "dr",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.title",
+        "pk": 2,
+        "fields": {
+            "name": "Mr.",
+            "slug": "mr",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.title",
+        "pk": 3,
+        "fields": {
+            "name": "Ms.",
+            "slug": "ms",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.title",
+        "pk": 4,
+        "fields": {
+            "name": "Prof.",
+            "slug": "prof",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.title",
+        "pk": 5,
+        "fields": {
+            "name": "Director",
+            "slug": "director",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    }
+]

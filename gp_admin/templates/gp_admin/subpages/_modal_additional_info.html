@@ -1,0 +1,63 @@
+<button class="btn btn-xs btn-link fs-sm" type="button" data-toggle="modal" data-target="#additional-info-modal-{{ data.id }}">
+  View
+</button>
+
+<div class="modal fade" id="additional-info-modal-{{ data.id }}" tabindex="-1" role="dialog" aria-labelledby="additional-info-modal-label-{{ data.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-info" id="additional-info-modal-label-{{ data.id }}">Additional Information</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body text-left">
+        <div class="row">
+          <div class="col-6 modal-item">
+            <div>
+              <h6>Middle Name:</h6>
+              <span>{{ data.middle_name }}</span>
+            </div>
+            <div>
+              <h6>Gender:</h6>
+              <span>{{ data.get_gender_display }}</span>
+            </div>
+            <div>
+              <h6>Phone Number (Work):</h6>
+              <span>{{ data.phone_work }}</span>
+            </div>
+            <div>
+              <h6>Phone Number (Home):</h6>
+              <span>{{ data.phone_home }}</span>
+            </div>
+          </div>
+          <div class="col-6 modal-item">
+            <div>
+              <h6>Address:</h6>
+              <span>{{ data.address }}</span>
+            </div>
+            <div>
+              <h6>City:</h6>
+              <span>{{ data.city }}</span>
+            </div>
+            <div>
+              <h6>Province:</h6>
+              <span>{{ data.province }}</span>
+            </div>
+            <div>
+              <h6>Postal Code:</h6>
+              <span>{{ data.postal_code }}</span>
+            </div>
+            <div>
+              <h6>Country:</h6>
+              <span>{{ data.country }}</span>
+            </div>
+            <div>
+              <h6>Permanent Address:</h6>
+              <span>{{ data.perm_address }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

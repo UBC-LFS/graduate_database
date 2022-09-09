@@ -1,0 +1,32 @@
+[
+    {
+        "model": "gp_admin.profile",
+        "pk": 1,
+        "fields": {
+            "user_id": 1,
+            "preferred_name": "ABC",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.profile",
+        "pk": 2,
+        "fields": {
+            "user_id": 2,
+            "preferred_name": "XYZ",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.profile",
+        "pk": 3,
+        "fields": {
+            "user_id": 3,
+            "preferred_name": null,
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    }
+]

@@ -1,0 +1,35 @@
+<nav class="container menu">
+  <div class="dropdown">
+    <a class="btn dropdown-item" href="{% url 'gp_admin:index' %}">Home</a>
+  </div>
+
+  <div class="dropdown">
+    <a class="btn dropdown-item" href="{% url 'gp_admin:get_users' %}">Users</a>
+  </div>
+
+  <div class="dropdown">
+    <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Data Tables
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <a class="dropdown-item" href="{% url 'gp_admin:get_professors' %}">Professors</a>
+      <a class="dropdown-item" href="{% url 'gp_admin:get_students' %}">Students</a>
+      <a class="dropdown-item" href="{% url 'gp_admin:get_grad_supervision' %}">Graduate Supervision</a>
+      <a class="dropdown-item" href="{% url 'gp_admin:get_comp_exams' %}">Comprehensive Exams</a>
+      <a class="dropdown-item" href="{% url 'gp_admin:get_sis_students' %}">SIS Students</a>
+    </div>
+  </div>
+
+  <div class="dropdown">
+    <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Preparation
+    </button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <a class="dropdown-item" href="#">Titles</a>
+      <a class="dropdown-item" href="#">Positions</a>
+      <a class="dropdown-item" href="#">Programs</a>
+    </div>
+  </div>
+</nav>
+
+{% include 'core/subpages/_return_messages.html' with data=messages %}

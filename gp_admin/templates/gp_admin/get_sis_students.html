@@ -1,0 +1,106 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+{% include 'gp_admin/subpages/_menu.html' %}
+
+<div class="container max-width-container">
+    <div class="row bg-light-gray">
+      <div class="col-md-2">
+        <h2 class="text-center-middle text-center">SIS Students</h2>
+      </div>
+      <div class="col-md-8">
+        <div class="search-field p-3 fs-sm">
+          <form method="GET">
+            <input type="text" name="last_name" value="{{ request.GET.last_name }}" placeholder="Last Name" /> and
+            <input type="text" name="first_name" value="{{ request.GET.first_name }}" placeholder="First Name" /> and
+
+            <input type="text" name="student_number" value="{{ request.GET.student_number }}" placeholder="Student Number" /> and
+            <input type="text" name="email" value="{{ request.GET.email }}" placeholder="Email" /> <br />
+
+            <div class="mt-2">
+              <button class="btn btn-sm fs-xs btn-primary" type="submit">Search</button>
+              <a class="btn btn-sm fs-xs btn-secondary" href="#">Clear</a>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="bg-light-gray p-4">
+
+        </div>
+      </div>
+    </div>
+
+    {% include 'core/subpages/_searched_message.html' with items=students total_items=total_students %}
+
+    <table
+      class="table table-striped table-hover table-bordered table-responsive text-center table-vertical-middle fs-xs"
+      data-toggle="table"
+      data-sortable="true"
+      data-classes=""
+    >
+      <thead>
+        <tr>
+          <th data-sortable="true">Surname</th>
+          <th data-sortable="true">Given <br /> Name</th>
+          <th data-sortable="true">Middle <br /> Name</th>
+          <th data-sortable="true">Preferred <br /> Name</th>
+          <th>Student <br /> Number</th>
+          <th>Email <br /> Address</th>
+          <th>Gender</th>
+          <th>DEGR PGM <br /> CD</th>
+          <th>SPEC1 PRIM SUBJ <br /> CD</th>
+          <th>Address1</th>
+          <th>Address2</th>
+          <th>City</th>
+          <th>Province <br /> State</th>
+          <th>Country <br /> CD</th>
+          <th>Country</th>
+          <th>Postal <br /> CD</th>
+          <th>Country of <br /> Citizenship</th>
+          <th>Citizenship</th>
+          <th>Visa Type <br /> CD</th>
+          <th>DOM INTL</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for st in students %}
+          <tr>
+            <td>{{ st.surname }}</td>
+            <td>{{ st.given_name }}</td>
+            <td>{{ st.middle_name }}</td>
+            <td>{{ st.preferred_name }}</td>
+
+            <td>{{ st.stud_no }}</td>
+            <td>{{ st.email_address }}</td>
+            <td>{{ st.gender }}</td>
+
+            <td>{{ st.degr_pgm_cd }}</td>
+            <td>{{ st.spec1_prim_subj_cd }}</td>
+
+            <td>{{ st.addr1 }}</td>
+            <td>{{ st.addr2 }}</td>
+            <td>{{ st.city }}</td>
+            <td>{{ st.province_state }}</td>
+            <td>{{ st.country_cd }}</td>
+            <td>{{ st.country }}</td>
+            <td>{{ st.postal_cd }}</td>
+
+            <td>{{ st.country_of_citizenship }}</td>
+            <td>{{ st.citizenship }}</td>
+            <td>{{ st.visa_type_cd }}</td>
+            <td>{{ st.dom_intl }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="12">No SIS students found</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  </div>
+
+
+
+{% endblock %}

@@ -1,1 +1,1 @@
-# graduate_database
+# Graduate Database

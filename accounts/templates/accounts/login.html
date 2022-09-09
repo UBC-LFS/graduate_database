@@ -1,0 +1,85 @@
+{% extends 'core/base.html' %}
+{% block content %}
+{% load static %}
+
+<div class="container mt-5">
+  {% if errors %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      An error occurred. Failed to login. {{ errors }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  {% endif %}
+
+  <div class="row">
+    <div class="col-md-6">
+
+      <div>
+        <h4 class="text-center mb-3">
+          Welcome
+        </h4>
+        <p class="text-dark-gray">
+          Welcome to the Graduate Database system in the Faculty of Land and Food Systems!
+        </p>
+
+        <div class="bd-callout bd-callout-info bg-light-gray mt-5">
+          <h5 class="text-center">
+            <i class="fa fa-bullhorn" aria-hidden="true"></i> About Graduate Database
+          </h5>
+          <p>
+            Description. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="mt-5">
+        <table class="info-table">
+          <tr>
+            <td>
+              <img src="{% static 'images/ubc-lfs-logo.gif' %}" width=100 alt="ubc lfs logo"/>
+            </td>
+            <td>
+              <h6>Graduate & Postdoctoral Studies</h6>
+              <p>
+                Faculty of Land and Food Systems <br />
+                Tel: 604-822-8373
+              </p>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+
+      <div class="bg-prompt">
+        <div class="prompt text-center p-4 mb-4">
+          <h4 class="text-primary mb-4">User login</h4>
+
+          <div class="col-10 mx-auto">
+            <form action="" method="post">
+              {% csrf_token %}
+
+              <label class="font-weight-bold float-left" for="id_username">CWL:</label>
+              <input id="username" class="form-control d-block mb-3" type="text" name="username" placeholder="Enter" required />
+
+              <label class="font-weight-bold float-left" for="id_password">Password:</label>
+              <input id="password" class="form-control d-block mb-4" type="password" name="password" placeholder="Enter" required />
+
+              <button class="btn btn-primary" type="submit" name="button">
+                <i class="fa fa-sign-in" aria-hidden="true"></i> Log in
+              </button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

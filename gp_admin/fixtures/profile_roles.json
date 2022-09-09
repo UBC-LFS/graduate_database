@@ -1,0 +1,26 @@
+[
+    {
+        "model": "gp_admin.profile_roles",
+        "pk": 1,
+        "fields": {
+            "profile_id": 1,
+            "role_id": 1
+        }
+    },
+    {
+        "model": "gp_admin.profile_roles",
+        "pk": 2,
+        "fields": {
+            "profile_id": 2,
+            "role_id": 2
+        }
+    },
+    {
+        "model": "gp_admin.profile_roles",
+        "pk": 3,
+        "fields": {
+            "profile_id": 3,
+            "role_id": 3
+        }
+    }
+]

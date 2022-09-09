@@ -1,0 +1,104 @@
+[
+    {
+        "model": "gp_admin.professor",
+        "pk": 1,
+        "fields": {
+            "last_name": "User1",
+            "first_name": "Prof",
+            "title": 1,
+            "position": 1,
+            "program": 1,
+            "email": "user1.prof@example.com",
+            "phone": "",
+            "fax": "",
+            "office": "",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.professor",
+        "pk": 2,
+        "fields": {
+            "last_name": "User2",
+            "first_name": "Prof",
+            "title": 2,
+            "position": 2,
+            "program": 3,
+            "email": "user2.prof@example.com",
+            "phone": "",
+            "fax": "",
+            "office": "",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.professor",
+        "pk": 3,
+        "fields": {
+            "last_name": "User3",
+            "first_name": "Prof",
+            "title": 3,
+            "position": 3,
+            "program": 2,
+            "email": "user3.prof@example.com",
+            "phone": "",
+            "fax": "",
+            "office": "",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.professor",
+        "pk": 4,
+        "fields": {
+            "last_name": "User4",
+            "first_name": "Prof",
+            "title": 4,
+            "position": 3,
+            "program": 4,
+            "email": "user4.prof@example.com",
+            "phone": "",
+            "fax": "",
+            "office": "",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.professor",
+        "pk": 5,
+        "fields": {
+            "last_name": "User5",
+            "first_name": "Prof",
+            "title": 2,
+            "position": 3,
+            "program": 5,
+            "email": "user5.prof@example.com",
+            "phone": "",
+            "fax": "",
+            "office": "",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.professor",
+        "pk": 6,
+        "fields": {
+            "last_name": "User6",
+            "first_name": "Prof",
+            "title": 2,
+            "position": 2,
+            "program": 4,
+            "email": "user6.prof@example.com",
+            "phone": "",
+            "fax": "",
+            "office": "",
+            "created_on": "2022-02-02",
+            "updated_on": "2022-02-02"
+        }
+    }
+]

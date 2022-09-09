@@ -1,0 +1,68 @@
+[
+    {
+        "model": "gp_admin.supervision",
+        "pk": 1,
+        "fields": {
+            "student_id": 1,
+            "professor_role_id": 2,
+            "professor_id": 2,
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.supervision",
+        "pk": 2,
+        "fields": {
+            "student_id": 1,
+            "professor_role_id": 3,
+            "professor_id": 1,
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.supervision",
+        "pk": 3,
+        "fields": {
+            "student_id": 1,
+            "professor_role_id": 1,
+            "professor_id": 4,
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.supervision",
+        "pk": 4,
+        "fields": {
+            "student_id": 2,
+            "professor_role_id": 2,
+            "professor_id": 3,
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.supervision",
+        "pk": 5,
+        "fields": {
+            "student_id": 2,
+            "professor_role_id": 2,
+            "professor_id": 5,
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.supervision",
+        "pk": 6,
+        "fields": {
+            "student_id": 3,
+            "professor_role_id": 1,
+            "professor_id": 1,
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    }
+]

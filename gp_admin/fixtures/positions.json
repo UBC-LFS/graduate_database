@@ -1,0 +1,42 @@
+[
+    {
+        "model": "gp_admin.position",
+        "pk": 1,
+        "fields": {
+            "name": "Professor",
+            "slug": "professor",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.position",
+        "pk": 2,
+        "fields": {
+            "name": "Associate Professor",
+            "slug": "associate-professor",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.position",
+        "pk": 3,
+        "fields": {
+            "name": "Assistant Professor",
+            "slug": "assistant-professor",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.position",
+        "pk": 4,
+        "fields": {
+            "name": "Adjunct Professor",
+            "slug": "adjunct-professor",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    }
+]

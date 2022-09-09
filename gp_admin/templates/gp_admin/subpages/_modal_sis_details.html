@@ -1,0 +1,103 @@
+<button class="btn btn-xs btn-info fs-xs mt-1" type="button" data-toggle="modal" data-target="#sis-details-modal-{{ data.id }}">
+  SIS Details
+</button>
+
+<div class="modal fade" id="sis-details-modal-{{ data.id }}" tabindex="-1" role="dialog" aria-labelledby="sis-details-modal-label-{{ data.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-info" id="sis-details-modal-label-{{ data.id }}">SIS Details</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body text-left">
+        <div class="row">
+          <div class="col-6 modal-item">
+            <div>
+              <h6>Surname:</h6>
+              <span>{{ data.sis_details.surname }}</span>
+            </div>
+            <div>
+              <h6>Given Name:</h6>
+              <span>{{ data.sis_details.given_name }}</span>
+            </div>
+            <div>
+              <h6>Middle Name:</h6>
+              <span>{{ data.sis_details.middle_name }}</span>
+            </div>
+            <div>
+              <h6>Preferred Name:</h6>
+              <span>{{ data.sis_details.preferred_name }}</span>
+            </div>
+            <div>
+              <h6>STUD NO:</h6>
+              <span>{{ data.sis_details.stud_no }}</span>
+            </div>
+            <div>
+              <h6>Email Address:</h6>
+              <span>{{ data.sis_details.email_address }}</span>
+            </div>
+            <div>
+              <h6>Gender:</h6>
+              <span>{{ data.sis_details.gender }}</span>
+            </div>
+            <div>
+              <h6>DEGR PGM CD:</h6>
+              <span>{{ data.sis_details.degr_pgm_cd }}</span>
+            </div>
+            <div>
+              <h6>SPEC1 PRIM SUBJ CD:</h6>
+              <span>{{ data.sis_details.spec1_prim_subj_cd }}</span>
+            </div>
+          </div>
+          <div class="col-6 modal-item">
+            <div>
+              <h6>Addr1:</h6>
+              <span>{{ data.sis_details.addr1 }}</span>
+            </div>
+            <div>
+              <h6>Addr2:</h6>
+              <span>{{ data.sis_details.addr2 }}</span>
+            </div>
+            <div>
+              <h6>City:</h6>
+              <span>{{ data.sis_details.city }}</span>
+            </div>
+            <div>
+              <h6>Province State:</h6>
+              <span>{{ data.sis_details.province_state }}</span>
+            </div>
+            <div>
+              <h6>Country CD:</h6>
+              <span>{{ data.sis_details.country_cd }}</span>
+            </div>
+            <div>
+              <h6>Country:</h6>
+              <span>{{ data.sis_details.country }}</span>
+            </div>
+            <div>
+              <h6>Postal CD:</h6>
+              <span>{{ data.sis_details.postal_cd }}</span>
+            </div>
+            <div>
+              <h6>Country_of Citizenship:</h6>
+              <span>{{ data.sis_details.country_of_citizenship }}</span>
+            </div>
+            <div>
+              <h6>Citizenship:</h6>
+              <span>{{ data.sis_details.citizenship }}</span>
+            </div>
+            <div>
+              <h6>Visa Type CD:</h6>
+              <span>{{ data.sis_details.visa_type_cd }}</span>
+            </div>
+            <div>
+              <h6>DOM/INTL:</h6>
+              <span>{{ data.sis_details.dom_intl }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

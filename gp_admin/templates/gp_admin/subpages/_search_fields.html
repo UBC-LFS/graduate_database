@@ -1,0 +1,63 @@
+<div class="search-field p-3 fs-sm">
+  <form method="GET">
+    <input type="text" name="last_name" value="{{ request.GET.last_name }}" placeholder="Last Name" /> and
+    <input type="text" name="first_name" value="{{ request.GET.first_name }}" placeholder="First Name" />
+
+    {% if path == 'students' or path == 'comp_exams' %}
+      and <input type="text" name="student_number" value="{{ request.GET.student_number }}" placeholder="Student Number" />
+    {% endif %}
+
+    {% if path == 'professors' or path == 'students' or path == 'comp_exams' %}
+      and <input type="text" name="email" value="{{ request.GET.email }}" placeholder="Email" /> <br />
+    {% endif %}
+
+    {% if path == 'grad_supervision' %}
+      <br />
+      <span class="mr-3">
+        Supervisor only:
+        <input class="custom-input-mb-7" type="checkbox" name="supervisor_only" value="filled" {% if request.GET.supervisor_only %}checked{% endif %} />
+      </span>
+    {% endif %}
+
+    {% if path == 'comp_exams' %}
+      <div>
+        <span class="mr-3">
+          Exam Date:
+          <input class="custom-input-mb-7" type="radio" name="exam_date" value="filled" {% if request.GET.exam_date == 'filled' %}checked{% endif %} />
+          <label for="filled">Filled</label>
+          or
+          <input class="custom-input-mb-7" type="radio" name="exam_date" value="empty" {% if request.GET.exam_date == 'empty' %}checked{% endif %} />
+          <label for="empty">Empty</label>
+        </span>
+      </div>
+    {% endif %}
+
+    {% if path == 'users' %}
+      and
+      <input type="text" name="preferred_name" value="{{ request.GET.preferred_name }}" placeholder="Preferred Name" /> and
+      <input type="text" name="username" value="{{ request.GET.username }}" placeholder="CWL" /> and
+      <input type="text" name="email" value="{{ request.GET.email }}" placeholder="Email" />
+    {% endif %}
+
+    <div class="mt-2">
+      <button class="btn btn-sm fs-xs btn-primary" type="submit">Search</button>
+
+      {% if path == 'professors' %}
+        <a class="btn btn-sm fs-xs btn-secondary" href="{% url 'gp_admin:get_professors' %}">Clear</a>
+
+      {% elif path == 'students' %}
+        <a class="btn btn-sm fs-xs btn-secondary" href="{% url 'gp_admin:get_students' %}">Clear</a>
+
+      {% elif path == 'grad_supervision' %}
+        <a class="btn btn-sm fs-xs btn-secondary" href="{% url 'gp_admin:get_grad_supervision' %}">Clear</a>
+
+      {% elif path == 'comp_exams' %}
+        <a class="btn btn-sm fs-xs btn-secondary" href="{% url 'gp_admin:get_comp_exams' %}">Clear</a>
+
+      {% elif path == 'users' %}
+        <a class="btn btn-sm fs-xs btn-secondary" href="{% url 'gp_admin:get_users' %}">Clear</a>
+
+      {% endif %}
+    </div>
+  </form>
+</div>

@@ -1,0 +1,92 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+{% include 'gp_admin/subpages/_menu.html' %}
+
+<div class="container max-width-container">
+
+  <div class="row bg-light-gray">
+    <div class="col-md-2">
+      <h2 class="text-center-middle text-center">Graduate <br /> Supervision</h2>
+    </div>
+    <div class="col-md-8">
+      {% include 'gp_admin/subpages/_search_fields.html' with path='grad_supervision' %}
+    </div>
+    <div class="col-md-2"></div>
+  </div>
+
+  {% include 'core/subpages/_searched_message.html' with items=supervisions total_items=total_supervisions %}
+
+  <table
+    class="table table-custom-striped table-custom-hover table-bordered table-responsive-md text-center table-vertical-middle fs-sm"
+  >
+    <thead>
+      <tr>
+        <th colspan="5">Professor</th>
+        <th colspan="3">Student</th>
+        <th colspan="2">Supervision</th>
+      </tr>
+      <tr>
+        <th>#</th>
+        <th>Full Name</th>
+        <th>Title</th>
+        <th>Position</th>
+        <th>Role</th>
+        <th>Full Name</th>
+        <th>Current Degree</th>
+        <th>Program</th>
+        <th>Created on</th>
+        <th>Updated on</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sup in supervisions %}
+        <tr class="row-{{ sup.odd_or_even }}">
+          {% if sup.prof_id %}
+            <td {% if sup.num_students > 1 %} rowspan="{{ sup.num_students }}" {% endif %}>
+              {{ sup.prof_id }}
+            </td>
+          {% endif %}
+
+          {% if sup.prof_full_name %}
+            <td {% if sup.num_students > 1 %} rowspan="{{ sup.num_students }}" {% endif %}>
+              {{ sup.prof_full_name }}
+            </td>
+          {% endif %}
+
+          {% if sup.prof_title %}
+            <td {% if sup.num_students > 1 %} rowspan="{{ sup.num_students }}" {% endif %}>
+              {{ sup.prof_title }}
+            </td>
+          {% endif %}
+
+          {% if sup.prof_position %}
+            <td {% if sup.num_students > 1 %} rowspan="{{ sup.num_students }}" {% endif %}>
+              {{ sup.prof_position }}
+            </td>
+          {% endif %}
+
+          <td>{{ sup.prof_role }}</td>
+          <td>{{ sup.stud_full_name }}</td>
+          <td>{{ sup.stud_current_degree }}</td>
+          <td>{{ sup.stud_program_code }}</td>
+          <td>
+            <span class="d-none">{{ sup.created_on|date:"Y m d z" }}</span>
+            {{ sup.created_on }}
+          </td>
+          <td>
+            <span class="d-none">{{ sup.updated_on|date:"Y m d z" }}</span>
+            {{ sup.updated_on }}
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="6">No supervisors found</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,137 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+{% include 'gp_admin/subpages/_menu.html' %}
+
+<div class="container max-width-container">
+
+  <div class="row bg-light-gray">
+    <div class="col-md-2">
+      <h2 class="text-center-middle text-center">Professors</h2>
+    </div>
+    <div class="col-md-8">
+      {% include 'gp_admin/subpages/_search_fields.html' with path='professors' %}
+    </div>
+    <div class="col-md-2">
+      <div class="bg-light-gray p-4">
+        <a class="btn btn-primary" href="{% url 'gp_admin:add_professor' %}">Add Professor</a>
+      </div>
+    </div>
+  </div>
+
+  {% include 'core/subpages/_searched_message.html' with items=professors total_items=total_professors %}
+
+  <table
+    class="table table-striped table-hover table-bordered table-responsive-md text-center table-vertical-middle fs-xs"
+    data-toggle="table"
+    data-sortable="true"
+    data-classes=""
+  >
+    <thead>
+      <tr>
+        <th>PID</th>
+        <th data-sortable="true">Last <br /> Name</th>
+        <th data-sortable="true">First <br /> Name</th>
+        <th>Email</th>
+        <th>Title</th>
+        <th>Position</th>
+        <th>Program</th>
+        <th>Phone</th>
+        <th>Fax</th>
+        <th>Office</th>
+        <th data-sortable="true">Graduate <br /> Supervision</th>
+        <th data-sortable="true">Created on</th>
+        <th data-sortable="true">Updated on</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for prof in professors %}
+        <tr>
+          <td>{{ prof.id }}</td>
+          <td>{{ prof.last_name }}</td>
+          <td>{{ prof.first_name }}</td>
+          <td>{{ prof.email }}</td>
+          <td>{{ prof.title.name }}</td>
+          <td>{{ prof.position.name }}</td>
+          <td>{{ prof.program.code }}</td>
+          <td>{{ prof.phone }}</td>
+          <td>{{ prof.fax }}</td>
+          <td>{{ prof.office }}</td>
+          <td>
+            <span class="d-none">{{ prof.supervision_set.count }}</span>
+            {% if prof.supervision_set.count > 0 %}
+
+              <button class="btn btn-xs btn-info" type="button" data-toggle="modal" data-target="#grad-supervision-modal-{{ prof.id }}">
+                {{ prof.supervision_set.count }}
+              </button>
+
+              <div class="modal fade" id="grad-supervision-modal-{{ prof.id }}" tabindex="-1" role="dialog" aria-labelledby="grad-supervision-modal-label-{{ prof.id }}" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title text-info" id="grad-supervision-modal-label-{{ prof.id }}">Graduate Supervision</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-body text-left">
+
+                      <h6 class="mb-4">
+                        Professor Full Name: <span class="text-dark-blue font-weight-bold">{{ prof.get_full_name }}</span>
+                      </h6>
+
+                      <table class="modal-table table">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Professor Role</th>
+                            <th>Student</th>
+                            <th>Created on</th>
+                            <th>Updated on</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for sup in prof.supervision_set.all %}
+                          <tr>
+                            <td>{{ sup.id }}</td>
+                            <td>{{ sup.professor_role }}</td>
+                            <td>{{ sup.student.get_full_name }}</td>
+                            <td>{{ sup.created_on }}</td>
+                            <td>{{ sup.updated_on }}</td>
+                          </tr>
+                          {% endfor %}
+                        </tbody>
+                      </table>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            {% else %}
+
+              {{ prof.supervision_set.count }}
+
+            {% endif %}
+          </td>
+          <td>
+            <span class="d-none">{{ app.created_on|date:"Y m d z" }}</span>
+            {{ prof.created_on }}
+          </td>
+          <td>
+            <span class="d-none">{{ app.updated_on|date:"Y m d z" }}</span>
+            {{ prof.updated_on }}
+          </td>
+          <td>
+            <button class="btn btn-warning btn-xs fs-xs mb-2" type="button" name="button">Edit</button> <br />
+            <button class="btn btn-danger btn-xs fs-xs" type="button" name="button">Delete</button>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% include 'gp_admin/subpages/_table_paginator.html' with data=professors %}
+
+</div>
+
+{% endblock %}

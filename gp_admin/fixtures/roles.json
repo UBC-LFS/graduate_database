@@ -1,0 +1,42 @@
+[
+    {
+        "model": "gp_admin.role",
+        "pk": 1,
+        "fields": {
+            "name": "Superadmin",
+            "slug": "superadmin",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.role",
+        "pk": 2,
+        "fields": {
+            "name": "Admin",
+            "slug": "admin",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.role",
+        "pk": 3,
+        "fields": {
+            "name": "Supervisor",
+            "slug": "supervisor",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.role",
+        "pk": 4,
+        "fields": {
+            "name": "Guest",
+            "slug": "guest",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    }
+]

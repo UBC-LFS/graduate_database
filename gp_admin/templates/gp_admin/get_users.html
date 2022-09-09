@@ -1,0 +1,86 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+{% include 'gp_admin/subpages/_menu.html' %}
+
+<div class="container max-width-container">
+
+  <div class="row bg-light-gray">
+    <div class="col-md-2">
+      <h2 class="text-center-middle text-center">Users</h2>
+    </div>
+    <div class="col-md-10">
+      {% include 'gp_admin/subpages/_search_fields.html' with path='users' %}
+    </div>
+  </div>
+
+  {% include 'core/subpages/_searched_message.html' with items=users total_items=total_users %}
+
+  <table
+    class="table table-striped table-hover table-bordered table-responsive-md text-center table-vertical-middle fs-xs"
+    data-toggle="table"
+    data-sortable="true"
+    data-classes=""
+  >
+    <thead>
+      <tr>
+        <th>UID</th>
+        <th data-sortable="true">Last <br /> Name</th>
+        <th data-sortable="true">First <br /> Name</th>
+        <th>Preferred <br /> Name</th>
+        <th>CWL</th>
+        <th>Email</th>
+        <th>Role</th>
+        <th data-sortable="true">Superuser <br />Status</th>
+        <th data-sortable="true">Last Login</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+        <tr>
+          <td>{{ user.id }}</td>
+          <td>{{ user.last_name }}</td>
+          <td>{{ user.first_name }}</td>
+          <td>{{ user.profile.preferred_name }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ user.email }}</td>
+          <td>
+            {% for role in user.profile.roles.all %}
+              {% include 'core/subpages/_user_role.html' with data=role.name %}
+            {% empty %}
+              None
+            {% endfor %}
+          </td>
+          <td>
+            {% if user.is_superuser %}
+              <i class="fa fa-check-circle text-chocolate font-size-1 vertical-middle" aria-hidden="true"></i>
+            {% endif %}
+          </td>
+          <td>
+            {% if user.last_login %}
+              <span class="d-none">{{ user.last_login|date:"Y m d z" }}</span>
+              {{ user.last_login|date:"N j, Y" }}<br />
+              {{ user.last_login|date:"g:i a" }}
+            {% else %}
+              None
+            {% endif %}
+          </td>
+          <td>
+            <div class="btn-toolbar">
+              <a class="btn btn-xs btn-warning fs-xs mr-2" href="#">Edit</a>
+              <a class="btn btn-xs btn-danger fs-xs" href="#">Delete</a>
+            </div>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="3">No users found</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+
+{% endblock %}

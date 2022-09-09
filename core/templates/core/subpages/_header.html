@@ -1,0 +1,19 @@
+{% load static %}
+
+{% if type == 'wide'%}
+
+  <h2 class="text-center-middle text-center">{{ title }}</h2>
+
+{% elif type == 'normal'%}
+
+  <div class="mb-2">
+    <div class="ml-1 d-inline-block">
+      <h5 class="text-dark">
+        <img class="mr-2" src="{% static 'images/olympics-g682ffb518_640.png' %}" width=40 alt="olympics logo"/>
+        {{ title }}
+        {% if total %} <small class="text-dark-gray">(Total: {{ total }})</small> {% endif %}
+      </h5>
+    </div>
+  </div>
+
+{% endif %}

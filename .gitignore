@@ -1,0 +1,13 @@
+*.DS_Store
+*.pyc
+__pycache__
+*.swp
+*.swo
+*.admin
+.vagrant
+vagrant
+*.log
+assets/staticfiles
+core/settings.py
+Thumbs.db
+accounts/fixtures
