@@ -13,7 +13,7 @@ from scheduler import tasks
 
 
 def index(request):
-    tasks.main()
+    # tasks.main()
     print( request.session.get('loggedin_user') )
     
     return render(request, 'gp_admin/index.html')

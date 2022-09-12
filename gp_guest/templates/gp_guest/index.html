@@ -1,42 +1,24 @@
 {% extends 'core/base.html' %}
 {% block content %}
-
-{% include 'gp_supervisor/subpages/_menu.html' %}
+{% load static %}
 
 <div class="container max-width-container">
   <div class="row">
     <div class="col-md-4">
       {% include 'core/subpages/_left_aside.html' with data=request.user %}
-
-      <div class="col-10 mx-auto mt-5">
-        <div class="bd-callout bd-callout-warning">
-          <h4>
-            <i class="fa fa-bell-o" aria-hidden="true"></i> Memo
-          </h4>
-        </div>
-      </div>
-
     </div>
 
     <div class="col-md-8">
+      <div class="ml-5">
+        <h4 class="mt-5 text-danger">
+          <i class="fa fa-lock" aria-hidden="true"></i>
+          Permission Denied
+        </h4>
+        <p class="mt-5 mb-2">You do not have permission to access this page. Please refer to your system administrator.</p>
+        <p>Contact the <span class="font-weight-bold">Graduate & Postdoctoral Studies</span> at <a href="mailto:lfs.gradapp@ubc.ca">lfs.gradapp@ubc.ca</a> if you need assistance. </p>
 
-      <div class="bg-prompt">
-        <div class="prompt p-4 text-center">
-          <h4>Welcome</h4>
-          <p class="col-8 mx-auto">
-
-          </p>
-        </div>
+        <img class="mt-7" src="{% static 'images/bee-gd6e90ff25_640.png' %}" width=200 alt="bumble-bee"/>
       </div>
-
-      <div class="col-8 mx-auto text-center mt-5">
-        <h5 class="text-info mb-3">Overview</h5>
-
-        <h5 class="text-info mt-5 mb-3">
-          Quick View
-        </h5>
-      </div>
-
     </div>
   </div>
 </div>

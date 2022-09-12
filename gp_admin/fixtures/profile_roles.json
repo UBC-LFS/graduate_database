@@ -22,5 +22,13 @@
             "profile_id": 3,
             "role_id": 3
         }
+    },
+    {
+        "model": "gp_admin.profile_roles",
+        "pk": 4,
+        "fields": {
+            "profile_id": 4,
+            "role_id": 4
+        }
     }
 ]

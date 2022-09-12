@@ -34,5 +34,17 @@
             "email": "user1.prof@example.com",
             "is_superuser": false
         }
+    },
+    {
+        "model": "auth.user",
+        "pk": 4,
+        "fields": {
+            "password": "pbkdf2_sha256$150000$o40PKWhQTyaC$8LXfzmFRqlwYH0C2ckjaQfAiYeDy3BKWeBYLerdTiDs=",
+            "username": "user.guest",
+            "last_name": "User",
+            "first_name": "Guest",
+            "email": "user.guest@example.com",
+            "is_superuser": false
+        }
     }
 ]
