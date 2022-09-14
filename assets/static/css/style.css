@@ -67,6 +67,11 @@ main {
   margin-bottom: 5px;
 }
 
+.table,
+.table .btn {
+  font-size: 0.8rem;
+}
+
 .bd-callout {
     padding: 1.25rem;
     margin-top: 1.25rem;
@@ -158,9 +163,13 @@ main {
   background-color: #aaa;
 }
 
+.modal-item .field-wrapper:nth-child(2) {
+  margin-top: 0 !important;
+}
+
 .field-wrapper {
-  margin-top: 2.0rem;
-  margin-bottom: 2.0rem;
+  margin-top: 1.8rem;
+  margin-bottom: 1.8rem;
 }
 
 .field-wrapper > label {

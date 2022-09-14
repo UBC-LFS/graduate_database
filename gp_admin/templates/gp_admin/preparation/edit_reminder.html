@@ -1,0 +1,62 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+{% include 'gp_admin/subpages/_menu.html' %}
+
+<div class="container max-width-container">
+
+  <div class="row">
+    <div class="col-md-3">
+
+      <div class="bg-prompt">
+        <div class="prompt p-4 mb-4">
+          <h4>Setup Exam Reminders</h4>
+        </div>
+      </div>
+      <div class="bd-callout bd-callout-warning">
+        <h4>Note:</h4>
+        <p>Curly brackets would be replaced by actual values while sending an email.</p>
+        <ul>
+          <li>Student Name: {0}</li>
+          <li>Student #: {1}</li>
+          <li>Session-Term: {2}</li>
+          <li>Course/Job: {3}</li>
+          <li>Instructor: {4}</li>
+          <li>Assigned Hours: {5}</li>
+          <li>Classification: {6}</li>
+        </ul>
+        <p>An email type (<code>Offer email</code>) is used in <strong>Job Offer Details</strong> on the Student's side, when they Accept, Re-Accept or Decline that Offer.</p>
+      </div>
+
+    </div>
+
+    <div class="col-md-9">
+
+      <div class="col-11 mx-auto">
+        <h4 class="text-primary mt-5">Edit Reminder</h4>
+
+        <form action="" method="post">
+          {% csrf_token %}
+
+          {% for field in form.visible_fields  %}
+            <div class="field-wrapper">
+              {{ field.label_tag }}
+              {% if field.help_text %}
+                <div class="help">{{ field.help_text|safe }}</div>
+              {% endif %}
+              {{ field }}
+            </div>
+          {% endfor %}
+
+          <a class="btn btn-outline-secondary" href="{% url 'gp_admin:get_reminders' %}">Cancel</a>
+          <input class="btn btn-primary" type="submit" value="Update" />
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+
+</div>
+
+{% endblock %}

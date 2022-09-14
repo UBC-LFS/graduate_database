@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'gp_admin',
     'gp_supervisor',
     'gp_guest',
+    'django_summernote',
     'scheduler.apps.SchedulerConfig'
 ]
 
@@ -164,3 +165,23 @@ MESSAGE_TAGS = {
 }
 
 PAGE_SIZE = 50
+
+
+# Text editor - summernote theme
+SUMMERNOTE_THEME = 'bs4'
+SUMMERNOTE_CONFIG = {
+    'summernote': {
+        'width': '100%',
+        'height': '400',
+        'toolbar': [
+          ['style', ['style']],
+          ['font', ['bold', 'underline', 'clear']],
+          ['fontname', ['fontname']],
+          ['color', ['color']],
+          ['para', ['ul', 'ol', 'paragraph']],
+          ['table', ['table']],
+          ['insert', ['link']],
+          ['view', ['help']],
+        ]
+    }
+}

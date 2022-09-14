@@ -1,7 +1,10 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.text import slugify
+from django.core.validators import MaxValueValidator, MinValueValidator
 
+
+# User
 
 class Role(models.Model):
     SUPERADMIN = 'Superadmin'
@@ -34,6 +37,27 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+
+# Preparation
+
+
+class Status(models.Model):
+    name = models.CharField(max_length=150, unique=True)
+    slug = models.SlugField(max_length=150, unique=True)
+    created_on = models.DateField(auto_now_add=True)
+    updated_on = models.DateField(auto_now=True)
+
+    class Meta:
+        ordering = ['name', 'pk']
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Status, self).save(*args, **kwargs)
 
 
 class Title(models.Model):
@@ -70,6 +94,23 @@ class Position(models.Model):
         super(Position, self).save(*args, **kwargs)
 
 
+class Professor_Role(models.Model):
+    name = models.CharField(max_length=150, unique=True)
+    slug = models.SlugField(max_length=150, unique=True)
+    created_on = models.DateField(auto_now_add=True)
+    updated_on = models.DateField(auto_now=True)
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Professor_Role, self).save(*args, **kwargs)
+
+
 class Program(models.Model):
     name = models.CharField(max_length=150, unique=True)
     code = models.CharField(max_length=10, unique=True)
@@ -88,46 +129,7 @@ class Program(models.Model):
         super(Program, self).save(*args, **kwargs)
 
 
-class Professor_Role(models.Model):
-    name = models.CharField(max_length=150, unique=True)
-    slug = models.SlugField(max_length=150, unique=True)
-    created_on = models.DateField(auto_now_add=True)
-    updated_on = models.DateField(auto_now=True)
-
-    class Meta:
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
-        super(Professor_Role, self).save(*args, **kwargs)
-
-
-class Professor(models.Model):
-    last_name = models.CharField(max_length=150)
-    first_name = models.CharField(max_length=150)
-    username = models.CharField(max_length=150, unique=True)
-    title = models.ForeignKey(Title, on_delete=models.SET_NULL, null=True, blank=True)
-    position = models.ForeignKey(Position, on_delete=models.SET_NULL, null=True, blank=True)
-    program = models.ForeignKey(Program, on_delete=models.SET_NULL, null=True, blank=True)
-    email = models.CharField(max_length=254, unique=True, null=True, blank=True)
-    phone = models.CharField(max_length=150, null=True, blank=True)
-    fax = models.CharField(max_length=150, null=True, blank=True)
-    office = models.CharField(max_length=150, null=True, blank=True)
-
-    created_on = models.DateField(auto_now_add=True)
-    updated_on = models.DateField(auto_now=True)
-
-    class Meta:
-        ordering = ['last_name', 'first_name']
-
-    def __str__(self):
-        return '{0} {1}'.format(self.last_name, self.first_name)
-
-    def get_full_name(self):
-        return '{0}, {1}'.format(self.last_name, self.first_name)
+# Data Tables
 
 
 class Student(models.Model):
@@ -189,6 +191,30 @@ class Student(models.Model):
         return '{0}, {1}'.format(self.last_name, self.first_name)
 
 
+class Professor(models.Model):
+    last_name = models.CharField(max_length=150)
+    first_name = models.CharField(max_length=150)
+    username = models.CharField(max_length=150, unique=True)
+    title = models.ForeignKey(Title, on_delete=models.SET_NULL, null=True, blank=True)
+    position = models.ForeignKey(Position, on_delete=models.SET_NULL, null=True, blank=True)
+    program = models.ForeignKey(Program, on_delete=models.SET_NULL, null=True, blank=True)
+    email = models.CharField(max_length=254, unique=True, null=True, blank=True)
+    phone = models.CharField(max_length=150, null=True, blank=True)
+    fax = models.CharField(max_length=150, null=True, blank=True)
+    office = models.CharField(max_length=150, null=True, blank=True)
+
+    created_on = models.DateField(auto_now_add=True)
+    updated_on = models.DateField(auto_now=True)
+
+    class Meta:
+        ordering = ['last_name', 'first_name']
+
+    def __str__(self):
+        return '{0} {1}'.format(self.last_name, self.first_name)
+
+    def get_full_name(self):
+        return '{0}, {1}'.format(self.last_name, self.first_name)
+
 
 class Supervision(models.Model):
     ''' To make a relationship bewteen students and professors '''
@@ -216,17 +242,38 @@ class Comprehensive_Exam(models.Model):
         ordering = ['student__last_name', 'student__first_name', 'exam_date']
 
 
-class Exam_Reminder(models.Model):
-    ''' Send an email to students '''
+class Reminder_Inbox(models.Model):
+    ''' Send a reminder email to students '''
     comp_exam = models.ForeignKey(Comprehensive_Exam, on_delete=models.CASCADE)
     sender = models.CharField(max_length=150)
     receiver = models.CharField(max_length=150)
     title = models.CharField(max_length=150)
     message = models.TextField()
+    type = models.CharField(max_length=150)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['-pk']
+
+
+class Reminder(models.Model):
+    ''' Admins can save an email message and title '''
+    title = models.CharField(max_length=150)
+    message = models.TextField()
+    type = models.CharField(max_length=150, unique=True)
+    month = models.IntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(200)]
+    )
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateField(auto_now=True)
+    slug = models.SlugField(max_length=150, unique=True)
+
+    class Meta:
+        ordering = ['pk']
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.type)
+        super(Reminder, self).save(*args, **kwargs)
 
 
 class SIS_Student(models.Model):

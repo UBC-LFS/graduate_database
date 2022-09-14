@@ -1,0 +1,41 @@
+[
+    {
+        "model": "gp_admin.reminder_inbox",
+        "pk": 1,
+        "fields": {
+            "comp_exam_id": 1,
+            "sender": "ABC Company <abc@example.com>",
+            "receiver": "john.doe@example.com <Doe, John>",
+            "title": "Reminder: Comprehensive Exam",
+            "message": "Hi John Doe, This is a reminder email for your comprehensive exam.",
+            "type": "Type 1",
+            "created_at": "2022-01-16 11:00:00.479052-07"
+        }
+    },
+    {
+        "model": "gp_admin.reminder_inbox",
+        "pk": 2,
+        "fields": {
+            "comp_exam_id": 3,
+            "sender": "ABC Company <abc@example.com>",
+            "receiver": "michael.jordan@example.com <Jordan, Michael>",
+            "title": "Reminder: Comprehensive Exam",
+            "message": "Hi Michael Jordan, This is a reminder email for your comprehensive exam.",
+            "type": "Type 1",
+            "created_at": "2022-02-10 11:00:00.830138-07"
+        }
+    },
+    {
+        "model": "gp_admin.reminder_inbox",
+        "pk": 3,
+        "fields": {
+            "comp_exam_id": 1,
+            "sender": "ABC Company <abc@example.com>",
+            "receiver": "john.doe@example.com <Doe, John>",
+            "title": "Title 2",
+            "message": "Hi John Doe, Thanks!",
+            "type": "Type 2",
+            "created_at": "2022-08-16 11:00:00.479052-07"
+        }
+    }
+]

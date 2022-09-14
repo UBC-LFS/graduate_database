@@ -6,21 +6,50 @@ app_name = 'gp_admin'
 urlpatterns = [
     path('', views.index, name='index'),
 
-    path('professors/', views.GetProfessors.as_view(), name='get_professors'),
-    path('professors/add/', views.AddProfessor.as_view(), name='add_professor'),
+    path('students/', views.Get_Students.as_view(), name='get_students'),
+    path('students/add/', views.Add_Student.as_view(), name='add_student'),
 
-    path('students/', views.GetStudents.as_view(), name='get_students'),
-    path('students/add/', views.AddStudent.as_view(), name='add_student'),
-    path('graduate-supervision/', views.GetGradSupervision.as_view(), name='get_grad_supervision'),
+    path('professors/', views.Get_Professors.as_view(), name='get_professors'),
+    path('professors/add/', views.Add_Professor.as_view(), name='add_professor'),
+    
+    path('graduate-supervision/', views.Get_Grad_Supervision.as_view(), name='get_grad_supervision'),
+    
+    path('comprehensive-exams/', views.Get_Comp_Exams.as_view(), name='get_comp_exams'),
+    path('comprehensive-exams/reminders/', views.Get_Exam_Reminders.as_view(), name='get_exam_reminders'),
+
     path('students/sis/', views.get_sis_students, name='get_sis_students'),
-    path('comprehensive-exams/', views.GetCompExams.as_view(), name='get_comp_exams'),
+
 
     # Users
-    path('users/all/', views.GetUsers.as_view(), name='get_users'),
-    path('user-roles/', views.GetRoles.as_view(), name='get_roles'),
+    
+    path('users/all/', views.Get_Users.as_view(), name='get_users'),
+    path('users/roles/', views.Get_Roles.as_view(), name='get_roles'),
+    path('api/roles/<str:slug>/edit/', views.edit_role, name='edit_role'),
+    path('api/role/delete/', views.delete_role, name='delete_role'),
 
     # Preparation
-    path('preparation/titles/', views.GetTitles.as_view(), name='get_titles'),
-    path('preparation/positions/', views.GetPositions.as_view(), name='get_positions'),
-    path('preparation/programs/', views.GetPrograms.as_view(), name='get_programs'),
+    
+    path('preparation/statuses/', views.Get_Statuses.as_view(), name='get_statuses'),
+    path('api/statuses/<str:slug>/edit/', views.edit_status, name='edit_status'),
+    path('api/status/delete/', views.delete_status, name='delete_status'),
+
+    path('preparation/titles/', views.Get_Titles.as_view(), name='get_titles'),
+    path('api/titles/<str:slug>/edit/', views.edit_title, name='edit_title'),
+    path('api/title/delete/', views.delete_title, name='delete_title'),
+
+    path('preparation/positions/', views.Get_Positions.as_view(), name='get_positions'),
+    path('api/positions/<str:slug>/edit/', views.edit_position, name='edit_position'),
+    path('api/position/delete/', views.delete_position, name='delete_position'),
+
+    path('preparation/professor-roles/', views.Get_Professor_Roles.as_view(), name='get_professor_roles'),
+    path('api/professor-roles/<str:slug>/edit/', views.edit_professor_role, name='edit_professor_role'),
+    path('api/professor-role/delete/', views.delete_professor_role, name='delete_professor_role'),
+
+    path('preparation/programs/', views.Get_Programs.as_view(), name='get_programs'),
+    path('api/programs/<str:slug>/edit/', views.edit_program, name='edit_program'),
+    path('api/program/delete/', views.delete_program, name='delete_program'),
+    
+    path('preparation/reminders/', views.Get_Reminders.as_view(), name='get_reminders'),
+    path('preparation/reminders/<str:slug>/edit/', views.Edit_Reminder.as_view(), name='edit_reminder'),
+    path('api/reminder/delete/', views.delete_reminder, name='delete_reminder')
 ]

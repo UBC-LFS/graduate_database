@@ -23,6 +23,16 @@
         "model": "gp_admin.role",
         "pk": 3,
         "fields": {
+            "name": "Graduate Advisor",
+            "slug": "graduate-advisor",
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.role",
+        "pk": 4,
+        "fields": {
             "name": "Supervisor",
             "slug": "supervisor",
             "created_on": "2022-01-01",
@@ -31,7 +41,7 @@
     },
     {
         "model": "gp_admin.role",
-        "pk": 4,
+        "pk": 5,
         "fields": {
             "name": "Guest",
             "slug": "guest",

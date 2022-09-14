@@ -31,7 +31,8 @@
         <th>CWL</th>
         <th>Email</th>
         <th>Role</th>
-        <th data-sortable="true">Superuser <br />Status</th>
+        <th>Superuser <br />Status</th>
+        <th>Is Active</th>
         <th data-sortable="true">Last Login</th>
         <th>Actions</th>
       </tr>
@@ -58,6 +59,11 @@
             {% endif %}
           </td>
           <td>
+            {% if user.is_active %}
+              <span class="badge badge-success">{{ user.is_active }} <i class="fa fa-check-circle" aria-hidden="true"></i></span>
+            {% endif %}
+          </td>
+          <td>
             {% if user.last_login %}
               <span class="d-none">{{ user.last_login|date:"Y m d z" }}</span>
               {{ user.last_login|date:"N j, Y" }}<br />
@@ -68,7 +74,7 @@
           </td>
           <td>
             <div class="btn-toolbar">
-              <a class="btn btn-xs btn-warning fs-sm mr-2" href="#">Edit</a>
+              <a class="btn btn-xs btn-link fs-sm mr-2" href="#">Edit</a>
               <a class="btn btn-xs btn-danger fs-sm" href="#">Delete</a>
             </div>
           </td>

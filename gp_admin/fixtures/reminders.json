@@ -1,0 +1,28 @@
+[
+    {
+        "model": "gp_admin.reminder",
+        "pk": 1,
+        "fields": {
+            "title": "Reminder: Comprehensive Exam",
+            "message": "<p>Hi {0},</p><p><br></p><p>This is a reminder email for your comprehensive exam.</p>",
+            "type": "Offer email",
+            "month": 12,
+            "created_at": "2019-11-04",
+            "updated_at": "2019-11-04",
+            "slug": "offer-email"
+      }
+    },
+    {
+        "model": "gp_admin.reminder",
+        "pk": 2,
+        "fields": {
+            "title": "Title 2",
+            "message": "<p>Hi {0},</p><p><br></p><p>Thanks!</p>",
+            "type": "Type 2",
+            "month": 24,
+            "created_at": "2019-11-05",
+            "updated_at": "2019-11-05",
+            "slug": "type-2"
+      }
+    }
+]

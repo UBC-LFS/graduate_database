@@ -13,6 +13,7 @@
       <a class="dropdown-item" href="{% url 'gp_admin:get_professors' %}">Professors</a>
       <a class="dropdown-item" href="{% url 'gp_admin:get_grad_supervision' %}">Graduate Supervision</a>
       <a class="dropdown-item" href="{% url 'gp_admin:get_comp_exams' %}">Comprehensive Exams</a>
+      <a class="dropdown-item" href="{% url 'gp_admin:get_exam_reminders' %}">Exam Reminder History</a>
       <a class="dropdown-item" href="{% url 'gp_admin:get_sis_students' %}">SIS Students</a>
     </div>
   </div>
@@ -32,9 +33,12 @@
       Preparation
     </button>
     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <a class="dropdown-item" href="{% url 'gp_admin:get_statuses' %}">Statuses</a>
       <a class="dropdown-item" href="{% url 'gp_admin:get_titles' %}">Titles</a>
       <a class="dropdown-item" href="{% url 'gp_admin:get_positions' %}">Positions</a>
+      <a class="dropdown-item" href="{% url 'gp_admin:get_professor_roles' %}">Professor Roles</a>
       <a class="dropdown-item" href="{% url 'gp_admin:get_programs' %}">Programs</a>
+      <a class="dropdown-item" href="{% url 'gp_admin:get_reminders' %}">Setup Exam Reminders</a>
     </div>
   </div>
 

@@ -10,7 +10,7 @@
 
     <div class="bg-prompt">
       <div class="prompt p-4 mb-4">
-        <h4>Create Title</h4>
+        <h4>Create Program</h4>
 
         <form action="" method="post">
           {% csrf_token %}
@@ -25,11 +25,7 @@
             </div>
           {% endfor %}
 
-          {% for field in form.hidden_fields %}
-            {{ field }}
-          {% endfor %}
-
-          <input class="btn btn-primary mt-3" type="submit" value="Create" />
+          <input class="btn btn-primary" type="submit" value="Create" />
         </form>
 
       </div>
@@ -48,41 +44,51 @@
     >
       <thead>
         <tr>
-          <th>TID</th>
+          <th>PID</th>
           <th>Name</th>
+          <th>Code</th>
           <th>Created on</th>
           <th>Updated on</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        {% for title in titles %}
+        {% for program in programs %}
           <tr>
-            <td>{{ title.id }}</td>
-            <td>{{ title.name }}</td>
-            <td>{{ title.created_on }}</td>
-            <td>{{ title.updated_on }}</td>
+            <td>{{ program.id }}</td>
+            <td>{{ program.name }}</td>
+            <td>{{ program.code }}</td>
+            <td>{{ program.created_on }}</td>
+            <td>{{ program.updated_on }}</td>
             <td>
               <div class="btn-toolbar">
-                <button class="btn btn-xs btn-primary fs-sm mr-2" type="button" data-toggle="modal" data-target="#title-edit-modal-{{ title.id }}">Edit</button>
+                <button class="btn btn-xs btn-warning fs-sm mr-2" type="button" data-toggle="modal" data-target="#program-edit-modal-{{ program.id }}">Edit</button>
 
-                <div class="modal fade" id="title-edit-modal-{{ title.id }}" tabindex="-1" role="dialog" aria-labelledby="title-edit-modal-label-{{ title.id }}" aria-hidden="true">
+                <div class="modal fade" id="program-edit-modal-{{ program.id }}" tabindex="-1" role="dialog" aria-labelledby="program-edit-modal-label-{{ program.id }}" aria-hidden="true">
                   <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title text-info" id="title-edit-modal-label-{{ title.id }}">Edit Title</h5>
+                        <h5 class="modal-title text-info" id="program-edit-modal-label-{{ program.id }}">Edit Program</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                       </div>
                       <div class="modal-body text-left">
                         <div class="modal-item">
-                          <form action="#" method="post">
+                          <form action="{% url 'gp_admin:edit_program' slug=program.slug %}" method="post">
                             {% csrf_token %}
 
                             <div class="field-wrapper">
-                              <label for="id_name_{{ title.id }}">Name:</label>
-                              <input id="id_name_{{ title.id }}" type="text" name="name" maxlength="256" value="{{ title.name }}" class="form-control" />
+                              <label for="id_name_{{ program.id }}">Name:</label>
+                              <div class="help">This is a required and unique field. Maximum characters: 150</div>
+                              <input id="name_{{ program.id }}" type="text" name="name" maxlength="150" value="{{ program.name }}" class="form-control" />
                             </div>
-                            <input class="btn btn-primary mt-3" type="submit" value="Update" />
+
+                            <div class="field-wrapper">
+                              <label for="id_code_{{ program.id }}">Code:</label>
+                              <div class="help">This is a required and unique field. Maximum characters: 10</div>
+                              <input id="code_{{ program.id }}" type="text" name="code" maxlength="10" value="{{ program.code }}" class="form-control" />
+                            </div>
+
+                            <input class="btn btn-primary" type="submit" value="Update" />
                           </form>
                         </div>
                       </div>
@@ -90,10 +96,10 @@
                   </div>
                 </div>
 
-                <form action="#" method="post" onsubmit="return confirm('Are you sure to delete {{ title.name }}?');">
+                <form action="{% url 'gp_admin:delete_program' %}" method="post" onsubmit="return confirm('Are you sure to delete this program - {{ program.name }}?');">
                   {% csrf_token %}
 
-                  <input type="hidden" name="title" value="{{ title.id }}" />
+                  <input type="hidden" name="program" value="{{ program.id }}" />
                   <input class="btn btn-xs btn-danger fs-sm" type="submit" value="Delete" />
                 </form>
               </div>

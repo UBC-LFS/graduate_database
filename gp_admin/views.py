@@ -1,7 +1,10 @@
 from django.conf import settings
 from django.views import View
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.views.decorators.http import require_http_methods
+from django.shortcuts import get_object_or_404
 
 import json
 
@@ -19,7 +22,9 @@ def index(request):
     return render(request, 'gp_admin/index.html')
 
 
-class GetStudents(View):
+# Data Tables
+
+class Get_Students(View):
     def get(self, request, *args, **kwargs):
         student_list = Student.objects.all()
 
@@ -53,23 +58,23 @@ class GetStudents(View):
                 if s.student_number in sis_student_ids:
                     s.sis_details = SIS_Student.objects.filter(student_number=s.student_number).first().json
 
-        return render(request, 'gp_admin/get_students.html', {
+        return render(request, 'gp_admin/data_tables/get_students.html', {
             'students': students,
             'total_students': len(student_list)
         })
 
 
-class AddStudent(View):
-    form_class = StudentCreateForm
+class Add_Student(View):
+    form_class = Student_Create_Form
 
     def get(self, request, *args, **kwargs):
-        return render(request, 'gp_admin/add_student.html', {
+        return render(request, 'gp_admin/data_tables/add_student.html', {
             'students': api.get_students(),
             'form': self.form_class()
         })
 
 
-class GetProfessors(View):
+class Get_Professors(View):
     def get(self, request, *args, **kwargs):
         professor_list =  api.get_professors()
 
@@ -97,7 +102,7 @@ class GetProfessors(View):
         for prof in professors:
             print(prof.supervision_set.count())
 
-        return render(request, 'gp_admin/get_professors.html', {
+        return render(request, 'gp_admin/data_tables/get_professors.html', {
             'professors': professors,
             'total_professors': len(professor_list)
         })
@@ -106,17 +111,17 @@ class GetProfessors(View):
         pass
 
 
-class AddProfessor(View):
-    form_class = ProfessorCreateForm
+class Add_Professor(View):
+    form_class = Professor_Create_Form
 
     def get(self, request, *args, **kwargs):
-        return render(request, 'gp_admin/add_professor.html', {
+        return render(request, 'gp_admin/data_tables/add_professor.html', {
             'professors': api.get_professors(),
             'form': self.form_class()
         })
 
 
-class GetGradSupervision(View):
+class Get_Grad_Supervision(View):
     def get(self, request, *args, **kwargs):
         professor_list = api.get_professors()
 
@@ -158,14 +163,14 @@ class GetGradSupervision(View):
                     })
                 num_supervisors += 1
 
-        return render(request, 'gp_admin/get_grad_supervision.html', {
+        return render(request, 'gp_admin/data_tables/get_grad_supervision.html', {
             'supervisions': supervisions,
             'total_supervisions': num_supervisors
         })
 
 
-class GetCompExams(View):
-    form_class = CompExamForm
+class Get_Comp_Exams(View):
+    form_class = Comp_Exam_Form
 
     def get(self, request, *args, **kwargs):
         student_list = api.get_students()
@@ -207,12 +212,22 @@ class GetCompExams(View):
         #     except Comprehensive_Exam.DoesNotExist:
         #         stud.comprehensive_exam = None
 
-        return render(request, 'gp_admin/get_comp_exams.html', {
+        return render(request, 'gp_admin/data_tables/get_comp_exams.html', {
             'students': students,
             'total_students': len(student_list),
             'form': self.form_class()
         })
 
+
+    def post(self, request, *args, **kwargs):
+        pass
+
+
+class Get_Exam_Reminders(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'gp_admin/data_tables/get_exam_reminders.html', {
+            'reminders': Exam_Reminder.objects.all().order_by('-created_at')
+        })
 
     def post(self, request, *args, **kwargs):
         pass
@@ -228,7 +243,7 @@ def get_sis_students(request):
 
     student_json = [ s.json for s in sis_student_list ]
 
-    return render(request, 'gp_admin/get_sis_students.html', {
+    return render(request, 'gp_admin/data_tables/get_sis_students.html', {
         'students': student_json,
         'total_students': len(student_json)
     })
@@ -236,11 +251,11 @@ def get_sis_students(request):
 
 # Users
 
-class GetUsers(View):
+class Get_Users(View):
     def get(self, request, *args, **kwargs):
         users = User.objects.all().order_by('last_name', 'first_name')
 
-        return render(request, 'gp_admin/get_users.html', {
+        return render(request, 'gp_admin/users/get_users.html', {
             'users': users,
             'total_users': len(users)
         })
@@ -249,59 +264,379 @@ class GetUsers(View):
         pass
     
 
-class GetRoles(View):
-    form_class = RoleForm
+class Get_Roles(View):
+    form_class = Role_Form
 
     def get(self, request, *args, **kwargs):
-        return render(request, 'gp_admin/get_roles.html', {
+        return render(request, 'gp_admin/users/get_roles.html', {
             'roles': Role.objects.all().order_by('id'),
             'form': self.form_class()
         })
     
     def post(self, request, *args, **kwargs):
-        pass
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            res = form.save()
+            if res:
+                messages.success(request, 'Success! Role ({0}) created'.format(res.name))
+            else:
+                messages.error(request, 'An error occurred while saving data.')
+        else:
+            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+        return redirect('gp_admin:get_roles')
     
+
+@require_http_methods(['POST'])
+def edit_role(request, slug):
+    ''' Edit a role '''
+
+    role = api.get_role(slug, 'slug')
+    form = Role_Form(request.POST, instance=role)
+    if form.is_valid():
+        res = form.save()
+        if res:
+            messages.success(request, 'Success! Status ({0}) updated'.format(res.name))
+        else:
+            messages.error(request, 'An error occurred.')
+    else:
+        messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+    return redirect('gp_admin:get_roles')
+
+
+@require_http_methods(['POST'])
+def delete_role(request):
+    ''' Delete a role '''
+
+    role = api.get_role(request.POST.get('role'))
+    if role.delete():
+        messages.success(request, 'Success! Role ({0}) deleted'.format(role.name))
+    else:
+        messages.error(request, 'An error occurred.')
+    return redirect('gp_admin:get_roles')
+
 
 
 # Preparation
 
 
-class GetTitles(View):
-    form_class = TitleForm
+class Get_Statuses(View):
+    form_class = Status_Form
 
     def get(self, request, *args, **kwargs):
-        return render(request, 'gp_admin/get_titles.html', {
+        return render(request, 'gp_admin/preparation/get_statuses.html', {
+            'statuses': Status.objects.all().order_by('id'),
+            'form': self.form_class()
+        })
+    
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            res = form.save()
+            if res:
+                messages.success(request, 'Success! Status ({0}) created'.format(res.name))
+            else:
+                messages.error(request, 'An error occurred while saving data.')
+        else:
+            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+        return redirect('gp_admin:get_statuses')
+
+
+@require_http_methods(['POST'])
+def edit_status(request, slug):
+    ''' Edit a status '''
+
+    status = api.get_status(slug, 'slug')
+    form = Status_Form(request.POST, instance=status)
+    if form.is_valid():
+        res = form.save()
+        if res:
+            messages.success(request, 'Success! Status ({0}) updated'.format(res.name))
+        else:
+            messages.error(request, 'An error occurred.')
+    else:
+        messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+    return redirect('gp_admin:get_statuses')
+
+
+@require_http_methods(['POST'])
+def delete_status(request):
+    ''' Delete a status '''
+
+    status = api.get_status(request.POST.get('status'))
+    if status.delete():
+        messages.success(request, 'Success! Status ({0}) deleted'.format(status.name))
+    else:
+        messages.error(request, 'An error occurred.')
+    return redirect('gp_admin:get_statuses')
+
+
+class Get_Titles(View):
+    form_class = Title_Form
+
+    def get(self, request, *args, **kwargs):
+        return render(request, 'gp_admin/preparation/get_titles.html', {
             'titles': Title.objects.all().order_by('id'),
             'form': self.form_class()
         })
     
     def post(self, request, *args, **kwargs):
-        pass
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            res = form.save()
+            if res:
+                messages.success(request, 'Success! Title ({0}) created'.format(res.name))
+            else:
+                messages.error(request, 'An error occurred while saving data.')
+        else:
+            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+        return redirect('gp_admin:get_titles')
 
 
-class GetPositions(View):
-    form_class = PositionForm
+@require_http_methods(['POST'])
+def edit_title(request, slug):
+    ''' Edit a title '''
+
+    title = api.get_title(slug, 'slug')
+    form = Title_Form(request.POST, instance=title)
+    if form.is_valid():
+        res = form.save()
+        if res:
+            messages.success(request, 'Success! Title ({0}) updated'.format(res.name))
+        else:
+            messages.error(request, 'An error occurred.')
+    else:
+        messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+
+    return redirect('gp_admin:get_titles')
+
+
+@require_http_methods(['POST'])
+def delete_title(request):
+    ''' Delete a title '''
+
+    title = api.get_title(request.POST.get('title'))
+    if title.delete():
+        messages.success(request, 'Success! Title ({0}) deleted'.format(title.name))
+    else:
+        messages.error(request, 'An error occurred.')
+    
+    return redirect('gp_admin:get_titles')
+
+
+class Get_Positions(View):
+    form_class = Position_Form
 
     def get(self, request, *args, **kwargs):
-        return render(request, 'gp_admin/get_positions.html', {
+        return render(request, 'gp_admin/preparation/get_positions.html', {
             'positions': Position.objects.all().order_by('id'),
             'form': self.form_class()
         })
     
     def post(self, request, *args, **kwargs):
-        pass
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            res = form.save()
+            if res:
+                messages.success(request, 'Success! Position ({0}) created'.format(res.name))
+            else:
+                messages.error(request, 'An error occurred while saving data.')
+        else:
+            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+        return redirect('gp_admin:get_positions')
 
 
-class GetPrograms(View):
-    form_class = ProgramForm
+@require_http_methods(['POST'])
+def edit_position(request, slug):
+    ''' Edit a position '''
+
+    position = api.get_position(slug, 'slug')
+    form = Position_Form(request.POST, instance=position)
+    if form.is_valid():
+        res = form.save()
+        if res:
+            messages.success(request, 'Success! Position ({0}) updated'.format(res.name))
+        else:
+            messages.error(request, 'An error occurred.')
+    else:
+        messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+
+    return redirect('gp_admin:get_positions')
+
+
+@require_http_methods(['POST'])
+def delete_position(request):
+    ''' Delete a position '''
+
+    position = api.get_position(request.POST.get('position'))
+    if position.delete():
+        messages.success(request, 'Success! Position ({0}) deleted'.format(position.name))
+    else:
+        messages.error(request, 'An error occurred.')
+    
+    return redirect('gp_admin:get_positions')
+
+
+
+class Get_Professor_Roles(View):
+    form_class = Professor_Role_Form
 
     def get(self, request, *args, **kwargs):
-        return render(request, 'gp_admin/get_programs.html', {
+        return render(request, 'gp_admin/preparation/get_professor_roles.html', {
+            'professor_roles': Professor_Role.objects.all().order_by('id'),
+            'form': self.form_class()
+        })
+    
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            res = form.save()
+            if res:
+                messages.success(request, 'Success! Professor Role ({0}) created'.format(res.name))
+            else:
+                messages.error(request, 'An error occurred while saving data.')
+        else:
+            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+        return redirect('gp_admin:get_professor_roles')
+
+
+@require_http_methods(['POST'])
+def edit_professor_role(request, slug):
+    ''' Edit a professor role '''
+
+    professor_role = api.get_professor_role(slug, 'slug')
+    form = Professor_Role_Form(request.POST, instance=professor_role)
+    if form.is_valid():
+        res = form.save()
+        if res:
+            messages.success(request, 'Success! Position ({0}) updated'.format(res.name))
+        else:
+            messages.error(request, 'An error occurred.')
+    else:
+        messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+    return redirect('gp_admin:get_professor_roles')
+
+
+@require_http_methods(['POST'])
+def delete_professor_role(request):
+    ''' Delete a professor role '''
+
+    professor_role = api.get_professor_role(request.POST.get('professor_role'))
+    if professor_role.delete():
+        messages.success(request, 'Success! Professor Role ({0}) deleted'.format(professor_role.name))
+    else:
+        messages.error(request, 'An error occurred.')
+    return redirect('gp_admin:get_professor_roles')
+
+
+class Get_Programs(View):
+    form_class = Program_Form
+
+    def get(self, request, *args, **kwargs):
+        return render(request, 'gp_admin/preparation/get_programs.html', {
             'programs': Program.objects.all().order_by('id'),
             'form': self.form_class()
         })
     
     def post(self, request, *args, **kwargs):
-        pass
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            res = form.save()
+            if res:
+                messages.success(request, 'Success! Program ({0}) created'.format(res.name))
+            else:
+                messages.error(request, 'An error occurred while saving data.')
+        else:
+            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+
+        return redirect('gp_admin:get_programs')
 
 
+@require_http_methods(['POST'])
+def edit_program(request, slug):
+    ''' Edit a program '''
+
+    program = api.get_program(slug, 'slug')
+    form = Program_Form(request.POST, instance=program)
+    if form.is_valid():
+        res = form.save()
+        if res:
+            messages.success(request, 'Success! Position ({0}) updated'.format(res.name))
+        else:
+            messages.error(request, 'An error occurred.')
+    else:
+        messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+
+    return redirect('gp_admin:get_programs')
+
+
+@require_http_methods(['POST'])
+def delete_program(request):
+    ''' Delete a program '''
+
+    program = api.get_program(request.POST.get('program'))
+    if program.delete():
+        messages.success(request, 'Success! Program ({0}) deleted'.format(program.name))
+    else:
+        messages.error(request, 'An error occurred.')
+    
+    return redirect('gp_admin:get_programs')
+
+
+class Get_Reminders(View):
+    form_class = Reminder_Form
+
+    def get(self, request, *args, **kwargs):
+        return render(request, 'gp_admin/preparation/get_reminders.html', {
+            'reminders': Reminder.objects.all().order_by('id'),
+            'form': self.form_class()
+        })
+    
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            res = form.save()
+            if res:
+                messages.success(request, 'Success! Reminder with Type: {0} and Month: {1} created'.format(res.type, res.month))
+            else:
+                messages.error(request, 'An error occurred while saving data.')
+        else:
+            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+
+        return redirect('gp_admin:get_reminders')
+
+
+class Edit_Reminder(View):
+    form_class = Reminder_Form
+
+    def get(self, request, *args, **kwargs):
+        reminder = api.get_reminder(kwargs['slug'], 'slug')
+        return render(request, 'gp_admin/preparation/edit_reminder.html', {
+            'form': self.form_class(data=None, instance=reminder)
+        })
+    
+    def post(self, request, *args, **kwargs):
+        reminder = api.get_reminder(kwargs['slug'], 'slug')
+        form = self.form_class(request.POST, instance=reminder)
+        if form.is_valid():
+            res = form.save()
+            if res:
+                messages.success(request, 'Success! Reminder with Type: {0} and Month: {1} updated'.format(res.type, res.month))
+            else:
+                messages.error(request, 'An error occurred while updating data.')
+        else:
+            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+
+        return redirect('gp_admin:get_reminders')
+
+
+@require_http_methods(['POST'])
+def delete_reminder(request):
+    ''' Delete a reminder '''
+
+    reminder = api.get_reminder(request.POST.get('reminder'))
+    if reminder.delete():
+        messages.success(request, 'Success! Reminder (Type: {0}) deleted'.format(reminder.type))
+    else:
+        messages.error(request, 'An error occurred while deleting it.')
+    
+    return redirect('gp_admin:get_reminders')

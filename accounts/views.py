@@ -14,7 +14,7 @@ from ldap3.core.exceptions import LDAPBindError
 import json
 
 from .forms import LocalLoginForm
-from gp_admin import api as adminApi
+from gp_admin import api
 
 
 def ldap_auth(cwl, password):
@@ -110,10 +110,10 @@ class Login(View):
                 if temp_user.exists():
                     user = temp_user.first()
                 else:
-                    user = adminApi.create_user(username, ldap_info['first_name'], ldap_info['last_name'])
+                    user = api.create_user(username, ldap_info['first_name'], ldap_info['last_name'])
                 
                 AuthLogin(request, user)
-                roles = adminApi.get_roles(user)
+                roles = api.get_roles(user)
                 
                 if len(roles) == 0:
                     messages.error(request, 'An error occurred. Users must have at least one role.')
@@ -153,7 +153,7 @@ class LocalLogin(View):
             user = authenticate(username=request.POST['username'], password=request.POST['password'])
             if user is not None:
                 AuthLogin(request, user)
-                roles = adminApi.get_roles(user)
+                roles = api.get_roles(user)
                 if roles == None:
                     messages.error(request, 'An error occurred. Users must have at least one role.')
                 else:

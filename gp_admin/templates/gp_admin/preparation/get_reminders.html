@@ -1,0 +1,133 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+{% include 'gp_admin/subpages/_menu.html' %}
+
+<div class="container max-width-container">
+
+  <div class="row">
+    <div class="col-md-3">
+
+      <div class="bg-prompt">
+        <div class="prompt p-4 mb-4">
+          <h4>Setup Exam Reminders</h4>
+        </div>
+      </div>
+      <div class="bd-callout bd-callout-warning">
+        <h4>Note:</h4>
+        <p>Curly brackets would be replaced by actual values while sending an email.</p>
+        <ul>
+          <li>Student Name: {0}</li>
+          <li>Student #: {1}</li>
+          <li>Session-Term: {2}</li>
+          <li>Course/Job: {3}</li>
+          <li>Instructor: {4}</li>
+          <li>Assigned Hours: {5}</li>
+          <li>Classification: {6}</li>
+        </ul>
+        <p>An email type (<code>Offer email</code>) is used in <strong>Job Offer Details</strong> on the Student's side, when they Accept, Re-Accept or Decline that Offer.</p>
+      </div>
+
+    </div>
+
+    <div class="col-md-9">
+
+      <div class="col-11 mx-auto">
+        <h4 class="mb-3">
+          Reminders
+          <small class="text-dark-gray">(Total: {{ reminders|length }})</small>
+        </h4>
+
+        <table class="table table-bordered table-hover table-striped table-responsive-md text-center">
+          <thead>
+            <tr>
+              <th>RID</th>
+              <th>Title</th>
+              <th>Message</th>
+              <th>Type</th>
+              <th>Month</th>
+              <th>Created at</th>
+              <th>Updated at</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for reminder in reminders %}
+              <tr>
+                <td>{{ reminder.id }}</td>
+                <td class="text-left">{{ reminder.title }}</td>
+                <td>
+                  <button class="btn btn-xs btn-info" type="button" data-toggle="modal" data-target="#reminder-modal-{{ reminder.id }}">
+                    <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                  </button>
+                  <div class="modal fade" id="reminder-modal-{{ reminder.id }}" tabindex="-1" role="dialog" aria-labelledby="reminder-modal-label-{{ reminder.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title text-info" id="reminder-modal-label-{{ reminder.id }}">Message</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                        <div class="modal-body text-left">
+                          <div class="h6 text-chocolate mb-3">
+                            Type: {{ reminder.type }}, Month: {{ reminder.month }}
+                          </div>
+
+                          <h5>{{ reminder.title }}</h5>
+
+                          <hr />
+                          <p>{{ reminder.message|safe }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td>{{ reminder.type }}</td>
+                <td>{{ reminder.month }}</td>
+                <td>{{ reminder.created_at }}</td>
+                <td>{{ reminder.updated_at }}</td>
+                <td>
+                  <div class="btn-toolbar">
+                    <a class="btn btn-xs btn-link mr-2" href="{% url 'gp_admin:edit_reminder' slug=reminder.slug %}">Edit</a>
+
+                    <form action="{% url 'gp_admin:delete_reminder' %}" method="post" onsubmit="return confirm('Are you sure to delete this exam reminder (ID: {{ reminder.id }}, Type: {{ reminder.type }})?')">
+                      {% csrf_token %}
+                      <input type="hidden" name="reminder" value="{{ reminder.id }}" />
+                      <input class="btn btn-xs btn-danger" type="submit" value="Delete" />
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="8">No exam reminders found.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <h4 class="text-primary mt-5">Create Reminder</h4>
+
+        <form action="" method="post">
+          {% csrf_token %}
+
+          {% for field in form.visible_fields  %}
+            <div class="field-wrapper">
+              {{ field.label_tag }}
+              {% if field.help_text %}
+                <div class="help">{{ field.help_text|safe }}</div>
+              {% endif %}
+              {{ field }}
+            </div>
+          {% endfor %}
+
+          <input class="btn btn-primary mt-3" type="submit" value="Create" />
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+
+</div>
+
+{% endblock %}

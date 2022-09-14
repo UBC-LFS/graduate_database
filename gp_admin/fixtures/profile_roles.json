@@ -30,5 +30,13 @@
             "profile_id": 4,
             "role_id": 4
         }
+    },
+    {
+        "model": "gp_admin.profile_roles",
+        "pk": 5,
+        "fields": {
+            "profile_id": 5,
+            "role_id": 5
+        }
     }
 ]

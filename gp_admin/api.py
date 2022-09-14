@@ -30,11 +30,32 @@ def get_sis_students():
     return SIS_Student.objects.all()
 
 
-# --- User Role ---
 
-def get_role_by_name(name):
-    ''' Get a role by name '''
-    return get_object_or_404(Role, name=name)
+# Reminder
+
+def get_reminder(arg, type='id'):
+    if type == 'slug':
+        return get_object_or_404(Reminder, slug=arg)
+    return get_object_or_404(Reminder, id=arg)
+
+
+# User
+
+
+
+def create_user(username, first_name, last_name):
+    ''' Create a new user with roles '''
+
+    user = User.objects.create(
+        username = username,
+        first_name = first_name,
+        last_name = last_name
+    )
+
+    profile = Profile.objects.create(user_id=user.id)
+    profile.roles.add( get_role('Guest', 'name') )
+
+    return user
 
 
 def get_roles(user):
@@ -57,18 +78,43 @@ def get_roles(user):
     return roles
 
 
-# --- User ---
+def get_role(arg, type='id'):
+    ''' Get a role by id '''
+    if type == 'slug':
+        return get_object_or_404(Role, slug=arg)
+    elif type == 'name':
+        return get_object_or_404(Role, name=arg)
+    return get_object_or_404(Role, id=arg)
 
-def create_user(username, first_name, last_name):
-    ''' Create a new user with roles '''
 
-    user = User.objects.create(
-        username = username,
-        first_name = first_name,
-        last_name = last_name
-    )
+# Preparation
 
-    profile = Profile.objects.create(user_id=user.id)
-    profile.roles.add( get_role_by_name('Guest') )
+def get_status(arg, type='id'):
+    ''' Get a status by id '''
+    if type == 'slug':
+        return get_object_or_404(Status, slug=arg)
+    return get_object_or_404(Status, id=arg)
 
-    return user
+def get_title(arg, type='id'):
+    ''' Get a title by id '''
+    if type == 'slug':
+        return get_object_or_404(Title, slug=arg)
+    return get_object_or_404(Title, id=arg)
+
+def get_position(arg, type='id'):
+    ''' Get a position by id '''
+    if type == 'slug':
+        return get_object_or_404(Position, slug=arg)
+    return get_object_or_404(Position, id=arg)
+
+def get_professor_role(arg, type='id'):
+    ''' Get a professor role by id '''
+    if type == 'slug':
+        return get_object_or_404(Professor_Role, slug=arg)
+    return get_object_or_404(Professor_Role, id=arg)
+
+def get_program(arg, type='id'):
+    ''' Get a program by id '''
+    if type == 'slug':
+        return get_object_or_404(Program, slug=arg)
+    return get_object_or_404(Program, id=arg)

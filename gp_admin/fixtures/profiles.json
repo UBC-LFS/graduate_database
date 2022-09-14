@@ -24,7 +24,7 @@
         "pk": 3,
         "fields": {
             "user_id": 3,
-            "preferred_name": "Supervisor",
+            "preferred_name": null,
             "created_on": "2022-01-01",
             "updated_on": "2022-01-01"
         }
@@ -34,6 +34,16 @@
         "pk": 4,
         "fields": {
             "user_id": 4,
+            "preferred_name": null,
+            "created_on": "2022-01-01",
+            "updated_on": "2022-01-01"
+        }
+    },
+    {
+        "model": "gp_admin.profile",
+        "pk": 5,
+        "fields": {
+            "user_id": 5,
             "preferred_name": null,
             "created_on": "2022-01-01",
             "updated_on": "2022-01-01"

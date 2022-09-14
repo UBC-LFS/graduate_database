@@ -1,10 +1,11 @@
 from django import forms
 from datetime import datetime
+from django_summernote.widgets import SummernoteWidget, SummernoteInplaceWidget
 
 from .models import *
 
 
-class ProfessorCreateForm(forms.ModelForm):
+class Professor_Create_Form(forms.ModelForm):
     class Meta:
         model = Professor
         fields = ['last_name', 'first_name', 'title', 'position', 'program', 'email', 'phone', 'fax', 'office']
@@ -26,7 +27,7 @@ class ProfessorCreateForm(forms.ModelForm):
         }
 
 
-class StudentCreateForm(forms.ModelForm):
+class Student_Create_Form(forms.ModelForm):
     date_of_birth = forms.DateField(
         required = False,
         widget = forms.widgets.DateInput(attrs={'type': 'date', 'class':'form-control'}),
@@ -132,7 +133,7 @@ class StudentCreateForm(forms.ModelForm):
         }
 
 
-class CompExamForm(forms.ModelForm):
+class Comp_Exam_Form(forms.ModelForm):
     today = datetime.now()
 
     exam_date = forms.DateField(
@@ -150,37 +151,92 @@ class CompExamForm(forms.ModelForm):
 # Users
 
 
-class RoleForm(forms.ModelForm):
+class Role_Form(forms.ModelForm):
     class Meta:
         model = Role
         fields = ['name']
         widgets = {
             'name': forms.TextInput(attrs={ 'class':'form-control' })
         }
+        help_texts = {
+            'name': 'This is a required and unique field. Maximum characters: 150',
+        }
+
 
 # Preparation
 
-class TitleForm(forms.ModelForm):
+class Status_Form(forms.ModelForm):
+    class Meta:
+        model = Status
+        fields = ['name']
+        widgets = {
+            'name': forms.TextInput(attrs={ 'class':'form-control' })
+        }
+        help_texts = {
+            'name': 'This is a required and unique field. Maximum characters: 150',
+        }
+
+class Title_Form(forms.ModelForm):
     class Meta:
         model = Title
         fields = ['name']
         widgets = {
             'name': forms.TextInput(attrs={ 'class':'form-control' })
         }
+        help_texts = {
+            'name': 'This is a required and unique field. Maximum characters: 150',
+        }
 
-class PositionForm(forms.ModelForm):
+class Position_Form(forms.ModelForm):
     class Meta:
         model = Position
         fields = ['name']
         widgets = {
             'name': forms.TextInput(attrs={ 'class':'form-control' })
         }
+        help_texts = {
+            'name': 'This is a required and unique field. Maximum characters: 150',
+        }
 
-class ProgramForm(forms.ModelForm):
+class Professor_Role_Form(forms.ModelForm):
+    class Meta:
+        model = Professor_Role
+        fields = ['name']
+        widgets = {
+            'name': forms.TextInput(attrs={ 'class':'form-control' })
+        }
+        help_texts = {
+            'name': 'This is a required and unique field. Maximum characters: 150',
+        }
+
+
+class Program_Form(forms.ModelForm):
     class Meta:
         model = Program
         fields = ['name', 'code']
         widgets = {
             'name': forms.TextInput(attrs={ 'class':'form-control' }),
             'code': forms.TextInput(attrs={ 'class':'form-control' })
+        }
+        help_texts = {
+            'name': 'This is a required and unique field. Maximum characters: 150',
+            'code': 'This is a required and unique field. Maximum characters: 10',
+        }
+
+
+class Reminder_Form(forms.ModelForm):
+    class Meta:
+        model = Reminder
+        fields = ['title', 'message', 'type', 'month']
+        widgets = {
+            'title': forms.TextInput(attrs={ 'class':'form-control' }),
+            'message': SummernoteWidget(),
+            'type': forms.TextInput(attrs={ 'class':'form-control' }),
+            'month': forms.TextInput(attrs={ 'class':'form-control' })
+        }
+        help_texts = {
+            'title': 'This is a required field. Maximum characters: 150',
+            'message': 'This is a required field.',
+            'type': 'This is a required and unique field. Maximum characters: 150',
+            'month': 'This is a required field. Must be numeric (Minimun value: 1, Maximum Value: 200)'
         }
