@@ -40,7 +40,7 @@
         "pk": 4,
         "fields": {
             "password": "pbkdf2_sha256$150000$o40PKWhQTyaC$8LXfzmFRqlwYH0C2ckjaQfAiYeDy3BKWeBYLerdTiDs=",
-            "username": "user2.guest",
+            "username": "user2.prof",
             "last_name": "User2",
             "first_name": "Prof",
             "email": "user2.prof@example.com",

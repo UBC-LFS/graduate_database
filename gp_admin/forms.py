@@ -1,6 +1,9 @@
 from django import forms
 from datetime import datetime
 from django_summernote.widgets import SummernoteWidget, SummernoteInplaceWidget
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 from .models import *
 
@@ -149,6 +152,73 @@ class Comp_Exam_Form(forms.ModelForm):
 
 
 # Users
+
+
+class User_Form(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['last_name', 'first_name', 'email', 'username', 'is_superuser', 'is_active']
+        labels = {
+            'last_name': 'Last Name',
+            'first_name': 'First Name',
+            'email': 'Email',
+            'username': 'CWL',
+            'is_superuser': 'Superuser Status'
+        }
+        widgets = {
+            'last_name': forms.TextInput(attrs={ 'required': True, 'class': 'form-control' }),
+            'first_name': forms.TextInput(attrs={ 'required': True, 'class': 'form-control' }),
+            'email': forms.EmailInput(attrs={ 'required': True, 'class': 'form-control' }),
+            'username': forms.TextInput(attrs={ 'required': True, 'class': 'form-control' })
+        }
+        help_texts = {
+            'last_name': 'Maximum length is 150 characters.',
+            'first_name': 'Maximum length is 150 characters.',
+            'email': 'Maximum length is 254 characters.',
+            'username': 'This is a unique field. Maximum length is 150 characters.',
+            'is_superuser': "This field is necessary for a Superadmin role."
+        }
+
+    def clean_last_name(self):
+        data = self.cleaned_data['last_name']    
+        if not data: raise ValidationError('This field is required.')
+        return data
+
+    def clean_first_name(self):
+        data = self.cleaned_data['first_name']    
+        if not data: raise ValidationError('This field is required.')
+        return data
+
+    def clean_email(self):
+        data = self.cleaned_data['email']    
+        if not data: raise ValidationError('This field is required.')
+        return data
+
+
+class Profile_Form(forms.ModelForm):
+    roles = forms.ModelMultipleChoiceField(
+        required = True,
+        queryset = Role.objects.all(),
+        widget = forms.CheckboxSelectMultiple(),
+    )
+    class Meta:
+        model = Profile
+        fields = ['preferred_name', 'roles']
+        labels = {
+            'preferred_name': 'Preferred Name'
+        }
+        widgets = {
+            'preferred_name': forms.TextInput(attrs={ 'class': 'form-control' })
+        }
+        help_texts = {
+            'preferred_name': 'This field is optional. Maximum length is 150 characters.'
+        }
+
+    def clean_roles(self):
+        data = self.cleaned_data['roles']
+        if not data: raise ValidationError('This field is required.')
+        return data
+
 
 
 class Role_Form(forms.ModelForm):

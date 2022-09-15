@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 
 import json
 
@@ -253,7 +254,7 @@ def get_sis_students(request):
 
 class Get_Users(View):
     def get(self, request, *args, **kwargs):
-        users = User.objects.all().order_by('last_name', 'first_name')
+        users = api.get_users()
 
         return render(request, 'gp_admin/users/get_users.html', {
             'users': users,
@@ -262,7 +263,92 @@ class Get_Users(View):
     
     def post(self, request, *args, **kwargs):
         pass
+
+
+class Add_User(View):
+    user_form = User_Form
+    profile_form = Profile_Form
+
+    def get(self, request, *args, **kwargs):
+        return render(request, 'gp_admin/users/user.html', {
+            'user_form': self.user_form(),
+            'profile_form': self.profile_form(),
+            'info': {
+                'btn_label': 'Create',
+                'href': reverse('gp_admin:add_user'),
+                'type': 'add'
+            }
+        })
     
+    def post(self, request, *args, **kwargs):
+        user_form = self.user_form(request.POST)
+        profile_form = self.profile_form(request.POST)
+
+        errors = []
+        if not user_form.is_valid():
+            errors.append( api.get_error_messages(user_form.errors.get_json_data()) )
+        if not profile_form.is_valid():
+            errors.append( api.get_error_messages(profile_form.errors.get_json_data()) )
+
+        if len(errors) == 0:
+            user = user_form.save()
+            profile_data = profile_form.cleaned_data
+
+            # # Create a profile and add roles
+            profile = Profile.objects.create(user_id=user.id, preferred_name=profile_data.get('preferred_name', None))
+            profile.roles.add( *profile_data['roles'] )
+
+            messages.success(request, 'Success! User ({0} {1}, CWL: {2}) created'.format(user.first_name, user.last_name, user.username))
+            return redirect('gp_admin:get_users')
+        else:
+            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(' '.join(errors)) )
+
+        return redirect('gp_admin:add_user')
+
+
+class Edit_User(View):
+    user_form = User_Form
+    profile_form = Profile_Form
+
+    def get(self, request, *args, **kwargs):
+        user = api.get_user(kwargs['username'], 'username')
+        profile = api.has_profile_created(user)
+
+        return render(request, 'gp_admin/users/user.html', {
+            'user': user,
+            'user_form': self.user_form(data=None, instance=user),
+            'profile_form': self.profile_form(data=None, instance=profile),
+            'info': {
+                'btn_label': 'Update',
+                'href': reverse('gp_admin:edit_user', args=[ kwargs['username'] ]),
+                'type': 'edit'
+            }
+        })
+    
+    def post(self, request, *args, **kwargs):
+        user = api.get_user(request.POST.get('user'))
+        user_form = self.user_form(request.POST, instance=user)
+        profile_form = self.profile_form(request.POST, instance=user.profile)
+        
+        errors = []
+        if not user_form.is_valid():
+            errors.append( api.get_error_messages(user_form.errors.get_json_data()) )
+        if not profile_form.is_valid():
+            errors.append( api.get_error_messages(profile_form.errors.get_json_data()) )
+
+        if len(errors) == 0:
+            # profile_roles = user.profile.roles.all()
+            user_form.save()
+            profile = profile_form.save()
+
+            # res = api.update_profile_roles(profile, profile_roles, profile_form.cleaned_data)
+            messages.success(request, 'Success! User ({0} {1}, CWL: {2}) updated'.format(user.first_name, user.last_name, user.username))
+            return redirect('gp_admin:get_users')
+        else:
+            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(' '.join(errors)) )
+        
+        return redirect('gp_admin:edit_user')
+        
 
 class Get_Roles(View):
     form_class = Role_Form

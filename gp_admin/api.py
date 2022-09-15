@@ -41,6 +41,14 @@ def get_reminder(arg, type='id'):
 
 # User
 
+def get_users():
+    return User.objects.all().order_by('last_name', 'first_name')
+
+
+def get_user(arg, type='id'):
+    if type == 'username':
+        return get_object_or_404(User, username=arg)
+    return get_object_or_404(User, id=arg)
 
 
 def create_user(username, first_name, last_name):
@@ -52,10 +60,36 @@ def create_user(username, first_name, last_name):
         last_name = last_name
     )
 
-    profile = Profile.objects.create(user_id=user.id)
+    profile = create_profile(user)
     profile.roles.add( get_role('Guest', 'name') )
 
     return user
+
+def create_profile(user):
+    return Profile.objects.create(user_id=user.id)
+
+
+def has_profile_created(user):
+    ''' Check an user has a profile '''
+    try:
+        return user.profile
+    except Profile.DoesNotExist:
+        return create_profile(user)
+
+
+def redirect_to_index_page(roles):
+    ''' Redirect to an index page given roles '''
+
+    if 'Superadmin' in roles or 'Admin' in roles:
+        return '/admin/'
+
+    elif 'Graduate Advisor' in roles:
+        return '/gradudate-advisor/'    
+
+    elif 'Supervisor' in roles:
+        return '/supervisor/'
+    
+    return '/guest/'
 
 
 def get_roles(user):
@@ -68,6 +102,9 @@ def get_roles(user):
 
         elif role.name == 'Admin':
             roles.append('Admin')
+
+        elif role.name == 'Graduate Advisor':
+            roles.append('Graduate Advisor')
 
         elif role.name == 'Supervisor':
             roles.append('Supervisor')
@@ -86,6 +123,36 @@ def get_role(arg, type='id'):
         return get_object_or_404(Role, name=arg)
     return get_object_or_404(Role, id=arg)
 
+
+def update_profile_roles(profile, old_roles, data):
+    ''' Update roles of a user '''
+
+    if check_two_querysets_equal( old_roles, data.get('roles') ) == False:
+        profile.roles.remove( *old_roles ) # Remove current roles
+        new_roles = list( data.get('roles') )
+        profile.roles.add( *new_roles )  # Add new roles
+
+    return True if profile.roles else False
+
+def check_two_querysets_equal(qs1, qs2):
+    ''' Helper funtion: To check whether two querysets are equal or not '''
+    if len(qs1) != len(qs2):
+        return False
+
+    d = dict()
+    for qs in qs1:
+        item = qs.name.lower()
+        if item in d.keys(): d[item] += 1
+        else: d[item] = 1
+
+    for qs in qs2:
+        item = qs.name.lower()
+        if item in d.keys(): d[item] += 1
+        else: d[item] = 1
+
+    for k, v in d.items():
+        if v != 2: return False
+    return True
 
 # Preparation
 
@@ -118,3 +185,14 @@ def get_program(arg, type='id'):
     if type == 'slug':
         return get_object_or_404(Program, slug=arg)
     return get_object_or_404(Program, id=arg)
+
+
+
+# Helper functions
+
+def get_error_messages(errors):
+    messages = ''
+    for key in errors.keys():
+        value = errors[key]
+        messages += key.replace('_', ' ').upper() + ': ' + value[0]['message'] + ' '
+    return messages.strip()

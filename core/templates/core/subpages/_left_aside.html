@@ -6,14 +6,24 @@
 
     <div class="bg-prompt">
       <div class="prompt p-3 mb-4">
-        <h5>{{ data.get_full_name }}</h5>
-        <p class="my-1">{{ data.username }}</p>
 
-        {% for role in data.profile.roles.all %}
-          {% include 'core/subpages/_role.html' with data=role.name %}
-        {% empty %}
-          None
-        {% endfor %}
+        {% if type == 'add' %}
+
+          <h5>New User</h5>
+          <span class="badge badge-light my-1">No Role</span>
+
+        {% else %}
+
+          <h5>{{ data.get_full_name }}</h5>
+          <p class="my-1">{{ data.username }}</p>
+
+          {% for role in data.profile.roles.all %}
+            {% include 'core/subpages/_role.html' with data=role.name %}
+          {% empty %}
+            None
+          {% endfor %}
+
+        {% endif %}
 
       </div>
     </div>

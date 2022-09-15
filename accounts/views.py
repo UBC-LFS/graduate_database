@@ -17,14 +17,13 @@ from .forms import LocalLoginForm
 from gp_admin import api
 
 
-def ldap_auth(cwl, password):
-    ldap_server = Server(settings.GRAD_DB_LDAP_URI)
-    bind_dn = "uid={},{}".format(cwl, settings.GRAD_DB_LDAP_MEMBER_DN)
-
+def ldap_auth(username, password):
+    server = Server(settings.GRAD_DB_LDAP_URI)
+    
     try:
-        cwl_conn = Connection(
-            ldap_server, 
-            user = bind_dn, 
+        auth_conn = Connection(
+            server, 
+            user = "uid={},{}".format(username, settings.GRAD_DB_LDAP_MEMBER_DN), 
             password = password, 
             authentication = 'SIMPLE', 
             check_names = True, 
@@ -33,12 +32,12 @@ def ldap_auth(cwl, password):
             raise_exceptions = False
         )
 
-        valid_cwl = cwl_conn.bind()
-        if not valid_cwl:
+        is_valid = auth_conn.bind()
+        if not is_valid:
             return False
 
-        lfs_conn = Connection(
-            ldap_server, 
+        conn = Connection(
+            server, 
             user = settings.GRAD_DB_LDAP_AUTH_DN,
             password = settings.GRAD_DB_LDAP_AUTH_PASSWORD,
             authentication = 'SIMPLE', 
@@ -48,17 +47,16 @@ def ldap_auth(cwl, password):
             raise_exceptions = False
         )
 
-        lfs_conn.bind()
+        conn.bind()
 
-        search_base = "uid={},{}".format(cwl, settings.GRAD_DB_LDAP_MEMBER_DN)
-        lfs_conn.search(
-            search_base = search_base, 
+        conn.search(
+            search_base = "uid={0},{1}".format(username, settings.GRAD_DB_LDAP_MEMBER_DN), 
             search_filter = settings.GRAD_DB_LDAP_SEARCH_FILTER, 
             search_scope = SUBTREE, 
             attributes = ALL_ATTRIBUTES
         )
         
-        entries = json.loads(lfs_conn.response_to_json())['entries']
+        entries = json.loads(conn.response_to_json())['entries']
         
         if len(entries) == 0:
             return False
@@ -75,18 +73,6 @@ def ldap_auth(cwl, password):
 
     except LDAPBindError:
         return False
-
-
-def redirect_to_index_page(roles):
-    ''' Redirect to an index page given roles '''
-
-    if 'Superadmin' in roles or 'Admin' in roles:
-        return '/admin/'
-
-    elif 'Supervisor' in roles:
-        return '/supervisor/'
-    
-    return '/guest/'
 
 
 class Login(View):
@@ -123,7 +109,7 @@ class Login(View):
                         'username': user.username,
                         'roles': roles
                     }
-                    redirect_to = redirect_to_index_page(roles)
+                    redirect_to = api.redirect_to_index_page(roles)
                     
                     return HttpResponseRedirect(redirect_to)
         
@@ -139,7 +125,7 @@ class LocalLogin(View):
     def get(self, request, *args, **kwargs):
         if 'loggedin_user' in request.session.keys():
             roles = request.session['loggedin_user']['roles']
-            redirect_to = redirect_to_index_page(roles)
+            redirect_to = api.redirect_to_index_page(roles)
             return HttpResponseRedirect(redirect_to)
 
         return render(request, 'accounts/local_login.html', {
@@ -162,7 +148,7 @@ class LocalLogin(View):
                         'username': user.username,
                         'roles': roles
                     }
-                    redirect_to = redirect_to_index_page(roles)
+                    redirect_to = api.redirect_to_index_page(roles)
                     return HttpResponseRedirect(redirect_to)
             else:
                 messages.error(request, 'An error occurred. Please check your username and password, then try again.')

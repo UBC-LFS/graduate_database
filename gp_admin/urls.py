@@ -23,6 +23,9 @@ urlpatterns = [
     # Users
     
     path('users/all/', views.Get_Users.as_view(), name='get_users'),
+    path('users/<str:username>/edit/', views.Edit_User.as_view(), name='edit_user'),
+    path('user/add/', views.Add_User.as_view(), name='add_user'),
+
     path('users/roles/', views.Get_Roles.as_view(), name='get_roles'),
     path('api/roles/<str:slug>/edit/', views.edit_role, name='edit_role'),
     path('api/role/delete/', views.delete_role, name='delete_role'),

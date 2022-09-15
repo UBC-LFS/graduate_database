@@ -9,8 +9,11 @@
     <div class="col-md-2">
       <h2 class="text-center-middle text-center">All Users</h2>
     </div>
-    <div class="col-md-10">
+    <div class="col-md-8">
       {% include 'gp_admin/subpages/_search_fields.html' with path='users' %}
+    </div>
+    <div class="col-md-2">
+      <a class="btn btn-primary" href="{% url 'gp_admin:add_user' %}">Add User</a>
     </div>
   </div>
 
@@ -60,7 +63,9 @@
           </td>
           <td>
             {% if user.is_active %}
-              <span class="badge badge-success">{{ user.is_active }} <i class="fa fa-check-circle" aria-hidden="true"></i></span>
+              <span class="badge badge-success">True <i class="fa fa-check-circle" aria-hidden="true"></i></span>
+            {% else %}
+              <span class="badge badge-danger">False <i class="fa fa-check-circle" aria-hidden="true"></i></span>
             {% endif %}
           </td>
           <td>
@@ -74,7 +79,7 @@
           </td>
           <td>
             <div class="btn-toolbar">
-              <a class="btn btn-xs btn-link fs-sm mr-2" href="#">Edit</a>
+              <a class="btn btn-xs btn-link fs-sm mr-2" href="{% url 'gp_admin:edit_user' username=user.username %}">Edit</a>
               <a class="btn btn-xs btn-danger fs-sm" href="#">Delete</a>
             </div>
           </td>
