@@ -113,13 +113,16 @@ class Get_Professors(View):
 
 
 class Add_Professor(View):
-    form_class = Professor_Create_Form
+    form_class = Professor_Form
 
     def get(self, request, *args, **kwargs):
         return render(request, 'gp_admin/data_tables/add_professor.html', {
             'professors': api.get_professors(),
             'form': self.form_class()
         })
+    
+    def post(self, request, *args, **kwargs):
+        pass
 
 
 class Get_Grad_Supervision(View):
@@ -456,6 +459,114 @@ def delete_status(request):
     return redirect('gp_admin:get_statuses')
 
 
+class Get_Degrees(View):
+    form_class = Degree_Form
+
+    def get(self, request, *args, **kwargs):
+        return render(request, 'gp_admin/preparation/get_degrees.html', {
+            'degrees': Degree.objects.all().order_by('id'),
+            'form': self.form_class()
+        })
+    
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            res = form.save()
+            if res:
+                messages.success(request, 'Success! Degree ({0}) created'.format(res.name))
+            else:
+                messages.error(request, 'An error occurred while saving data.')
+        else:
+            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+
+        return redirect('gp_admin:get_degrees')
+
+
+@require_http_methods(['POST'])
+def edit_degree(request, slug):
+    ''' Edit a degree '''
+
+    degree = api.get_degree(slug, 'slug')
+    form = Degree_Form(request.POST, instance=degree)
+    if form.is_valid():
+        res = form.save()
+        if res:
+            messages.success(request, 'Success! Degree ({0}) updated'.format(res.name))
+        else:
+            messages.error(request, 'An error occurred.')
+    else:
+        messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+
+    return redirect('gp_admin:get_degrees')
+
+
+@require_http_methods(['POST'])
+def delete_degree(request):
+    ''' Delete a degree '''
+
+    degree = api.get_degree(request.POST.get('degree'))
+    if degree.delete():
+        messages.success(request, 'Success! Degree ({0}) deleted'.format(degree.name))
+    else:
+        messages.error(request, 'An error occurred.')
+    
+    return redirect('gp_admin:get_degrees')
+
+
+class Get_Programs(View):
+    form_class = Program_Form
+
+    def get(self, request, *args, **kwargs):
+        return render(request, 'gp_admin/preparation/get_programs.html', {
+            'programs': Program.objects.all().order_by('id'),
+            'form': self.form_class()
+        })
+    
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.POST)
+        if form.is_valid():
+            res = form.save()
+            if res:
+                messages.success(request, 'Success! Program ({0}) created'.format(res.name))
+            else:
+                messages.error(request, 'An error occurred while saving data.')
+        else:
+            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+
+        return redirect('gp_admin:get_programs')
+
+
+@require_http_methods(['POST'])
+def edit_program(request, slug):
+    ''' Edit a program '''
+
+    program = api.get_program(slug, 'slug')
+    form = Program_Form(request.POST, instance=program)
+    if form.is_valid():
+        res = form.save()
+        if res:
+            messages.success(request, 'Success! Program ({0}) updated'.format(res.name))
+        else:
+            messages.error(request, 'An error occurred.')
+    else:
+        messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+
+    return redirect('gp_admin:get_programs')
+
+
+@require_http_methods(['POST'])
+def delete_program(request):
+    ''' Delete a program '''
+
+    program = api.get_program(request.POST.get('program'))
+    if program.delete():
+        messages.success(request, 'Success! Program ({0}) deleted'.format(program.name))
+    else:
+        messages.error(request, 'An error occurred.')
+    
+    return redirect('gp_admin:get_programs')
+
+
 class Get_Titles(View):
     form_class = Title_Form
 
@@ -612,60 +723,6 @@ def delete_professor_role(request):
     else:
         messages.error(request, 'An error occurred.')
     return redirect('gp_admin:get_professor_roles')
-
-
-class Get_Programs(View):
-    form_class = Program_Form
-
-    def get(self, request, *args, **kwargs):
-        return render(request, 'gp_admin/preparation/get_programs.html', {
-            'programs': Program.objects.all().order_by('id'),
-            'form': self.form_class()
-        })
-    
-    def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            res = form.save()
-            if res:
-                messages.success(request, 'Success! Program ({0}) created'.format(res.name))
-            else:
-                messages.error(request, 'An error occurred while saving data.')
-        else:
-            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
-
-        return redirect('gp_admin:get_programs')
-
-
-@require_http_methods(['POST'])
-def edit_program(request, slug):
-    ''' Edit a program '''
-
-    program = api.get_program(slug, 'slug')
-    form = Program_Form(request.POST, instance=program)
-    if form.is_valid():
-        res = form.save()
-        if res:
-            messages.success(request, 'Success! Position ({0}) updated'.format(res.name))
-        else:
-            messages.error(request, 'An error occurred.')
-    else:
-        messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
-
-    return redirect('gp_admin:get_programs')
-
-
-@require_http_methods(['POST'])
-def delete_program(request):
-    ''' Delete a program '''
-
-    program = api.get_program(request.POST.get('program'))
-    if program.delete():
-        messages.success(request, 'Success! Program ({0}) deleted'.format(program.name))
-    else:
-        messages.error(request, 'An error occurred.')
-    
-    return redirect('gp_admin:get_programs')
 
 
 class Get_Reminders(View):

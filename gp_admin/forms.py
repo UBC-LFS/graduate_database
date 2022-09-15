@@ -8,28 +8,6 @@ from django.utils.translation import gettext_lazy as _
 from .models import *
 
 
-class Professor_Create_Form(forms.ModelForm):
-    class Meta:
-        model = Professor
-        fields = ['last_name', 'first_name', 'title', 'position', 'program', 'email', 'phone', 'fax', 'office']
-        widgets = {
-            'last_name': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'first_name': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'email': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'phone': forms.TextInput(attrs={ 'class': 'form-control' }), 
-            'fax': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'office': forms.TextInput(attrs={ 'class': 'form-control' })
-        }
-        help_texts = {
-            'last_name': 'Maximum characters: 150',
-            'first_name': 'Maximum characters: 150',
-            'email': 'This field is unique. Maximum characters: 254',
-            'phone': 'Maximum characters: 150',
-            'fax': 'Maximum characters: 150',
-            'office': 'Maximum characters: 150'
-        }
-
-
 class Student_Create_Form(forms.ModelForm):
     date_of_birth = forms.DateField(
         required = False,
@@ -134,6 +112,30 @@ class Student_Create_Form(forms.ModelForm):
             'degree_3': 'Maximum characters: 50',
             'gpa_3': 'Maximum characters: 20'
         }
+
+
+class Professor_Form(forms.ModelForm):
+    class Meta:
+        model = Professor
+        fields = ['last_name', 'first_name', 'title', 'position', 'program', 'email', 'phone', 'fax', 'office']
+        widgets = {
+            'last_name': forms.TextInput(attrs={ 'class': 'form-control' }),
+            'first_name': forms.TextInput(attrs={ 'class': 'form-control' }),
+            'email': forms.TextInput(attrs={ 'class': 'form-control' }),
+            'phone': forms.TextInput(attrs={ 'class': 'form-control' }), 
+            'fax': forms.TextInput(attrs={ 'class': 'form-control' }),
+            'office': forms.TextInput(attrs={ 'class': 'form-control' })
+        }
+        help_texts = {
+            'last_name': 'Maximum characters: 150',
+            'first_name': 'Maximum characters: 150',
+            'email': 'This field is unique. Maximum characters: 254',
+            'phone': 'Maximum characters: 150',
+            'fax': 'Maximum characters: 150',
+            'office': 'Maximum characters: 150'
+        }
+
+
 
 
 class Comp_Exam_Form(forms.ModelForm):
@@ -246,6 +248,35 @@ class Status_Form(forms.ModelForm):
             'name': 'This is a required and unique field. Maximum characters: 150',
         }
 
+
+class Degree_Form(forms.ModelForm):
+    class Meta:
+        model = Degree
+        fields = ['name', 'code']
+        widgets = {
+            'name': forms.TextInput(attrs={ 'class':'form-control' }),
+            'code': forms.TextInput(attrs={ 'class':'form-control' })
+        }
+        help_texts = {
+            'name': 'This is a required and unique field. Maximum characters: 150',
+            'code': 'This is a required and unique field. Maximum characters: 10',
+        }
+
+
+class Program_Form(forms.ModelForm):
+    class Meta:
+        model = Program
+        fields = ['name', 'code']
+        widgets = {
+            'name': forms.TextInput(attrs={ 'class':'form-control' }),
+            'code': forms.TextInput(attrs={ 'class':'form-control' })
+        }
+        help_texts = {
+            'name': 'This is a required and unique field. Maximum characters: 150',
+            'code': 'This is a required and unique field. Maximum characters: 10',
+        }
+
+
 class Title_Form(forms.ModelForm):
     class Meta:
         model = Title
@@ -277,20 +308,6 @@ class Professor_Role_Form(forms.ModelForm):
         }
         help_texts = {
             'name': 'This is a required and unique field. Maximum characters: 150',
-        }
-
-
-class Program_Form(forms.ModelForm):
-    class Meta:
-        model = Program
-        fields = ['name', 'code']
-        widgets = {
-            'name': forms.TextInput(attrs={ 'class':'form-control' }),
-            'code': forms.TextInput(attrs={ 'class':'form-control' })
-        }
-        help_texts = {
-            'name': 'This is a required and unique field. Maximum characters: 150',
-            'code': 'This is a required and unique field. Maximum characters: 10',
         }
 
 

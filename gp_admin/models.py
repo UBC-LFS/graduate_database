@@ -4,42 +4,6 @@ from django.utils.text import slugify
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 
-# User
-
-class Role(models.Model):
-    SUPERADMIN = 'Superadmin'
-    ADMIN = 'Admin'
-    SUPERVISOR = 'Supervisor'
-    GUEST = 'Guest'
-
-    name = models.CharField(max_length=150, unique=True)
-    slug = models.SlugField(max_length=150, unique=True)
-    created_on = models.DateField(auto_now_add=True)
-    updated_on = models.DateField(auto_now=True)
-
-    class Meta: 
-        ordering = ['pk']
-
-    def __str__(self): 
-        return self.name
-
-    def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
-        super(Role, self).save(*args, **kwargs)
-
-
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    preferred_name = models.CharField(max_length=150, null=True, blank=True)
-    roles = models.ManyToManyField(Role)
-    created_on = models.DateField(auto_now_add=True)
-    updated_on = models.DateField(auto_now=True)
-
-    def __str__(self):
-        return self.user.username
-
-
-
 # Preparation
 
 
@@ -58,6 +22,42 @@ class Status(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
         super(Status, self).save(*args, **kwargs)
+
+
+class Degree(models.Model):
+    name = models.CharField(max_length=150, unique=True)
+    code = models.CharField(max_length=10, unique=True)
+    slug = models.SlugField(max_length=150, unique=True)
+    created_on = models.DateField(auto_now_add=True)
+    updated_on = models.DateField(auto_now=True)
+
+    class Meta:
+        ordering = ['name', 'pk']
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Degree, self).save(*args, **kwargs)
+
+
+class Program(models.Model):
+    name = models.CharField(max_length=150, unique=True)
+    code = models.CharField(max_length=10, unique=True)
+    slug = models.SlugField(max_length=150, unique=True)
+    created_on = models.DateField(auto_now_add=True)
+    updated_on = models.DateField(auto_now=True)
+
+    class Meta:
+        ordering = ['name', 'code', 'pk']
+
+    def __str__(self):
+        return '{0} ({1})'.format(self.name, self.code)
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(Program, self).save(*args, **kwargs)
 
 
 class Title(models.Model):
@@ -111,22 +111,42 @@ class Professor_Role(models.Model):
         super(Professor_Role, self).save(*args, **kwargs)
 
 
-class Program(models.Model):
+# User
+
+class Role(models.Model):
+    SUPERADMIN = 'Superadmin'
+    ADMIN = 'Admin'
+    SUPERVISOR = 'Supervisor'
+    GUEST = 'Guest'
+
     name = models.CharField(max_length=150, unique=True)
-    code = models.CharField(max_length=10, unique=True)
     slug = models.SlugField(max_length=150, unique=True)
     created_on = models.DateField(auto_now_add=True)
     updated_on = models.DateField(auto_now=True)
 
-    class Meta:
-        ordering = ['name', 'code', 'pk']
+    class Meta: 
+        ordering = ['pk']
 
-    def __str__(self):
-        return '{0} ({1})'.format(self.name, self.code)
+    def __str__(self): 
+        return self.name
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
-        super(Program, self).save(*args, **kwargs)
+        super(Role, self).save(*args, **kwargs)
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    preferred_name = models.CharField(max_length=150, null=True, blank=True)
+    roles = models.ManyToManyField(Role)
+    created_on = models.DateField(auto_now_add=True)
+    updated_on = models.DateField(auto_now=True)
+
+    def __str__(self):
+        return self.user.username
+
+
+
 
 
 # Data Tables
@@ -197,7 +217,8 @@ class Professor(models.Model):
     username = models.CharField(max_length=150, unique=True)
     title = models.ForeignKey(Title, on_delete=models.SET_NULL, null=True, blank=True)
     position = models.ForeignKey(Position, on_delete=models.SET_NULL, null=True, blank=True)
-    program = models.ForeignKey(Program, on_delete=models.SET_NULL, null=True, blank=True)
+    program = models.ManyToManyField(Program)
+    is_graduate_advisor = models.BooleanField(default=False)
     email = models.CharField(max_length=254, unique=True, null=True, blank=True)
     phone = models.CharField(max_length=150, null=True, blank=True)
     fax = models.CharField(max_length=150, null=True, blank=True)

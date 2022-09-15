@@ -154,6 +154,8 @@ def check_two_querysets_equal(qs1, qs2):
         if v != 2: return False
     return True
 
+
+
 # Preparation
 
 def get_status(arg, type='id'):
@@ -161,6 +163,22 @@ def get_status(arg, type='id'):
     if type == 'slug':
         return get_object_or_404(Status, slug=arg)
     return get_object_or_404(Status, id=arg)
+
+
+def get_degree(arg, type='id'):
+    ''' Get a degree by id '''
+    if type == 'slug':
+        return get_object_or_404(Degree, slug=arg)
+    return get_object_or_404(egree, id=arg)
+
+
+def get_program(arg, type='id'):
+    ''' Get a program by id '''
+    if type == 'slug':
+        return get_object_or_404(Program, slug=arg)
+    return get_object_or_404(Program, id=arg)
+
+
 
 def get_title(arg, type='id'):
     ''' Get a title by id '''
@@ -179,13 +197,6 @@ def get_professor_role(arg, type='id'):
     if type == 'slug':
         return get_object_or_404(Professor_Role, slug=arg)
     return get_object_or_404(Professor_Role, id=arg)
-
-def get_program(arg, type='id'):
-    ''' Get a program by id '''
-    if type == 'slug':
-        return get_object_or_404(Program, slug=arg)
-    return get_object_or_404(Program, id=arg)
-
 
 
 # Helper functions

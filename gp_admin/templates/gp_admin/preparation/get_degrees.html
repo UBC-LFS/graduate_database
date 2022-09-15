@@ -10,7 +10,7 @@
 
     <div class="bg-prompt">
       <div class="prompt p-4 mb-4">
-        <h4>Create Position</h4>
+        <h4>Create Degree</h4>
 
         <form action="" method="post">
           {% csrf_token %}
@@ -39,38 +39,46 @@
         <tr>
           <th>PID</th>
           <th>Name</th>
+          <th>Code</th>
           <th>Created on</th>
           <th>Updated on</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        {% for position in positions %}
+        {% for degree in degrees %}
           <tr>
-            <td>{{ position.id }}</td>
-            <td>{{ position.name }}</td>
-            <td>{{ position.created_on }}</td>
-            <td>{{ position.updated_on }}</td>
+            <td>{{ degree.id }}</td>
+            <td>{{ degree.name }}</td>
+            <td>{{ degree.code }}</td>
+            <td>{{ degree.created_on }}</td>
+            <td>{{ degree.updated_on }}</td>
             <td>
               <div class="btn-toolbar">
-                <button class="btn btn-xs btn-warning fs-sm mr-2" type="button" data-toggle="modal" data-target="#position-edit-modal-{{ position.id }}">Edit</button>
+                <button class="btn btn-xs btn-warning fs-sm mr-2" type="button" data-toggle="modal" data-target="#degree-edit-modal-{{ degree.id }}">Edit</button>
 
-                <div class="modal fade" id="position-edit-modal-{{ position.id }}" tabindex="-1" role="dialog" aria-labelledby="position-edit-modal-label-{{ position.id }}" aria-hidden="true">
+                <div class="modal fade" id="degree-edit-modal-{{ degree.id }}" tabindex="-1" role="dialog" aria-labelledby="degree-edit-modal-label-{{ degree.id }}" aria-hidden="true">
                   <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <h5 class="modal-title text-info" id="position-edit-modal-label-{{ position.id }}">Edit Position</h5>
+                        <h5 class="modal-title text-info" id="degree-edit-modal-label-{{ degree.id }}">Edit Degree</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                       </div>
                       <div class="modal-body text-left">
                         <div class="modal-item">
-                          <form action="{% url 'gp_admin:edit_position' slug=position.slug %}" method="post">
+                          <form action="{% url 'gp_admin:edit_degree' slug=degree.slug %}" method="post">
                             {% csrf_token %}
 
                             <div class="field-wrapper">
-                              <label for="id_name_{{ position.id }}">Name:</label>
+                              <label for="id_name_{{ degree.id }}">Name:</label>
                               <div class="help">This is a required and unique field. Maximum characters: 150</div>
-                              <input id="name_{{ position.id }}" type="text" name="name" maxlength="150" value="{{ position.name }}" class="form-control" />
+                              <input id="name_{{ degree.id }}" type="text" name="name" maxlength="150" value="{{ degree.name }}" class="form-control" />
+                            </div>
+
+                            <div class="field-wrapper">
+                              <label for="id_code_{{ degree.id }}">Code:</label>
+                              <div class="help">This is a required and unique field. Maximum characters: 10</div>
+                              <input id="code_{{ degree.id }}" type="text" name="code" maxlength="10" value="{{ degree.code }}" class="form-control" />
                             </div>
 
                             <input class="btn btn-primary" type="submit" value="Update" />
@@ -81,10 +89,10 @@
                   </div>
                 </div>
 
-                <form action="{% url 'gp_admin:delete_position' %}" method="post" onsubmit="return confirm('Are you sure to delete this position - {{ position.name }}?');">
+                <form action="{% url 'gp_admin:delete_degree' %}" method="post" onsubmit="return confirm('Are you sure to delete this degree - {{ degree.name }}?');">
                   {% csrf_token %}
 
-                  <input type="hidden" name="position" value="{{ position.id }}" />
+                  <input type="hidden" name="degree" value="{{ degree.id }}" />
                   <input class="btn btn-xs btn-danger fs-sm" type="submit" value="Delete" />
                 </form>
               </div>

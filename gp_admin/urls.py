@@ -36,6 +36,14 @@ urlpatterns = [
     path('api/statuses/<str:slug>/edit/', views.edit_status, name='edit_status'),
     path('api/status/delete/', views.delete_status, name='delete_status'),
 
+    path('preparation/degrees/', views.Get_Degrees.as_view(), name='get_degrees'),
+    path('api/degrees/<str:slug>/edit/', views.edit_degree, name='edit_degree'),
+    path('api/degree/delete/', views.delete_degree, name='delete_degree'),
+
+    path('preparation/programs/', views.Get_Programs.as_view(), name='get_programs'),
+    path('api/programs/<str:slug>/edit/', views.edit_program, name='edit_program'),
+    path('api/program/delete/', views.delete_program, name='delete_program'),
+
     path('preparation/titles/', views.Get_Titles.as_view(), name='get_titles'),
     path('api/titles/<str:slug>/edit/', views.edit_title, name='edit_title'),
     path('api/title/delete/', views.delete_title, name='delete_title'),
@@ -47,11 +55,7 @@ urlpatterns = [
     path('preparation/professor-roles/', views.Get_Professor_Roles.as_view(), name='get_professor_roles'),
     path('api/professor-roles/<str:slug>/edit/', views.edit_professor_role, name='edit_professor_role'),
     path('api/professor-role/delete/', views.delete_professor_role, name='delete_professor_role'),
-
-    path('preparation/programs/', views.Get_Programs.as_view(), name='get_programs'),
-    path('api/programs/<str:slug>/edit/', views.edit_program, name='edit_program'),
-    path('api/program/delete/', views.delete_program, name='delete_program'),
-    
+   
     path('preparation/reminders/', views.Get_Reminders.as_view(), name='get_reminders'),
     path('preparation/reminders/<str:slug>/edit/', views.Edit_Reminder.as_view(), name='edit_reminder'),
     path('api/reminder/delete/', views.delete_reminder, name='delete_reminder')

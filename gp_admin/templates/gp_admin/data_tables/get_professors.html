@@ -22,7 +22,7 @@
   {% include 'core/subpages/_searched_message.html' with items=professors total_items=total_professors %}
 
   <table
-    class="table table-striped table-hover table-bordered table-responsive-md text-center table-vertical-middle fs-xs"
+    class="table table-striped table-hover table-bordered table-responsive-md text-center table-vertical-middle fs-sm"
     data-toggle="table"
     data-sortable="true"
     data-classes=""
@@ -36,10 +36,9 @@
         <th>Title</th>
         <th>Position</th>
         <th>Program <br /> Code </th>
-        <th>Phone</th>
-        <th>Fax</th>
-        <th>Office</th>
-        <th data-sortable="true">Graduate <br /> Supervision</th>
+        <th>Graduate <br /> Advisor</th>
+        <th>Contact <br /> Info</th>
+        <th>Graduate <br /> Supervision</th>
         <th data-sortable="true">Created on</th>
         <th data-sortable="true">Updated on</th>
         <th>Actions</th>
@@ -54,10 +53,53 @@
           <td>{{ prof.email }}</td>
           <td>{{ prof.title.name }}</td>
           <td>{{ prof.position.name }}</td>
-          <td>{{ prof.program.code }}</td>
-          <td>{{ prof.phone }}</td>
-          <td>{{ prof.fax }}</td>
-          <td>{{ prof.office }}</td>
+          <td>
+            {% for pg in prof.program.all %}
+              <div>{{ pg.code }}</div>
+            {% empty %}
+              None
+            {% endfor %}
+          </td>
+          <td>
+            {% if prof.is_graduate_advisor %}
+              <i class="fa fa-check-circle text-chocolate font-size-1 vertical-middle" aria-hidden="true"></i>
+            {% endif %}
+          </td>
+          <td>
+            <button class="btn btn-xs btn-link fs-sm" type="button" data-toggle="modal" data-target="#contact-info-modal-{{ data.id }}">
+              View
+            </button>
+
+            <div class="modal fade" id="contact-info-modal-{{ data.id }}" tabindex="-1" role="dialog" aria-labelledby="contact-info-modal-label-{{ data.id }}" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title text-info" id="contact-info-modal-label-{{ data.id }}">Contact Information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  </div>
+                  <div class="modal-body text-left">
+
+                    <div class="modal-item">
+                      <div>
+                        <h6>Phone:</h6>
+                        <span>{{ prof.phone }}</span>
+                      </div>
+                      <div>
+                        <h6>Fax:</h6>
+                        <span>{{ prof.fax }}</span>
+                      </div>
+                      <div>
+                        <h6>Office:</h6>
+                        <span>{{ prof.office }}</span>
+                      </div>
+
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
           <td>
             <span class="d-none">{{ prof.supervision_set.count }}</span>
             {% if prof.supervision_set.count > 0 %}
