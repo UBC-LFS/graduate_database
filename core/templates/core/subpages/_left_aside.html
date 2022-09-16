@@ -9,8 +9,15 @@
 
         {% if type == 'add' %}
 
-          <h5>New User</h5>
-          <span class="badge badge-light my-1">No Role</span>
+          <h5>{{ title }}</h5>
+
+          {% if path == 'users' %}
+            <span class="badge badge-light my-2">No Role</span>
+          {% endif %}
+
+          <hr />
+
+          <p>There are currently <span class="font-weight-bold text-chocolate">{{ total }}</span> {{ path }}.</p>
 
         {% else %}
 

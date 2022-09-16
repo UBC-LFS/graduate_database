@@ -113,12 +113,18 @@ class Get_Professors(View):
 
 
 class Add_Professor(View):
-    form_class = Professor_Form
+    professor_form = Professor_Form
 
     def get(self, request, *args, **kwargs):
-        return render(request, 'gp_admin/data_tables/add_professor.html', {
+        return render(request, 'gp_admin/data_tables/professor.html', {
             'professors': api.get_professors(),
-            'form': self.form_class()
+            'form': self.professor_form(),
+            'info': {
+                'btn_label': 'Create',
+                'href': reverse('gp_admin:add_professor'),
+                'type': 'add',
+                'path': 'professors'
+            }
         })
     
     def post(self, request, *args, **kwargs):
@@ -274,12 +280,14 @@ class Add_User(View):
 
     def get(self, request, *args, **kwargs):
         return render(request, 'gp_admin/users/user.html', {
+            'users': api.get_users(),
             'user_form': self.user_form(),
             'profile_form': self.profile_form(),
             'info': {
                 'btn_label': 'Create',
                 'href': reverse('gp_admin:add_user'),
-                'type': 'add'
+                'type': 'add',
+                'path': 'users'
             }
         })
     

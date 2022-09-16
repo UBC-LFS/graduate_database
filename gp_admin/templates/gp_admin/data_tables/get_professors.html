@@ -13,9 +13,7 @@
       {% include 'gp_admin/subpages/_search_fields.html' with path='professors' %}
     </div>
     <div class="col-md-2">
-      <div class="bg-light-gray p-4">
-        <a class="btn btn-primary" href="{% url 'gp_admin:add_professor' %}">Add Professor</a>
-      </div>
+      <a class="btn btn-primary" href="{% url 'gp_admin:add_professor' %}">Add Professor</a>
     </div>
   </div>
 
@@ -32,6 +30,7 @@
         <th>PID</th>
         <th data-sortable="true">Last <br /> Name</th>
         <th data-sortable="true">First <br /> Name</th>
+        <th>CWL</th>
         <th>Email</th>
         <th>Title</th>
         <th>Position</th>
@@ -50,6 +49,7 @@
           <td>{{ prof.id }}</td>
           <td>{{ prof.last_name }}</td>
           <td>{{ prof.first_name }}</td>
+          <td>{{ prof.username }}</td>
           <td>{{ prof.email }}</td>
           <td>{{ prof.title.name }}</td>
           <td>{{ prof.position.name }}</td>

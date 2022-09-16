@@ -6,16 +6,18 @@ app_name = 'gp_admin'
 urlpatterns = [
     path('', views.index, name='index'),
 
+    # Data Tables
+
     path('students/', views.Get_Students.as_view(), name='get_students'),
-    path('students/add/', views.Add_Student.as_view(), name='add_student'),
+    path('student/add/', views.Add_Student.as_view(), name='add_student'),
 
     path('professors/', views.Get_Professors.as_view(), name='get_professors'),
-    path('professors/add/', views.Add_Professor.as_view(), name='add_professor'),
+    path('professor/add/', views.Add_Professor.as_view(), name='add_professor'),
     
     path('graduate-supervision/', views.Get_Grad_Supervision.as_view(), name='get_grad_supervision'),
     
     path('comprehensive-exams/', views.Get_Comp_Exams.as_view(), name='get_comp_exams'),
-    path('comprehensive-exams/reminders/', views.Get_Exam_Reminders.as_view(), name='get_exam_reminders'),
+    path('comprehensive-exam/reminders/', views.Get_Exam_Reminders.as_view(), name='get_exam_reminders'),
 
     path('students/sis/', views.get_sis_students, name='get_sis_students'),
 

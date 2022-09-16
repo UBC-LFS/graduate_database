@@ -8,9 +8,9 @@
   <div class="row">
     <div class="col-md-4">
       {% if info.type == 'add' %}
-        {% include 'core/subpages/_left_aside.html' with title='Add User' type=info.type %}
+        {% include 'core/subpages/_left_aside.html' with title='New User' total=users|length type=info.type path=info.path %}
       {% else %}
-        {% include 'core/subpages/_left_aside.html' with title='Add User' data=user type=info.type %}
+        {% include 'core/subpages/_left_aside.html' with data=user type=info.type %}
       {% endif %}
 
       <div class="left-aside-btn-groups">

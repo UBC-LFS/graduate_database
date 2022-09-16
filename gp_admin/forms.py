@@ -115,20 +115,31 @@ class Student_Create_Form(forms.ModelForm):
 
 
 class Professor_Form(forms.ModelForm):
+    programs = forms.ModelMultipleChoiceField(
+        required = True,
+        queryset = Program.objects.all(),
+        widget = forms.CheckboxSelectMultiple(),
+    )
+
     class Meta:
         model = Professor
-        fields = ['last_name', 'first_name', 'title', 'position', 'program', 'email', 'phone', 'fax', 'office']
+        fields = ['last_name', 'first_name', 'username', 'email', 'title', 'position', 'programs', 'is_graduate_advisor', 'phone', 'fax', 'office']
         widgets = {
             'last_name': forms.TextInput(attrs={ 'class': 'form-control' }),
             'first_name': forms.TextInput(attrs={ 'class': 'form-control' }),
+            'username': forms.TextInput(attrs={ 'class': 'form-control' }),
             'email': forms.TextInput(attrs={ 'class': 'form-control' }),
             'phone': forms.TextInput(attrs={ 'class': 'form-control' }), 
             'fax': forms.TextInput(attrs={ 'class': 'form-control' }),
             'office': forms.TextInput(attrs={ 'class': 'form-control' })
         }
+        labels = {
+            'is_graduate_advisor': 'Graduate Advisor'
+        }
         help_texts = {
             'last_name': 'Maximum characters: 150',
             'first_name': 'Maximum characters: 150',
+            'username': 'Maximum characters: 150',
             'email': 'This field is unique. Maximum characters: 254',
             'phone': 'Maximum characters: 150',
             'fax': 'Maximum characters: 150',

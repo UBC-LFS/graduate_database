@@ -3,32 +3,26 @@
 
 {% include 'gp_admin/subpages/_menu.html' %}
 
-<div class="container mt-5">
+<div class="container max-width-container">
 
   <div class="row">
-    <div class="col-md-4 pl-0">
+    <div class="col-md-4">
 
-      <aside>
-        <div class="bg-prompt text-center">
-
-          <div class="prompt p-4 mb-4">
-            <h3>Add Professor</h3>
-            <hr />
-            <p>There are currently <span class="font-weight-bold text-chocolate">{{ professors|length }}</span> professors.</p>
-          </div>
-        </div>
-      </aside>
-
-
+      {% if info.type == 'add' %}
+        {% include 'core/subpages/_left_aside.html' with title='New Professor' total=professors|length type=info.type path=info.path %}
+      {% else %}
+        {% include 'core/subpages/_left_aside.html' with data=user type=info.type %}
+      {% endif %}
+      
       <div class="left-aside-btn-groups">
         <a class="btn btn-outline-primary" href="{% url 'gp_admin:get_professors' %}">Back to Professors</a>
       </div>
     </div>
 
-    <div class="col-md-8 pr-0">
+    <div class="col-md-8">
 
       <div class="board">
-        <h3>Professor Create Form</h3>
+        <h3>Professor Form</h3>
 
         <div class="bg-white border p-3">
           <ul class="text-dark mb-0">
