@@ -41,6 +41,13 @@ def get_grad_supervision(arg, type='id'):
     return get_object_or_404(Graduate_Supervision, id=arg)
 
 
+def get_reminders():
+    return Reminder.objects.all()
+
+
+def sent_reminders():
+    return Sent_Reminder.objects.all()
+
 # User
 
 def get_users():

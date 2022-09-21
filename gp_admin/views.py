@@ -7,6 +7,8 @@ from django.views.decorators.http import require_http_methods
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.http import HttpResponseRedirect, Http404, JsonResponse
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 import json
 
@@ -234,8 +236,8 @@ def delete_grad_supervision(request, username):
     return HttpResponseRedirect(reverse('gp_admin:edit_grad_supervision', args=[username]))
 
 
-class Get_Comp_Exams(View):
-    form_class = Comp_Exam_Form
+class Get_Comp_Exams2(View):
+    # form_class = Comp_Exam_Form
 
     def get(self, request, *args, **kwargs):
         student_list = api.get_students()
@@ -271,16 +273,21 @@ class Get_Comp_Exams(View):
         except EmptyPage:
             students = paginator.page(paginator.num_pages)
 
-        # for stud in Student.objects.all():
-        #     try:
-        #         print(stud.id, stud.get_full_name(), stud.comprehensive_exam)
-        #     except Comprehensive_Exam.DoesNotExist:
-        #         stud.comprehensive_exam = None
+        reminders = Reminder.objects.all()
+        for rem in reminders:
+            print(rem.id, rem.month)
+
+        for stud in Student.objects.all():
+            pass
+            # try:
+            #     print(stud.id, stud.get_full_name(), stud.comprehensive_exam)
+            # except Comprehensive_Exam.DoesNotExist:
+            #     stud.comprehensive_exam = None
 
         return render(request, 'gp_admin/data_tables/get_comp_exams.html', {
             'students': students,
             'total_students': len(student_list),
-            'form': self.form_class()
+            # 'form': self.form_class()
         })
 
 
@@ -288,10 +295,35 @@ class Get_Comp_Exams(View):
         pass
 
 
-class Get_Exam_Reminders(View):
+
+class Get_Comp_Exams(View):
     def get(self, request, *args, **kwargs):
-        return render(request, 'gp_admin/data_tables/get_exam_reminders.html', {
-            'reminders': Exam_Reminder.objects.all().order_by('-created_at')
+        today = datetime.today().date()
+        students = api.get_students()
+        reminders = api.get_reminders()
+        for stud in students:
+            expect_send_reminders = []
+            for rem in reminders:
+                expect_send_reminders.append(stud.start_date + relativedelta(months=rem.months))
+                expect_send_reminders.reverse()
+            stud.expect_send_reminders = expect_send_reminders
+
+        return render(request, 'gp_admin/data_tables/get_comp_exams.html', {
+            'students': students,
+            'total_students': len(students)
+        })
+
+    def post(self, request, *args, **kwargs):
+        pass
+
+class Sent_Reminders(View):
+    def get(self, request, *args, **kwargs):
+        tasks.send_reminders()
+        sent_reminders = api.sent_reminders()
+
+        return render(request, 'gp_admin/data_tables/sent_reminders.html', {
+            'reminders': sent_reminders,
+            'total_reminders': len(sent_reminders)
         })
 
     def post(self, request, *args, **kwargs):
@@ -796,49 +828,47 @@ def delete_professor_role(request):
 
 
 class Get_Reminders(View):
-    form_class = Reminder_Form
+    reminder_form = Reminder_Form
 
     def get(self, request, *args, **kwargs):
-        return render(request, 'gp_admin/preparation/get_reminders.html', {
+        return render(request, 'gp_admin/data_tables/get_reminders.html', {
             'reminders': Reminder.objects.all().order_by('id'),
-            'form': self.form_class()
+            'form': self.reminder_form()
         })
     
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
+        form = self.reminder_form(request.POST)
         if form.is_valid():
             res = form.save()
             if res:
-                messages.success(request, 'Success! Reminder with Type: {0} and Month: {1} created'.format(res.type, res.month))
+                messages.success(request, 'Success! Reminder (Type: {0} and Month: {1}) created.'.format(res.type, res.month))
             else:
                 messages.error(request, 'An error occurred while saving data.')
         else:
             messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
-
         return redirect('gp_admin:get_reminders')
 
 
 class Edit_Reminder(View):
-    form_class = Reminder_Form
+    reminder_form = Reminder_Form
 
     def get(self, request, *args, **kwargs):
         reminder = api.get_reminder(kwargs['slug'], 'slug')
-        return render(request, 'gp_admin/preparation/edit_reminder.html', {
-            'form': self.form_class(data=None, instance=reminder)
+        return render(request, 'gp_admin/data_tables/edit_reminder.html', {
+            'form': self.reminder_form(data=None, instance=reminder)
         })
     
     def post(self, request, *args, **kwargs):
         reminder = api.get_reminder(kwargs['slug'], 'slug')
-        form = self.form_class(request.POST, instance=reminder)
+        form = self.reminder_form(request.POST, instance=reminder)
         if form.is_valid():
             res = form.save()
             if res:
-                messages.success(request, 'Success! Reminder with Type: {0} and Month: {1} updated'.format(res.type, res.month))
+                messages.success(request, 'Success! Reminder (Type: {0} and Month: {1}) updated.'.format(res.type, res.month))
             else:
                 messages.error(request, 'An error occurred while updating data.')
         else:
             messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
-
         return redirect('gp_admin:get_reminders')
 
 

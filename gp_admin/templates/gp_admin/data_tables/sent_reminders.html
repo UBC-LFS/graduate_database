@@ -5,15 +5,22 @@
 
 <div class="container max-width-container">
 
+  <div class="row bg-light-gray">
+    <div class="col-md-2">
+      <h2 class="text-center-middle text-center">Sent Exam <br /> Reminders</h2>
+    </div>
+    <div class="col-md-10">
+      {% include 'gp_admin/subpages/_search_fields.html' with path='comp_exams' %}
+    </div>
+  </div>
+
+  {% include 'core/subpages/_searched_message.html' with items=reminders total_items=total_reminders %}
 
   <table
-    class="table table-bordered table-hover table-striped table-responsive-md text-center"
+    class="table table-bordered table-hover table-striped table-responsive-md text-center fs-sm"
     data-toggle="table"
     data-sortable="true"
     data-classes=""
-    data-show-export="true"
-    data-show-columns="true"
-    data-export-types="['csv']"
   >
     <thead>
       <tr>
@@ -22,7 +29,7 @@
         <th data-sortable="true">Receiver</th>
         <th data-sortable="true">Email</th>
         <th data-sortable="true">Type</th>
-        <th data-sortable="true">Created at</th>
+        <th data-sortable="true">Sent at</th>
       </tr>
     </thead>
     <tbody>

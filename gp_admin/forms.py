@@ -171,19 +171,19 @@ class Student_Additional_Form(forms.ModelForm):
 
 
 
-class Comp_Exam_Form(forms.ModelForm):
-    today = datetime.now()
+# class Comp_Exam_Form(forms.ModelForm):
+#     today = datetime.now()
 
-    exam_date = forms.DateField(
-        required = False,
-        #widget=forms.SelectDateWidget(years=range(today.year - 10, today.year + 10)),
-        widget = forms.widgets.DateInput(attrs={'type': 'date', 'class':'form-control'}),
-        label = 'Exam Date'
-    )
+#     exam_date = forms.DateField(
+#         required = False,
+#         #widget=forms.SelectDateWidget(years=range(today.year - 10, today.year + 10)),
+#         widget = forms.widgets.DateInput(attrs={'type': 'date', 'class':'form-control'}),
+#         label = 'Exam Date'
+#     )
 
-    class Meta:
-        model = Comprehensive_Exam
-        fields = ['exam_date', 'note']
+#     class Meta:
+#         model = Comprehensive_Exam
+#         fields = ['exam_date', 'note']
 
 
 # Users
@@ -359,16 +359,16 @@ class Professor_Role_Form(forms.ModelForm):
 class Reminder_Form(forms.ModelForm):
     class Meta:
         model = Reminder
-        fields = ['title', 'message', 'type', 'month']
+        fields = ['title', 'message', 'type', 'months']
         widgets = {
             'title': forms.TextInput(attrs={ 'class':'form-control' }),
             'message': SummernoteWidget(),
             'type': forms.TextInput(attrs={ 'class':'form-control' }),
-            'month': forms.TextInput(attrs={ 'class':'form-control' })
+            'months': forms.TextInput(attrs={ 'class':'form-control' })
         }
         help_texts = {
             'title': 'This is a required field. Maximum characters: 150',
             'message': 'This is a required field.',
             'type': 'This is a required and unique field. Maximum characters: 150',
-            'month': 'This is a required field. Must be numeric (Minimun value: 1, Maximum Value: 200)'
+            'months': 'This is a required field. Must be numeric (Minimun value: 1, Maximum Value: 200)'
         }

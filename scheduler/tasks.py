@@ -1,3 +1,4 @@
+from django.conf import settings
 import os
 from os import listdir
 from os.path import isfile, join
@@ -6,14 +7,18 @@ import hashlib
 from datetime import datetime
 from django.conf import settings
 from pathlib import Path
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
+from django.core.mail import EmailMultiAlternatives
 
 from apscheduler.schedulers.background import BackgroundScheduler
-
 import xlrd
 from openpyxl import load_workbook
 from deepdiff import DeepDiff, DeepHash
 
-from gp_admin.models import SIS_Student
+from gp_admin import api
+
+from gp_admin.models import Sent_Reminder, SIS_Student
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 PATH = os.path.join(BASE_DIR, 'playground', 'data')
@@ -176,8 +181,48 @@ def main():
     #hashed_a = hashlib.sha256(json_a).hexdigest()
 
 
+
+def send_reminders():
+    today = datetime.today().date()
+    reminders = api.get_reminders()
+    students = api.get_students()
+    sender = settings.EMAIL_FROM
+    for stud in students:
+        receiver = '{0} {1} <{2}>'.format(stud.first_name, stud.last_name, stud.email)
+        
+        for rem in reminders:
+            new_date = stud.start_date + relativedelta(months=rem.months)
+            if new_date == today:
+                message = rem.message.format(
+                    stud.first_name,
+                    stud.last_name,
+                    stud.student_number,
+                    stud.comprehensive_exam_date
+                )
+
+                msg = EmailMultiAlternatives(rem.title, message, sender, [receiver])
+                msg.attach_alternative(message, "text/html")
+                msg.send()
+
+                sent = Sent_Reminder.objects.create(
+                    student = stud,
+                    sender = sender,
+                    receiver = receiver,
+                    title = rem.title,
+                    message = message,
+                    type = rem.type
+                )
+                print('Success!', stud.id, stud.start_date, new_date, new_date == today)
+                
+
+
 def run():
     print('Scheduling tasks running...')
     # scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
+    
     # scheduler.add_job(main, 'cron', day_of_week='mon-fri', minute='10')
+
+    # Send Reminders
+    # scheduler.add_job(send_reminders, 'cron', day_of_week='mon-sun', hour=9, minute='0')
+    
     # scheduler.start()

@@ -1,4 +1,4 @@
-h1,h2,h3,h4,h5,h6,p {
+h1,h2,h3,h4,h5,h6,p,ul {
   margin: 0;
   padding: 0;
 }
@@ -392,14 +392,19 @@ input[type=radio] {
   height: 100%;
 }
 
+.item-vertical-center {
+  display: flex;
+  align-items: center;
+}
+
 .list-no-bullets {
   list-style-type: none;
   padding: 0;
   margin: 0;
 }
 
-.list-no-left {
-  margin-left: -20px;
+.list-left-20 {
+  margin-left: 20px;
 }
 
 .badge-orange {

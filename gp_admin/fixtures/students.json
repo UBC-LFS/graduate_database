@@ -7,7 +7,7 @@
             "first_name": "John",
             "middle_name": "Test",
             "student_number": "90000001",
-            "email": "john.doe@example.com",
+            "email": "test@example.com",
             "gender": "M",
             "date_of_birth": "2001-01-01",
             "phone_work": "604-001-0001",
@@ -23,7 +23,10 @@
             "current_degree": "MFRE",
             "program_code": "MFRE",
             "status": "Graduated",
-            "start_date": "2020-01-01",
+            "start_date": "2020-09-21",
+            "comprehensive_exam_date": "2022-10-01",
+            "completion_date": null,
+            "graduation_date": null,
             "loa_months": null,
             "loa_details": null,
             "note": "Graduated, Nov30",
@@ -37,8 +40,8 @@
             "degree_3": null,
             "gpa_3": null,
             "policy_85": false,
-            "created_on": "2022-01-01",
-            "updated_on": "2022-01-01"
+            "created_on": "2020-09-01",
+            "updated_on": "2022-09-01"
         }
     },
     {
@@ -49,7 +52,7 @@
             "first_name": "Jane",
             "middle_name": null,
             "student_number": "90000002",
-            "email": "jane.doe@example.com",
+            "email": "test@example.com",
             "gender": "F",
             "date_of_birth": "2002-02-02",
             "phone_work": null,
@@ -65,7 +68,10 @@
             "current_degree": "Ph.D.",
             "program_code": "SOIL",
             "status": "Full Time",
-            "start_date": "2021-09-01",
+            "start_date": "2021-09-21",
+            "comprehensive_exam_date": "2023-01-01",
+            "completion_date": null,
+            "graduation_date": null,
             "loa_months": null,
             "loa_details": "Good. LOA Details",
             "note": null,
@@ -79,8 +85,8 @@
             "degree_3": null,
             "gpa_3": null,
             "policy_85": true,
-            "created_on": "2022-01-01",
-            "updated_on": "2022-01-01"
+            "created_on": "2021-09-01",
+            "updated_on": "2022-09-01"
         }
     },
     {
@@ -91,7 +97,7 @@
             "first_name": "Michael",
             "middle_name": null,
             "student_number": "00000003",
-            "email": "michael.jordan@example.com",
+            "email": "test@example.com",
             "gender": "M",
             "date_of_birth": "1966-01-01",
             "phone_work": null,
@@ -107,7 +113,10 @@
             "current_degree": "AQUA",
             "program_code": "AQUA",
             "status": "Full Time",
-            "start_date": "2019-09-01",
+            "start_date": "2022-09-01",
+            "comprehensive_exam_date": "2024-01-01",
+            "completion_date": null,
+            "graduation_date": null,
             "loa_months": null,
             "loa_details": null,
             "note": null,
@@ -121,8 +130,8 @@
             "degree_3": null,
             "gpa_3": null,
             "policy_85": false,
-            "created_on": "2022-01-01",
-            "updated_on": "2022-01-01"
+            "created_on": "2022-09-01",
+            "updated_on": "2022-09-01"
         }
     },
     {
@@ -133,7 +142,7 @@
             "first_name": "Simona",
             "middle_name": null,
             "student_number": "00000004",
-            "email": "simona.halep@example.com",
+            "email": "test@example.com",
             "gender": "F",
             "date_of_birth": "2001-08-31",
             "phone_work": "647-123-4567",
@@ -149,7 +158,10 @@
             "current_degree": "M.Sc.",
             "program_code": "FOOD",
             "status": "Voluntary Withdrawal",
-            "start_date": "2022-01-01",
+            "start_date": "2022-09-01",
+            "comprehensive_exam_date": "2024-01-01",
+            "completion_date": null,
+            "graduation_date": null,
             "loa_months": null,
             "loa_details": null,
             "note": null,
@@ -163,8 +175,8 @@
             "degree_3": null,
             "gpa_3": null,
             "policy_85": true,
-            "created_on": "2022-01-01",
-            "updated_on": "2022-01-01"
+            "created_on": "2022-09-01",
+            "updated_on": "2022-09-01"
         }
     },
     {
@@ -175,7 +187,7 @@
             "first_name": "Cristian",
             "middle_name": null,
             "student_number": "00000005",
-            "email": "cristian.garin@example.com",
+            "email": "test@example.com",
             "gender": "M",
             "date_of_birth": "1996-05-30",
             "phone_work": "778-987-4321",
@@ -191,7 +203,10 @@
             "current_degree": "M.Sc.",
             "program_code": "HUNU",
             "status": "Full Time",
-            "start_date": "2022-02-02",
+            "start_date": "2022-09-02",
+            "comprehensive_exam_date": "2024-01-01",
+            "completion_date": null,
+            "graduation_date": null,
             "loa_months": null,
             "loa_details": null,
             "note": null,
@@ -205,8 +220,8 @@
             "degree_3": null,
             "gpa_3": null,
             "policy_85": false,
-            "created_on": "2022-01-01",
-            "updated_on": "2022-01-01"
+            "created_on": "2022-09-02",
+            "updated_on": "2022-09-02"
         }
     }
 ]

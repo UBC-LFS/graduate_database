@@ -168,7 +168,7 @@ class Student(models.Model):
     first_name = models.CharField(max_length=150)
     middle_name = models.CharField(max_length=150, null=True, blank=True)
     student_number = models.CharField(max_length=8, unique=True)
-    email = models.CharField(max_length=150, unique=True)
+    email = models.CharField(max_length=150)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
     phone_work = models.CharField(max_length=20, null=True, blank=True)
@@ -194,6 +194,7 @@ class Student(models.Model):
     note = models.TextField(null=True, blank=True)
 
     start_date = models.DateField(null=True, blank=True)
+    comprehensive_exam_date = models.DateField(null=True, blank=True)
     completion_date = models.DateField(null=True, blank=True)
     graduation_date = models.DateField(null=True, blank=True)
 
@@ -240,38 +241,12 @@ class Graduate_Supervision(models.Model):
         unique_together = (('student', 'professor'))
 
 
-class Comprehensive_Exam(models.Model):
-    student = models.OneToOneField(Student, on_delete=models.CASCADE, primary_key=True)
-    exam_date = models.DateField(null=True, blank=True)
-    note = models.TextField(null=True, blank=True)
-
-    created_on = models.DateField(auto_now_add=True)
-    updated_on = models.DateField(auto_now=True)
-
-    class Meta:
-        ordering = ['student__last_name', 'student__first_name', 'exam_date']
-
-
-class Reminder_Inbox(models.Model):
-    ''' Send a reminder email to students '''
-    comp_exam = models.ForeignKey(Comprehensive_Exam, on_delete=models.CASCADE)
-    sender = models.CharField(max_length=150)
-    receiver = models.CharField(max_length=150)
-    title = models.CharField(max_length=150)
-    message = models.TextField()
-    type = models.CharField(max_length=150)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['-pk']
-
-
 class Reminder(models.Model):
     ''' Admins can save an email message and title '''
     title = models.CharField(max_length=150)
     message = models.TextField()
     type = models.CharField(max_length=150, unique=True)
-    month = models.IntegerField(
+    months = models.IntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(200)]
     )
     created_at = models.DateField(auto_now_add=True)
@@ -284,6 +259,32 @@ class Reminder(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.type)
         super(Reminder, self).save(*args, **kwargs)
+
+
+# class Comprehensive_Exam(models.Model):
+#     student = models.OneToOneField(Student, on_delete=models.CASCADE, primary_key=True)
+#     exam_date = models.DateField(null=True, blank=True)
+#     note = models.TextField(null=True, blank=True)
+
+#     created_on = models.DateField(auto_now_add=True)
+#     updated_on = models.DateField(auto_now=True)
+
+#     class Meta:
+#         ordering = ['student__last_name', 'student__first_name', 'exam_date']
+
+
+class Sent_Reminder(models.Model):
+    ''' Send a reminder email to students '''
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    sender = models.CharField(max_length=150)
+    receiver = models.CharField(max_length=150)
+    title = models.CharField(max_length=150)
+    message = models.TextField()
+    type = models.CharField(max_length=150)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at', '-pk']
 
 
 class SIS_Student(models.Model):

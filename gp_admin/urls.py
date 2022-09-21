@@ -21,7 +21,10 @@ urlpatterns = [
     path('api/graduate-supervision/<str:username>/delete/', views.delete_grad_supervision, name='delete_grad_supervision'),
     
     path('comprehensive-exams/', views.Get_Comp_Exams.as_view(), name='get_comp_exams'),
-    path('comprehensive-exam/reminders/', views.Get_Exam_Reminders.as_view(), name='get_exam_reminders'),
+    path('comprehensive-exams/reminders/', views.Get_Reminders.as_view(), name='get_reminders'),
+    path('comprehensive-exams/reminders/<str:slug>/edit/', views.Edit_Reminder.as_view(), name='edit_reminder'),
+    path('api/comprehensive-exams/reminder/delete/', views.delete_reminder, name='delete_reminder'),
+    path('reminders/sent/', views.Sent_Reminders.as_view(), name='sent_reminders'),
 
     path('students/sis/', views.get_sis_students, name='get_sis_students'),
 
@@ -62,7 +65,4 @@ urlpatterns = [
     path('api/professor-roles/<str:slug>/edit/', views.edit_professor_role, name='edit_professor_role'),
     path('api/professor-role/delete/', views.delete_professor_role, name='delete_professor_role'),
    
-    path('preparation/reminders/', views.Get_Reminders.as_view(), name='get_reminders'),
-    path('preparation/reminders/<str:slug>/edit/', views.Edit_Reminder.as_view(), name='edit_reminder'),
-    path('api/reminder/delete/', views.delete_reminder, name='delete_reminder')
 ]

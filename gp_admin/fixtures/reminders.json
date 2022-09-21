@@ -4,9 +4,9 @@
         "pk": 1,
         "fields": {
             "title": "Reminder: Comprehensive Exam",
-            "message": "<p>Hi {0},</p><p><br></p><p>This is a reminder email for your comprehensive exam.</p>",
+            "message": "<p>Hi {0} {1},</p><p>Student Number: {2}</p><p>This is a reminder email for your comprehensive exam {3}.</p>",
             "type": "Offer email",
-            "month": 12,
+            "months": 12,
             "created_at": "2019-11-04",
             "updated_at": "2019-11-04",
             "slug": "offer-email"
@@ -17,9 +17,9 @@
         "pk": 2,
         "fields": {
             "title": "Title 2",
-            "message": "<p>Hi {0},</p><p><br></p><p>Thanks!</p>",
+            "message": "<p>Hi {0} {1},</p><p>Student Number: {2}</p><p>Comp date {3}. Thanks!</p>",
             "type": "Type 2",
-            "month": 24,
+            "months": 24,
             "created_at": "2019-11-05",
             "updated_at": "2019-11-05",
             "slug": "type-2"

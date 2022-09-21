@@ -111,13 +111,13 @@
                           </tr>
                         </thead>
                         <tbody>
-                          {% for sup in stud.graduate_supervision_set.all %}
+                          {% for gs in stud.graduate_supervision_set.all %}
                           <tr>
-                            <td>{{ sup.id }}</td>
-                            <td>{{ sup.professor.get_full_name }}</td>
-                            <td>{{ sup.professor_role }}</td>
-                            <td>{{ sup.created_on }}</td>
-                            <td>{{ sup.updated_on }}</td>
+                            <td>{{ gs.id }}</td>
+                            <td>{{ gs.professor.get_full_name }}</td>
+                            <td>{{ gs.professor_role.name }}</td>
+                            <td>{{ gs.created_on }}</td>
+                            <td>{{ gs.updated_on }}</td>
                           </tr>
                           {% endfor %}
                         </tbody>

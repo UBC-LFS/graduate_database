@@ -123,7 +123,7 @@
                       <table class="modal-table table">
                         <thead>
                           <tr>
-                            <th>GID</th>
+                            <th>GSID</th>
                             <th>Professor Role</th>
                             <th>Student</th>
                             <th>Created on</th>
@@ -131,13 +131,13 @@
                           </tr>
                         </thead>
                         <tbody>
-                          {% for sup in prof.graduate_supervision_set.all %}
+                          {% for gs in prof.graduate_supervision_set.all %}
                           <tr>
-                            <td>{{ sup.id }}</td>
-                            <td>{{ sup.professor_role }}</td>
-                            <td>{{ sup.student.get_full_name }}</td>
-                            <td>{{ sup.created_on }}</td>
-                            <td>{{ sup.updated_on }}</td>
+                            <td>{{ gs.id }}</td>
+                            <td>{{ gs.professor_role.name }}</td>
+                            <td>{{ gs.student.get_full_name }}</td>
+                            <td>{{ gs.created_on }}</td>
+                            <td>{{ gs.updated_on }}</td>
                           </tr>
                           {% endfor %}
                         </tbody>

@@ -13,8 +13,8 @@
       {% include 'gp_admin/subpages/_search_fields.html' with path='comp_exams' %}
     </div>
     <div class="col-md-2">
-      <div class="bg-light-gray p-4">
-
+      <div>
+        <a class="btn btn-primary" href="{% url 'gp_admin:get_reminders' %}">Setup Exam Reminders</a>
       </div>
     </div>
   </div>
@@ -22,32 +22,29 @@
   {% include 'core/subpages/_searched_message.html' with items=students total_items=total_students %}
 
   <table
-    class="table table-striped table-hover table-bordered table-responsive-md text-center fs-xs"
+    class="table table-striped table-hover table-bordered table-responsive-md text-center fs-sm"
     data-toggle="table"
     data-sortable="true"
     data-classes=""
   >
     <thead>
       <tr>
-        <th>#</th>
-        <th data-sortable="true">Last Name</th>
+        <th>SID</th>
         <th data-sortable="true">First Name</th>
+        <th data-sortable="true">Last Name</th>
         <th>Student <br /> Number</th>
         <th>Email</th>
         <th data-sortable="true">Start Date</th>
-        <th data-sortable="true">Exam Date</th>
-        <th>Exam Reminder</th>
-        <th>Note</th>
-        <th data-sortable="true">Created on</th>
-        <th data-sortable="true">Updated on</th>
-        <th>Actions</th>
+        <th data-sortable="true">Comprehensive <br /> Exam Date</th>
+        <th>Expect to <br /> Send Reminders</th>
+        <th>Sent Reminders</th>
       </tr>
     <tbody>
       {% for stud in students %}
         <tr>
           <td>{{ stud.id }}</td>
-          <td>{{ stud.last_name }}</td>
           <td>{{ stud.first_name }}</td>
+          <td>{{ stud.last_name }}</td>
           <td>{{ stud.student_number }}</td>
           <td>{{ stud.email }}</td>
           <td>
@@ -55,117 +52,29 @@
             {{ stud.start_date }}
           </td>
           <td>
-            <span class="d-none">{{ stud.comprehensive_exam.exam_date|date:"Y m d z" }}</span>
-            {{ stud.comprehensive_exam.exam_date }}
+            <span class="d-none">{{ stud.comprehensive_exam_date|date:"Y m d z" }}</span>
+            {{ stud.comprehensive_exam_date }}
           </td>
-          <td>
-            {% if stud.comprehensive_exam %}
-
-                {% if stud.comprehensive_exam.exam_reminder_set.count > 0 %}
-                <button class="btn btn-xs btn-info" type="button" data-toggle="modal" data-target="#exam-email-modal-{{ stud.id }}">
-                  {{ stud.comprehensive_exam.exam_reminder_set.count }}
-                </button>
-
-                <div class="modal fade" id="exam-email-modal-{{ stud.id }}" tabindex="-1" role="dialog" aria-labelledby="exam-email-modal-label-{{ stud.id }}" aria-hidden="true">
-                  <div class="modal-dialog modal-lg" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title text-info" id="exam-email-modal-label-{{ stud.id }}">Exam Reminder</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                      </div>
-                      <div class="modal-body text-left">
-
-                        <h6 class="mb-4">
-                          Student Full Name: <span class="text-dark-blue font-weight-bold">{{ stud.get_full_name }}</span>
-                        </h6>
-
-                        <table class="table modal-table">
-                          <thead>
-                            <tr>
-                              <th>#</th>
-                              <th>Sender</th>
-                              <th>Receiver</th>
-                              <th>Created at</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {% for re in stud.comprehensive_exam.exam_reminder_set.all %}
-                              <tr>
-                                <td>{{ re.id }}</td>
-                                <td>{{ re.sender }}</td>
-                                <td>{{ re.receiver }}</td>
-                                <td>{{ re.created_at }}</td>
-                              </tr>
-                            {% endfor %}
-                          </tbody>
-                        </table>
-
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              {% else %}
-
-                {{ stud.comprehensive_exam.exam_reminder_set.count }}
-
-              {% endif %}
-
-            {% endif %}
+          <td class="text-left">
+            <ul class="list-left-20">
+              {% for reminder in stud.expect_send_reminders %}
+                <li>{{ reminder }}</li>
+              {% empty %}
+                <li>None</li>
+              {% endfor %}
+            </ul>
           </td>
-          <td>
-            {% if stud.comprehensive_exam.note %}
-              {% include 'gp_admin/subpages/_modal_note.html' with data=stud type="comp_exam" %}
-            {% endif %}
-          </td>
-          <td>
-            <span class="d-none">{{ stud.comprehensive_exam.created_on|date:"Y m d z" }}</span>
-            {{ stud.comprehensive_exam.created_on }}
-          </td>
-          <td>
-            <span class="d-none">{{ stud.comprehensive_exam.updated_on|date:"Y m d z" }}</span>
-            {{ stud.comprehensive_exam.updated_on }}
-          </td>
-          <td>
-
-            <button class="btn btn-warning btn-xs fs-xs" type="button" data-toggle="modal" data-target="#comp-edit-modal-{{ data.id }}">
-              Edit
-            </button>
-
-            <div class="modal fade" id="comp-edit-modal-{{ data.id }}" tabindex="-1" role="dialog" aria-labelledby="comp-edit-modal-label-{{ data.id }}" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title text-info" id="comp-edit-modal-label-{{ data.id }}">Edit Comprehensive Exam</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                  </div>
-                  <div class="modal-body text-left">
-                    <div class="modal-item fs-1">
-                      <div>
-                        <form action="" method="post">
-                          {% csrf_token %}
-
-                          {% for field in form.visible_fields  %}
-
-                            <div class="field-wrapper">
-                              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                              {% if field.help_text %}
-                                <div class="help">{{ field.help_text|safe }}</div>
-                              {% endif %}
-                              {{ field }}
-                            </div>
-
-                          {% endfor %}
-
-                          <input class="btn btn-primary" type="submit" value="Update" />
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
+          <td class="text-left">
+            <ul class="list-left-20">
+              {% for reminder in stud.sent_reminder_set.all %}
+                <li>
+                  {{ reminder.created_at }}
+                  {% include 'gp_admin/subpages/_modal_sent_reminder.html' with data=reminder %}
+                </li>
+              {% empty %}
+                <li>None</li>
+              {% endfor %}
+            </ul>
           </td>
         </tr>
       {% empty %}
