@@ -36,6 +36,38 @@
         "pk": 5,
         "fields": {
             "profile_id": 5,
+            "role_id": 4
+        }
+    },
+    {
+        "model": "gp_admin.profile_roles",
+        "pk": 6,
+        "fields": {
+            "profile_id": 6,
+            "role_id": 3
+        }
+    },
+    {
+        "model": "gp_admin.profile_roles",
+        "pk": 7,
+        "fields": {
+            "profile_id": 7,
+            "role_id": 4
+        }
+    },
+    {
+        "model": "gp_admin.profile_roles",
+        "pk": 8,
+        "fields": {
+            "profile_id": 8,
+            "role_id": 4
+        }
+    },
+    {
+        "model": "gp_admin.profile_roles",
+        "pk": 9,
+        "fields": {
+            "profile_id": 9,
             "role_id": 5
         }
     }

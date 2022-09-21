@@ -1,24 +1,15 @@
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 from .models import *
 
-ROLES = {
-    'Superadmin': 1,
-    'Admin': 2,
-    'Supervisor': 3,
-    'Guest': 4
-}
-
-def get_professors():
-    ''' Get all professors '''
-    return Professor.objects.all()
-
-
-def get_professor_by_username(username):
-    ''' Get a professor by username '''
-    return get_object_or_404(Professor, username=username)
-
+# ROLES = {
+#     'Superadmin': 1,
+#     'Admin': 2,
+#     'Supervisor': 3,
+#     'Guest': 4
+# }
 
 def get_students():
     ''' Get all students '''
@@ -30,13 +21,24 @@ def get_sis_students():
     return SIS_Student.objects.all()
 
 
+# Professor
 
-# Reminder
+def get_professors():
+    ''' Get all professors '''
+    return User.objects.filter(profile__roles__in=[get_role('graduate-advisor', 'slug'), get_role('supervisor', 'slug')])
 
-def get_reminder(arg, type='id'):
-    if type == 'slug':
-        return get_object_or_404(Reminder, slug=arg)
-    return get_object_or_404(Reminder, id=arg)
+
+def get_professor(arg, type='id'):
+    ''' Get a professor '''
+    if type == 'username':
+        return get_object_or_404(User, username=arg)
+    return get_object_or_404(User, id=arg)
+
+
+# Graduate Supervision
+
+def get_grad_supervision(arg, type='id'):
+    return get_object_or_404(Graduate_Supervision, id=arg)
 
 
 # User
@@ -65,7 +67,22 @@ def create_user(username, first_name, last_name):
 
     return user
 
-def create_profile(user):
+def create_profile(user, data=None):
+    if data:
+        preferred_name = data.get('preferred_name', None)
+        title = data.get('title', None)
+        position = data.get('position', None)
+        phone = data.get('phone', None)
+        fax = data.get('fax', None)
+        office = data.get('office', None)
+        return Profile.objects.create(
+            user_id = user.id,
+            title = title,
+            position = position,
+            phone = phone,
+            fax = fax,
+            office = office
+        )
     return Profile.objects.create(user_id=user.id)
 
 
@@ -124,36 +141,44 @@ def get_role(arg, type='id'):
     return get_object_or_404(Role, id=arg)
 
 
-def update_profile_roles(profile, old_roles, data):
-    ''' Update roles of a user '''
+# def update_profile_roles(profile, old_roles, data):
+#     ''' Update roles of a user '''
 
-    if check_two_querysets_equal( old_roles, data.get('roles') ) == False:
-        profile.roles.remove( *old_roles ) # Remove current roles
-        new_roles = list( data.get('roles') )
-        profile.roles.add( *new_roles )  # Add new roles
+#     if check_two_querysets_equal( old_roles, data.get('roles') ) == False:
+#         profile.roles.remove( *old_roles ) # Remove current roles
+#         new_roles = list( data.get('roles') )
+#         profile.roles.add( *new_roles )  # Add new roles
 
-    return True if profile.roles else False
+#     return True if profile.roles else False
 
-def check_two_querysets_equal(qs1, qs2):
-    ''' Helper funtion: To check whether two querysets are equal or not '''
-    if len(qs1) != len(qs2):
-        return False
 
-    d = dict()
-    for qs in qs1:
-        item = qs.name.lower()
-        if item in d.keys(): d[item] += 1
-        else: d[item] = 1
+# def check_two_querysets_equal(qs1, qs2):
+#     ''' Helper funtion: To check whether two querysets are equal or not '''
+#     if len(qs1) != len(qs2):
+#         return False
 
-    for qs in qs2:
-        item = qs.name.lower()
-        if item in d.keys(): d[item] += 1
-        else: d[item] = 1
+#     d = dict()
+#     for qs in qs1:
+#         item = qs.name.lower()
+#         if item in d.keys(): d[item] += 1
+#         else: d[item] = 1
 
-    for k, v in d.items():
-        if v != 2: return False
-    return True
+#     for qs in qs2:
+#         item = qs.name.lower()
+#         if item in d.keys(): d[item] += 1
+#         else: d[item] = 1
 
+#     for k, v in d.items():
+#         if v != 2: return False
+#     return True
+
+
+# Reminder
+
+def get_reminder(arg, type='id'):
+    if type == 'slug':
+        return get_object_or_404(Reminder, slug=arg)
+    return get_object_or_404(Reminder, id=arg)
 
 
 # Preparation

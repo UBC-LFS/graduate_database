@@ -28,8 +28,8 @@
     <thead>
       <tr>
         <th>UID</th>
-        <th data-sortable="true">Last <br /> Name</th>
         <th data-sortable="true">First <br /> Name</th>
+        <th data-sortable="true">Last <br /> Name</th>        
         <th>Preferred <br /> Name</th>
         <th>CWL</th>
         <th>Email</th>
@@ -79,7 +79,7 @@
           </td>
           <td>
             <div class="btn-toolbar">
-              <a class="btn btn-xs btn-link fs-sm mr-2" href="{% url 'gp_admin:edit_user' username=user.username %}">Edit</a>
+              <a class="btn btn-xs btn-link fs-sm mr-2" href="{% url 'gp_admin:edit_user' username=user.username %}">Edit</a> <br />
               <a class="btn btn-xs btn-danger fs-sm" href="#">Delete</a>
             </div>
           </td>

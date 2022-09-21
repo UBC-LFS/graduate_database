@@ -8,7 +8,9 @@ from django.utils.translation import gettext_lazy as _
 from .models import *
 
 
-class Student_Create_Form(forms.ModelForm):
+# Data Table
+
+class Student_Form(forms.ModelForm):
     date_of_birth = forms.DateField(
         required = False,
         widget = forms.widgets.DateInput(attrs={'type': 'date', 'class':'form-control'}),
@@ -24,18 +26,15 @@ class Student_Create_Form(forms.ModelForm):
     class Meta:
         model = Student
         fields = [
-            'last_name', 'first_name', 'middle_name', 'student_number', 'email', 'gender', 'date_of_birth', 
+            'middle_name', 'student_number', 'gender', 'date_of_birth', 
             'phone_work', 'phone_home', 'address', 'city', 'province', 'postal_code', 'country', 'perm_address', 
             'foreign_domestic', 'sin', 'current_degree', 'program_code', 'status', 'start_date', 'loa_months', 'loa_details',
             'previous_institution_1', 'degree_1', 'gpa_1', 'previous_institution_2', 'degree_2', 'gpa_2', 'previous_institution_3',
             'degree_3', 'gpa_3', 'policy_85', 'note'
         ]
         widgets = {
-            'last_name': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'first_name': forms.TextInput(attrs={ 'class': 'form-control' }),
             'middle_name': forms.TextInput(attrs={ 'class': 'form-control' }),
             'student_number': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'email': forms.TextInput(attrs={ 'class': 'form-control' }),
             'phone_work': forms.TextInput(attrs={ 'class': 'form-control' }),
             'phone_home': forms.TextInput(attrs={ 'class': 'form-control' }),
             'address': forms.TextInput(attrs={ 'class': 'form-control' }),
@@ -62,8 +61,6 @@ class Student_Create_Form(forms.ModelForm):
             'gpa_3': forms.TextInput(attrs={ 'class': 'form-control' })
         }
         labels = {
-            'last_name': 'Last Name',
-            'first_name': 'First Name',
             'middle_name': 'Middle Name',
             'student_number': 'Student Number',
             'postal_code': 'Postal Code',
@@ -84,8 +81,6 @@ class Student_Create_Form(forms.ModelForm):
             'gpa_3': 'GPA 3',
         }
         help_texts = {
-            'last_name': 'Maximum characters: 150',
-            'first_name': 'Maximum characters: 150',
             'middle_name': 'Maximum characters: 150',
             'student_number': 'Maximum characters: 8',
             'email': 'This field is unique. Maximum characters: 150',
@@ -122,30 +117,57 @@ class Professor_Form(forms.ModelForm):
     )
 
     class Meta:
-        model = Professor
-        fields = ['last_name', 'first_name', 'username', 'email', 'title', 'position', 'programs', 'is_graduate_advisor', 'phone', 'fax', 'office']
+        model = Profile
+        fields = ['title', 'position', 'programs', 'phone', 'fax', 'office']
         widgets = {
-            'last_name': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'first_name': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'username': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'email': forms.TextInput(attrs={ 'class': 'form-control' }),
             'phone': forms.TextInput(attrs={ 'class': 'form-control' }), 
             'fax': forms.TextInput(attrs={ 'class': 'form-control' }),
             'office': forms.TextInput(attrs={ 'class': 'form-control' })
         }
-        labels = {
-            'is_graduate_advisor': 'Graduate Advisor'
-        }
         help_texts = {
-            'last_name': 'Maximum characters: 150',
-            'first_name': 'Maximum characters: 150',
-            'username': 'Maximum characters: 150',
-            'email': 'This field is unique. Maximum characters: 254',
-            'phone': 'Maximum characters: 150',
-            'fax': 'Maximum characters: 150',
-            'office': 'Maximum characters: 150'
+            'phone': 'Maximum length is 150 characters.',
+            'fax': 'Maximum length is 150 characters.',
+            'office': 'Maximum length is 150 characters.'
         }
 
+
+class Grad_Supervision_Form(forms.ModelForm):
+    class Meta:
+        model = Graduate_Supervision
+        fields = ['student', 'professor', 'professor_role']
+        labels = {
+            'professor_role': 'Professor Role'
+        }
+        widgets = {
+            'professor': forms.HiddenInput()
+        }
+
+    def clean_student(self):
+        data = self.cleaned_data['student']
+        if not data: raise ValidationError('This field is required.')
+        return data
+    
+    def clean_professor(self):
+        data = self.cleaned_data['professor']
+        if not data: raise ValidationError('This field is required.')
+        return data
+
+    def clean_professor_role(self):
+        data = self.cleaned_data['professor_role']
+        if not data: raise ValidationError('This field is required.')
+        return data
+
+
+class Student_Additional_Form(forms.ModelForm):
+    class Meta:
+        model = Student
+        fields = ['thesis_title', 'current_role', 'funding_sources', 'total_funding_awarded', 'taships']
+        widgets = {
+
+        }
+        help_texts = {
+
+        }
 
 
 
@@ -214,24 +236,36 @@ class Profile_Form(forms.ModelForm):
         queryset = Role.objects.all(),
         widget = forms.CheckboxSelectMultiple(),
     )
+
+    programs = forms.ModelMultipleChoiceField(
+        required = True,
+        queryset = Program.objects.all(),
+        widget = forms.CheckboxSelectMultiple(),
+    )
+
     class Meta:
         model = Profile
-        fields = ['preferred_name', 'roles']
+        fields = ['preferred_name', 'roles', 'title', 'position', 'programs', 'phone', 'fax', 'office']
         labels = {
             'preferred_name': 'Preferred Name'
         }
         widgets = {
-            'preferred_name': forms.TextInput(attrs={ 'class': 'form-control' })
+            'preferred_name': forms.TextInput(attrs={ 'class': 'form-control' }),
+            'phone': forms.TextInput(attrs={ 'class': 'form-control' }), 
+            'fax': forms.TextInput(attrs={ 'class': 'form-control' }),
+            'office': forms.TextInput(attrs={ 'class': 'form-control' })
         }
         help_texts = {
-            'preferred_name': 'This field is optional. Maximum length is 150 characters.'
+            'preferred_name': 'Maximum length is 150 characters.',
+            'phone': 'Maximum length is 150 characters.',
+            'fax': 'Maximum length is 150 characters.',
+            'office': 'Maximum length is 150 characters.'
         }
 
     def clean_roles(self):
         data = self.cleaned_data['roles']
         if not data: raise ValidationError('This field is required.')
         return data
-
 
 
 class Role_Form(forms.ModelForm):

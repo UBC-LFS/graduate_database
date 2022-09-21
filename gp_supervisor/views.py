@@ -6,21 +6,21 @@ from gp_admin import api
 
 def index(request):
     print( request.session.get('loggedin_user') )
-    
+
     return render(request, 'gp_supervisor/index.html')
 
 
 class GetGradSupervision(View):
     def get(self, request, *args, **kwargs):
-        
-        prof = api.get_professor_by_username(request.user.username)
+
+        prof = api.get_professor(request.user.username, 'username')
         print(request.user.username, prof)
 
         supervisions = []
         non_supervisors = 0
         num_supervisors = 1
-    
-        num_students = prof.supervision_set.count()
+
+        num_students = prof.graduate_supervision_set.count()
         if num_students > 0:
             prof_id = prof.id
             prof_full_name = prof.get_full_name()
@@ -28,7 +28,7 @@ class GetGradSupervision(View):
             prof_position = prof.position.name
 
             i = 0
-            for sup in prof.supervision_set.all():
+            for sup in prof.graduate_supervision_set.all():
                 if i > 0:
                     prof_id = None
                     prof_full_name = None
@@ -58,4 +58,3 @@ class GetGradSupervision(View):
             'supervisions': supervisions,
             'total_supervisions': num_supervisors
         })
-

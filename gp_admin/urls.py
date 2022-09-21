@@ -12,9 +12,13 @@ urlpatterns = [
     path('student/add/', views.Add_Student.as_view(), name='add_student'),
 
     path('professors/', views.Get_Professors.as_view(), name='get_professors'),
-    path('professor/add/', views.Add_Professor.as_view(), name='add_professor'),
+    path('professors/<str:username>/edit/', views.Edit_Professor.as_view(), name='edit_professor'),
+    # path('professor/add/', views.Add_Professor.as_view(), name='add_professor'),
     
     path('graduate-supervision/', views.Get_Grad_Supervision.as_view(), name='get_grad_supervision'),
+    path('graduate-supervision/<str:username>/add/', views.Add_Grad_Supervision.as_view(), name='add_grad_supervision'),
+    path('api/graduate-supervision/<str:username>/edit/', views.edit_grad_supervision, name='edit_grad_supervision'),
+    path('api/graduate-supervision/<str:username>/delete/', views.delete_grad_supervision, name='delete_grad_supervision'),
     
     path('comprehensive-exams/', views.Get_Comp_Exams.as_view(), name='get_comp_exams'),
     path('comprehensive-exam/reminders/', views.Get_Exam_Reminders.as_view(), name='get_exam_reminders'),

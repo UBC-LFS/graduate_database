@@ -1,0 +1,141 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+{% include 'gp_admin/subpages/_menu.html' %}
+
+<div class="container max-width-container">
+
+  <div class="row">
+    <div class="col-md-4">
+
+      {% if info.type == 'add' %}
+        {% include 'core/subpages/_left_aside.html' with title='New Professor' total=professors|length type=info.type path=info.path %}
+      {% else %}
+        {% include 'core/subpages/_left_aside.html' with data=prof type=info.type %}
+      {% endif %}
+
+      <div class="left-aside-btn-groups">
+        <a class="btn btn-outline-primary" href="{% url 'gp_admin:get_grad_supervision' %}">Back to Graduate Supervision</a>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+
+      <div class="board">
+        <h3>Graduate Supervision Form</h3>
+
+        {% include 'core/subpages/_form_note.html' %}
+
+        <form class="mb-5" action="{% url 'gp_admin:add_grad_supervision' username=prof.username %}" method="post">
+          {% csrf_token %}
+
+          {% for field in form.visible_fields  %}
+            <div class="field-wrapper">
+              <label for="{{ field.id_for_label }}">
+                {{ field.label }}:
+                {% if field.name == 'student' or field.name == 'professor_role' %}
+                  <small class="text-danger"><i class="fa fa-asterisk" aria-hidden="true"></i></small>
+                {% endif %}
+              </label>
+              {% if field.help_text %}
+                <div class="help">{{ field.help_text|safe }}</div>
+              {% endif %}
+              {{ field }}
+            </div>
+          {% endfor %}
+
+          <input type="hidden" name="professor" value="{{ prof.id }}" />
+          <a class="btn btn-outline-secondary" href="{% url 'gp_admin:get_professors' %}">Cancel</a>
+          <input class="btn btn-primary" type="submit" value="Create" />
+        </form>
+
+        <hr />
+
+        <h5 class="mt-5 mb-3">Students ({{ prof.graduate_supervision_set.count }})</h5>
+
+        <table class="table bg-white border">
+          <thead>
+            <tr>
+              <th>GSID</th>
+              <th>Professor Role</th>
+              <th>Student Name</th>
+              <th>Studnet Number</th>
+              <th>Email</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for gs in prof.graduate_supervision_set.all %}
+              <tr>
+                <td>{{ gs.id }}</td>
+                <td>{{ gs.professor_role.name }}</td>
+                <td>{{ gs.student.get_full_name }}</td>
+                <td>{{ gs.student.student_number }}</td>
+                <td>{{ gs.student.email }}</td>
+                <td>
+                  <div class="btn-toolbar">
+                    <button class="btn btn-xs btn-warning fs-sm mr-2" type="button" data-toggle="modal" data-target="#grad-supervision-modal-{{ gs.id }}">
+                      Edit
+                    </button>
+
+                    <div class="modal fade" id="grad-supervision-modal-{{ gs.id }}" tabindex="-1" role="dialog" aria-labelledby="grad-supervision-modal-label-{{ gs.id }}" aria-hidden="true">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title text-info" id="grad-supervision-modal-label-{{ gs.id }}">Edit Graduate Supervision</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          </div>
+                          <div class="modal-body text-left">
+                            <div class="modal-item fs-1">
+                              <form action="{% url 'gp_admin:edit_grad_supervision' username=prof.username %}" method="post">
+                                {% csrf_token %}
+
+                                <div class="field-wrapper">
+                                  <label for="id_professor_role_{{ gs.id }}">
+                                    Professor Role:
+                                    <small class="text-danger"><i class="fa fa-asterisk" aria-hidden="true"></i></small>
+                                  </label>
+                                  <select id="id_professor_role_{{ gs.id }}" name="professor_role">
+                                    {% for role in prof_roles %}
+                                      <option value="{{ role.id }}" {% if role.id == gs.professor_role.id %}selected{% endif %}>{{ role.name }}</option>
+                                    {% endfor %}
+                                  </select>
+                                </div>
+
+                                <input type="hidden" name="graduate_supervision" value="{{ gs.id }}" />
+                                <input type="hidden" name="student" value="{{ gs.student.id }}" />
+                                <input type="hidden" name="professor" value="{{ gs.professor.id }}" />
+                                <input class="btn btn-warning" type="submit" value="Update" />
+                              </form>
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <form action="{% url 'gp_admin:delete_grad_supervision' username=prof.username %}" method="post" onsubmit="return confirm('Are you sure to delete this Graduate Supervision - {{ gs.student.first_name }} {{ gs.student.last_name }}?');">
+                      {% csrf_token %}
+
+                      <input type="hidden" name="graduate_supervision" value="{{ gs.id }}" />
+                      <input class="btn btn-xs btn-danger fs-sm" type="submit" value="Delete" />
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="6">No students found</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

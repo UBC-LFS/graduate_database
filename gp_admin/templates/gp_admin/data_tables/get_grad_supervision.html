@@ -15,77 +15,67 @@
     <div class="col-md-2"></div>
   </div>
 
-  {% include 'core/subpages/_searched_message.html' with items=supervisions total_items=total_supervisions %}
+  {% include 'core/subpages/_searched_message.html' with items=professors total_items=total_professors %}
 
-  <table
-    class="table table-custom-striped table-custom-hover table-bordered table-responsive-md text-center table-vertical-middle fs-sm"
-  >
-    <thead>
-      <tr>
-        <th colspan="5">Professor</th>
-        <th colspan="3">Student</th>
-        <th colspan="2">Supervision</th>
-      </tr>
-      <tr>
-        <th>#</th>
-        <th>Full Name</th>
-        <th>Title</th>
-        <th>Position</th>
-        <th>Role</th>
-        <th>Full Name</th>
-        <th>Current Degree</th>
-        <th>Program</th>
-        <th>Created on</th>
-        <th>Updated on</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for sup in supervisions %}
-        <tr class="row-{{ sup.odd_or_even }}">
-          {% if sup.prof_id %}
-            <td {% if sup.num_students > 1 %} rowspan="{{ sup.num_students }}" {% endif %}>
-              {{ sup.prof_id }}
-            </td>
-          {% endif %}
+  {% for prof in professors %}
 
-          {% if sup.prof_full_name %}
-            <td {% if sup.num_students > 1 %} rowspan="{{ sup.num_students }}" {% endif %}>
-              {{ sup.prof_full_name }}
-            </td>
-          {% endif %}
+    <div class="row mb-5">
 
-          {% if sup.prof_title %}
-            <td {% if sup.num_students > 1 %} rowspan="{{ sup.num_students }}" {% endif %}>
-              {{ sup.prof_title }}
-            </td>
-          {% endif %}
+      <div class="col-md-3">
+        <div class="text-center">
+          <h5 class="text-dark-blue mb-3">{{ prof.get_full_name }}</h5>
+          <p>{{ prof.profile.position.name }}</p>
+          <p class="text-secondary">Number of students: {{ prof.graduate_supervision_set.count }}</p>
+          <a href="{% url 'gp_admin:add_grad_supervision' username=prof.username %}">Add Student</a>
+        </div>
 
-          {% if sup.prof_position %}
-            <td {% if sup.num_students > 1 %} rowspan="{{ sup.num_students }}" {% endif %}>
-              {{ sup.prof_position }}
-            </td>
-          {% endif %}
+      </div>
+      <div class="col-md-9">
 
-          <td>{{ sup.prof_role }}</td>
-          <td>{{ sup.stud_full_name }}</td>
-          <td>{{ sup.stud_current_degree }}</td>
-          <td>{{ sup.stud_program_code }}</td>
-          <td>
-            <span class="d-none">{{ sup.created_on|date:"Y m d z" }}</span>
-            {{ sup.created_on }}
-          </td>
-          <td>
-            <span class="d-none">{{ sup.updated_on|date:"Y m d z" }}</span>
-            {{ sup.updated_on }}
-          </td>
-        </tr>
-      {% empty %}
-        <tr>
-          <td colspan="6">No supervisors found</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+        <table class="table table-sm fs-sm">
+          <thead>
+            <tr>
+              <th>GSID</th>
+              <th>Professor Role</th>
+              <th>Student Name</th>
+              <th>Studnet Number</th>
+              <th>Email</th>
+              <th>Thesis Title</th>
+              <th>Current Role</th>
+              <th>Funding Sources</th>
+              <th>Total Funding Awarded</th>
+              <th>TAships</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for gs in prof.graduate_supervision_set.all %}
+              <tr>
+                <td>{{ gs.id }}</td>
+                <td>{{ gs.professor_role }}</td>
+                <td>{{ gs.student.get_full_name }}</td>
+                <td>{{ gs.student.student_number }}</td>
+                <td>{{ gs.student.email }}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td>No students found</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  {% empty %}
+
+    <div>No professors found</div>
+
+  {% endfor %}
 
 </div>
 

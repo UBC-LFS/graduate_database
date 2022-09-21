@@ -80,11 +80,11 @@
           </td>
           <td>
 
-            <span class="d-none">{{ stud.supervision_set.count }}</span>
-            {% if stud.supervision_set.count > 0 %}
+            <span class="d-none">{{ stud.graduate_supervision_set.count }}</span>
+            {% if stud.graduate_supervision_set.count > 0 %}
 
               <button class="btn btn-xs btn-info" type="button" data-toggle="modal" data-target="#supervisors-modal-{{ stud.id }}">
-                {{ stud.supervision_set.count }}
+                {{ stud.graduate_supervision_set.count }}
               </button>
 
               <div class="modal fade" id="supervisors-modal-{{ stud.id }}" tabindex="-1" role="dialog" aria-labelledby="supervisors-modal-label-{{ stud.id }}" aria-hidden="true">
@@ -111,7 +111,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          {% for sup in stud.supervision_set.all %}
+                          {% for sup in stud.graduate_supervision_set.all %}
                           <tr>
                             <td>{{ sup.id }}</td>
                             <td>{{ sup.professor.get_full_name }}</td>
@@ -130,7 +130,7 @@
 
             {% else %}
 
-              {{ stud.supervision_set.count }}
+              {{ stud.graduate_supervision_set.count }}
 
             {% endif %}
 

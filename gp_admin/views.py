@@ -6,6 +6,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
+from django.http import HttpResponseRedirect, Http404, JsonResponse
 
 import json
 
@@ -66,7 +67,7 @@ class Get_Students(View):
 
 
 class Add_Student(View):
-    form_class = Student_Create_Form
+    form_class = Student_Form
 
     def get(self, request, *args, **kwargs):
         return render(request, 'gp_admin/data_tables/add_student.html', {
@@ -77,21 +78,21 @@ class Add_Student(View):
 
 class Get_Professors(View):
     def get(self, request, *args, **kwargs):
-        professor_list =  api.get_professors()
+        prof_list =  api.get_professors()
 
         last_name_q = request.GET.get('last_name')
         first_name_q = request.GET.get('first_name')
         email_q = request.GET.get('email')
 
         if bool(last_name_q):
-            professor_list = professor_list.filter(last_name__icontains=last_name_q)
+            prof_list = prof_list.filter(last_name__icontains=last_name_q)
         if bool(first_name_q):
-            professor_list = professor_list.filter(first_name__icontains=first_name_q)
+            prof_list = prof_list.filter(first_name__icontains=first_name_q)
         if bool(email_q):
-            professor_list = professor_list.filter(email__icontains=email_q)
+            prof_list = prof_list.filter(email__icontains=email_q)
 
         page = request.GET.get('page', 1)
-        paginator = Paginator(professor_list, settings.PAGE_SIZE)
+        paginator = Paginator(prof_list, settings.PAGE_SIZE)
 
         try:
             professors = paginator.page(page)
@@ -101,82 +102,136 @@ class Get_Professors(View):
             professors = paginator.page(paginator.num_pages)
 
         for prof in professors:
-            print(prof.supervision_set.count())
+            print(prof.id, prof.get_full_name(), prof.graduate_supervision_set.count())
 
         return render(request, 'gp_admin/data_tables/get_professors.html', {
             'professors': professors,
-            'total_professors': len(professor_list)
+            'total_professors': len(prof_list)
         })
 
     def post(self, request, *args, **kwargs):
         pass
 
 
-class Add_Professor(View):
-    professor_form = Professor_Form
+# class Add_Professor(View):
+#     prof_form = Professor_Form
+
+#     def get(self, request, *args, **kwargs):
+#         return render(request, 'gp_admin/data_tables/add_edit_professor.html', {
+#             'professors': api.get_professors(),
+#             'form': self.prof_form(),
+#             'info': {
+#                 'btn_label': 'Create',
+#                 'href': reverse('gp_admin:add_professor'),
+#                 'type': 'add',
+#                 'path': 'professors'
+#             }
+#         })
+    
+#     def post(self, request, *args, **kwargs):
+#         prof_form = self.prof_form(request.POST)
+
+#         if len(errors) == 0:
+#             prof = prof_form.save()
+#             # profile_data = profile_form.cleaned_data
+
+#             # Create a profile and add roles
+#             # profile = Profile.objects.create(user_id=user.id, preferred_name=profile_data.get('preferred_name', None))
+#             # profile.roles.add( *profile_data['roles'] )
+
+#             messages.success(request, 'Success! Professor ({0} {1}, CWL: {2}) created'.format(prof.user.first_name, prof.user.last_name, prof.user.username))
+#             return redirect('gp_admin:get_users')
+#         else:
+#             messages.error(request, 'An error occurred. Form is invalid. {0}'.format(' '.join(errors)) )
+
+#         return redirect('gp_admin:add_user')
+
+
+class Edit_Professor(View):
+    prof_form = Professor_Form
 
     def get(self, request, *args, **kwargs):
-        return render(request, 'gp_admin/data_tables/professor.html', {
-            'professors': api.get_professors(),
-            'form': self.professor_form(),
+        prof = api.get_professor(kwargs.get('username'), 'username')
+        return render(request, 'gp_admin/data_tables/edit_professor.html', {
+            'prof': prof,
+            'form': self.prof_form(data=None, instance=prof.profile),
             'info': {
-                'btn_label': 'Create',
+                'btn_label': 'Update',
                 'href': reverse('gp_admin:add_professor'),
-                'type': 'add',
+                'type': 'edit',
                 'path': 'professors'
             }
         })
     
     def post(self, request, *args, **kwargs):
-        pass
-
+        prof = api.get_professor(kwargs.get('username'), 'username')
+        form = self.prof_form(request.POST, instance=prof.profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Success! Professor ({0}, CWL: {1}) updated'.format(prof.get_full_name(), prof.username))
+            return redirect('gp_admin:get_professors')
+        else:
+            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors) )
+        return redirect('gp_admin:edit_professor')
+    
 
 class Get_Grad_Supervision(View):
     def get(self, request, *args, **kwargs):
-        professor_list = api.get_professors()
-
-        supervisions = []
-        non_supervisors = 0
-        num_supervisors = 1
-        for prof in professor_list:
-            num_students = prof.supervision_set.count()
-            if num_students > 0:
-                prof_id = prof.id
-                prof_full_name = prof.get_full_name()
-                prof_title = prof.title.name
-                prof_position = prof.position.name
-
-                i = 0
-                for sup in prof.supervision_set.all():
-                    if i > 0:
-                        prof_id = None
-                        prof_full_name = None
-                        prof_title = None
-                        prof_position = None
-                        non_supervisors += 1
-                    i += 1
-
-                    supervisions.append({
-                        'prof_id': prof_id,
-                        'prof_full_name': prof_full_name,
-                        'prof_title': prof_title,
-                        'prof_position': prof_position,
-                        'num_students': num_students,
-                        'prof_role': sup.professor_role.name,
-                        'stud_full_name': sup.student.get_full_name(),
-                        'stud_current_degree': sup.student.current_degree,
-                        'stud_program_code': sup.student.program_code,
-                        'created_on': sup.created_on,
-                        'updated_on': sup.updated_on,
-                        'num_supervisors': num_supervisors,
-                        'odd_or_even': 'odd' if num_supervisors % 2 != 0 else 'even'
-                    })
-                num_supervisors += 1
+        professors = api.get_professors()
 
         return render(request, 'gp_admin/data_tables/get_grad_supervision.html', {
-            'supervisions': supervisions,
-            'total_supervisions': num_supervisors
+            'professors': professors,
+            'total_professors': len(professors)
         })
+
+
+class Add_Grad_Supervision(View):
+    form = Grad_Supervision_Form
+    def get(self, request, *args, **kwargs):
+        prof = api.get_professor(kwargs.get('username'), 'username')
+        return render(request, 'gp_admin/data_tables/add_grad_supervision.html', {
+            'prof': prof,
+            'form': self.form,
+            'prof_roles': Professor_Role.objects.all()
+        })
+    
+    def post(self, request, *args, **kwargs):
+        prof = api.get_professor(kwargs.get('username'), 'username')
+        form = self.form(request.POST)
+        if form.is_valid():
+            res = form.save()
+            if res:
+                messages.success(request, 'Success! Graduate Supervision ({0} {1}) added.'.format(res.student.first_name, res.student.last_name))
+            else:
+                messages.error(request, 'An error occurred while saving data.')
+        else:
+            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+        return HttpResponseRedirect(reverse('gp_admin:add_grad_supervision', args=[kwargs.get('username')]))
+
+
+@require_http_methods(['POST'])
+def edit_grad_supervision(request, username):
+    gs = api.get_grad_supervision(request.POST.get('graduate_supervision'))
+    form = Grad_Supervision_Form(request.POST, instance=gs)
+    if form.is_valid():
+        res = form.save()
+        if res:
+            messages.success(request, 'Success! Graduate Supervision ({0} {1}) updated.'.format(res.student.first_name, res.student.last_name))
+        else:
+            messages.error(request, 'An error occurred while updating data.')
+    else:
+        messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+    return HttpResponseRedirect(reverse('gp_admin:add_grad_supervision', args=[username]))
+
+
+@require_http_methods(['POST'])
+def delete_grad_supervision(request, username):
+    gs = api.get_grad_supervision(request.POST.get('graduate_supervision'))
+    if gs.delete():
+        messages.success(request, 'Success! Graduate Supervision ({0} {1}) deleted.'.format(gs.student.first_name, gs.student.last_name))
+    else:
+        messages.error(request, 'An error occurred while deleting this graduate supervision.')
+    return HttpResponseRedirect(reverse('gp_admin:edit_grad_supervision', args=[username]))
 
 
 class Get_Comp_Exams(View):
@@ -279,7 +334,7 @@ class Add_User(View):
     profile_form = Profile_Form
 
     def get(self, request, *args, **kwargs):
-        return render(request, 'gp_admin/users/user.html', {
+        return render(request, 'gp_admin/users/add_edit_user.html', {
             'users': api.get_users(),
             'user_form': self.user_form(),
             'profile_form': self.profile_form(),
@@ -305,9 +360,16 @@ class Add_User(View):
             user = user_form.save()
             profile_data = profile_form.cleaned_data
 
-            # # Create a profile and add roles
-            profile = Profile.objects.create(user_id=user.id, preferred_name=profile_data.get('preferred_name', None))
-            profile.roles.add( *profile_data['roles'] )
+            # Create a profile and add roles and programs if they exist
+            profile = api.create_profile(user, profile_data)
+
+            roles = profile_data.get('roles', None)
+            if roles:
+                profile.roles.add( *roles )
+
+            programs = profile_data.get('programs', None)
+            if programs:
+                profile.programs.add( *programs )
 
             messages.success(request, 'Success! User ({0} {1}, CWL: {2}) created'.format(user.first_name, user.last_name, user.username))
             return redirect('gp_admin:get_users')
@@ -322,10 +384,10 @@ class Edit_User(View):
     profile_form = Profile_Form
 
     def get(self, request, *args, **kwargs):
-        user = api.get_user(kwargs['username'], 'username')
+        user = api.get_user(kwargs.get('username'), 'username')
         profile = api.has_profile_created(user)
 
-        return render(request, 'gp_admin/users/user.html', {
+        return render(request, 'gp_admin/users/add_edit_user.html', {
             'user': user,
             'user_form': self.user_form(data=None, instance=user),
             'profile_form': self.profile_form(data=None, instance=profile),
@@ -353,7 +415,7 @@ class Edit_User(View):
             profile = profile_form.save()
 
             # res = api.update_profile_roles(profile, profile_roles, profile_form.cleaned_data)
-            messages.success(request, 'Success! User ({0} {1}, CWL: {2}) updated'.format(user.first_name, user.last_name, user.username))
+            messages.success(request, 'Success! User ({0}, CWL: {1}) updated'.format(user.get_full_name(), user.username))
             return redirect('gp_admin:get_users')
         else:
             messages.error(request, 'An error occurred. Form is invalid. {0}'.format(' '.join(errors)) )

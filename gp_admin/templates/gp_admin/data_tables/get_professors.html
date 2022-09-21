@@ -9,11 +9,8 @@
     <div class="col-md-2">
       <h2 class="text-center-middle text-center">Professors</h2>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-10">
       {% include 'gp_admin/subpages/_search_fields.html' with path='professors' %}
-    </div>
-    <div class="col-md-2">
-      <a class="btn btn-primary" href="{% url 'gp_admin:add_professor' %}">Add Professor</a>
     </div>
   </div>
 
@@ -27,15 +24,15 @@
   >
     <thead>
       <tr>
-        <th>PID</th>
-        <th data-sortable="true">Last <br /> Name</th>
+        <th>UID</th>
         <th data-sortable="true">First <br /> Name</th>
+        <th data-sortable="true">Last <br /> Name</th>
         <th>CWL</th>
         <th>Email</th>
         <th>Title</th>
         <th>Position</th>
         <th>Program <br /> Code </th>
-        <th>Graduate <br /> Advisor</th>
+        <th>Role</th>
         <th>Contact <br /> Info</th>
         <th>Graduate <br /> Supervision</th>
         <th data-sortable="true">Created on</th>
@@ -51,30 +48,32 @@
           <td>{{ prof.first_name }}</td>
           <td>{{ prof.username }}</td>
           <td>{{ prof.email }}</td>
-          <td>{{ prof.title.name }}</td>
-          <td>{{ prof.position.name }}</td>
+          <td>{{ prof.profile.title.name }}</td>
+          <td>{{ prof.profile.position.name }}</td>
           <td>
-            {% for pg in prof.program.all %}
+            {% for pg in prof.profile.programs.all %}
               <div>{{ pg.code }}</div>
             {% empty %}
               None
             {% endfor %}
           </td>
           <td>
-            {% if prof.is_graduate_advisor %}
-              <i class="fa fa-check-circle text-chocolate font-size-1 vertical-middle" aria-hidden="true"></i>
-            {% endif %}
+            {% for role in prof.profile.roles.all %}
+              {% include 'core/subpages/_role.html' with data=role.name %}
+            {% empty %}
+              None
+            {% endfor %}
           </td>
           <td>
-            <button class="btn btn-xs btn-link fs-sm" type="button" data-toggle="modal" data-target="#contact-info-modal-{{ data.id }}">
+            <button class="btn btn-xs btn-link fs-sm" type="button" data-toggle="modal" data-target="#contact-info-modal-{{ prof.id }}">
               View
             </button>
 
-            <div class="modal fade" id="contact-info-modal-{{ data.id }}" tabindex="-1" role="dialog" aria-labelledby="contact-info-modal-label-{{ data.id }}" aria-hidden="true">
+            <div class="modal fade" id="contact-info-modal-{{ prof.id }}" tabindex="-1" role="dialog" aria-labelledby="contact-info-modal-label-{{ prof.id }}" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title text-info" id="contact-info-modal-label-{{ data.id }}">Contact Information</h5>
+                    <h5 class="modal-title text-info" id="contact-info-modal-label-{{ prof.id }}">Contact Information</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                   </div>
                   <div class="modal-body text-left">
@@ -82,15 +81,15 @@
                     <div class="modal-item">
                       <div>
                         <h6>Phone:</h6>
-                        <span>{{ prof.phone }}</span>
+                        <span>{{ prof.profile.phone }}</span>
                       </div>
                       <div>
                         <h6>Fax:</h6>
-                        <span>{{ prof.fax }}</span>
+                        <span>{{ prof.profile.fax }}</span>
                       </div>
                       <div>
                         <h6>Office:</h6>
-                        <span>{{ prof.office }}</span>
+                        <span>{{ prof.profile.office }}</span>
                       </div>
 
                     </div>
@@ -101,11 +100,11 @@
             </div>
           </td>
           <td>
-            <span class="d-none">{{ prof.supervision_set.count }}</span>
-            {% if prof.supervision_set.count > 0 %}
+            <span class="d-none">{{ prof.graduate_supervision_set.count }}</span>
+            {% if prof.graduate_supervision_set.count > 0 %}
 
               <button class="btn btn-xs btn-info" type="button" data-toggle="modal" data-target="#grad-supervision-modal-{{ prof.id }}">
-                {{ prof.supervision_set.count }}
+                {{ prof.graduate_supervision_set.count }}
               </button>
 
               <div class="modal fade" id="grad-supervision-modal-{{ prof.id }}" tabindex="-1" role="dialog" aria-labelledby="grad-supervision-modal-label-{{ prof.id }}" aria-hidden="true">
@@ -124,7 +123,7 @@
                       <table class="modal-table table">
                         <thead>
                           <tr>
-                            <th>#</th>
+                            <th>GID</th>
                             <th>Professor Role</th>
                             <th>Student</th>
                             <th>Created on</th>
@@ -132,7 +131,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          {% for sup in prof.supervision_set.all %}
+                          {% for sup in prof.graduate_supervision_set.all %}
                           <tr>
                             <td>{{ sup.id }}</td>
                             <td>{{ sup.professor_role }}</td>
@@ -151,21 +150,21 @@
 
             {% else %}
 
-              {{ prof.supervision_set.count }}
+              {{ prof.graduate_supervision_set.count }}
 
             {% endif %}
           </td>
           <td>
-            <span class="d-none">{{ app.created_on|date:"Y m d z" }}</span>
-            {{ prof.created_on }}
+            <span class="d-none">{{ app.profile.created_on|date:"Y m d z" }}</span>
+            {{ prof.profile.created_on }}
           </td>
           <td>
-            <span class="d-none">{{ app.updated_on|date:"Y m d z" }}</span>
-            {{ prof.updated_on }}
+            <span class="d-none">{{ app.profile.updated_on|date:"Y m d z" }}</span>
+            {{ prof.profile.updated_on }}
           </td>
           <td>
-            <button class="btn btn-warning btn-xs fs-xs mb-2" type="button" name="button">Edit</button> <br />
-            <button class="btn btn-danger btn-xs fs-xs" type="button" name="button">Delete</button>
+            <a class="btn btn-xs btn-link fs-sm d-block mb-1" href="{% url 'gp_admin:edit_professor' username=prof.username %}">Edit</a>
+            <a class="btn btn-xs btn-danger fs-sm" href="#">Delete</a>
           </td>
         </tr>
       {% endfor %}

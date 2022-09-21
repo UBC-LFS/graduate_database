@@ -4,10 +4,10 @@
         "pk": 1,
         "fields": {
             "password": "pbkdf2_sha256$150000$o40PKWhQTyaC$8LXfzmFRqlwYH0C2ckjaQfAiYeDy3BKWeBYLerdTiDs=",
-            "username": "hey1.superadmin",
-            "last_name": "Hey1",
+            "username": "haha.superadmin",
+            "last_name": "HaHa",
             "first_name": "Superadmin",
-            "email": "hey1.superadmin@example.com",
+            "email": "haha.superadmin@example.com",
             "is_superuser": true
         }
     },
@@ -16,10 +16,10 @@
         "pk": 2,
         "fields": {
             "password": "pbkdf2_sha256$150000$o40PKWhQTyaC$8LXfzmFRqlwYH0C2ckjaQfAiYeDy3BKWeBYLerdTiDs=",
-            "username": "hey2.admin",
-            "last_name": "Hey2",
+            "username": "haha.admin",
+            "last_name": "HaHa",
             "first_name": "Admin",
-            "email": "hey2.admin@example.com",
+            "email": "haha.admin@example.com",
             "is_superuser": false
         }
     },
@@ -52,10 +52,58 @@
         "pk": 5,
         "fields": {
             "password": "pbkdf2_sha256$150000$o40PKWhQTyaC$8LXfzmFRqlwYH0C2ckjaQfAiYeDy3BKWeBYLerdTiDs=",
-            "username": "user.guest",
-            "last_name": "User",
-            "first_name": "Guest",
-            "email": "user.guest@example.com",
+            "username": "user3.prof",
+            "last_name": "User3",
+            "first_name": "Prof",
+            "email": "user3.prof@example.com",
+            "is_superuser": false
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 6,
+        "fields": {
+            "password": "pbkdf2_sha256$150000$o40PKWhQTyaC$8LXfzmFRqlwYH0C2ckjaQfAiYeDy3BKWeBYLerdTiDs=",
+            "username": "user4.prof",
+            "last_name": "User4",
+            "first_name": "Prof",
+            "email": "user4.prof@example.com",
+            "is_superuser": false
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 7,
+        "fields": {
+            "password": "pbkdf2_sha256$150000$o40PKWhQTyaC$8LXfzmFRqlwYH0C2ckjaQfAiYeDy3BKWeBYLerdTiDs=",
+            "username": "user5.prof",
+            "last_name": "User5",
+            "first_name": "Prof",
+            "email": "user5.prof@example.com",
+            "is_superuser": false
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 8,
+        "fields": {
+            "password": "pbkdf2_sha256$150000$o40PKWhQTyaC$8LXfzmFRqlwYH0C2ckjaQfAiYeDy3BKWeBYLerdTiDs=",
+            "username": "user6.prof",
+            "last_name": "User6",
+            "first_name": "Prof",
+            "email": "user6.prof@example.com",
+            "is_superuser": false
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 9,
+        "fields": {
+            "password": "pbkdf2_sha256$150000$o40PKWhQTyaC$8LXfzmFRqlwYH0C2ckjaQfAiYeDy3BKWeBYLerdTiDs=",
+            "username": "test.guest1",
+            "last_name": "Test",
+            "first_name": "Guest1",
+            "email": "test.guest1@example.com",
             "is_superuser": false
         }
     }

@@ -139,6 +139,14 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     preferred_name = models.CharField(max_length=150, null=True, blank=True)
     roles = models.ManyToManyField(Role)
+
+    title = models.ForeignKey(Title, on_delete=models.SET_NULL, null=True, blank=True)
+    position = models.ForeignKey(Position, on_delete=models.SET_NULL, null=True, blank=True)
+    programs = models.ManyToManyField(Program)
+    phone = models.CharField(max_length=150, null=True, blank=True)
+    fax = models.CharField(max_length=150, null=True, blank=True)
+    office = models.CharField(max_length=150, null=True, blank=True)
+
     created_on = models.DateField(auto_now_add=True)
     updated_on = models.DateField(auto_now=True)
 
@@ -179,10 +187,15 @@ class Student(models.Model):
     current_degree = models.CharField(max_length=150, null=True, blank=True)
     program_code = models.CharField(max_length=20, null=True, blank=True)
     status = models.CharField(max_length=150, null=True, blank=True)
-    start_date = models.DateField(null=True, blank=True)
-    end_date = models.DateField(null=True, blank=True)
+    
     loa_months = models.IntegerField(null=True, blank=True)
     loa_details = models.CharField(max_length=150, null=True, blank=True)
+    policy_85 = models.BooleanField(default=False)
+    note = models.TextField(null=True, blank=True)
+
+    start_date = models.DateField(null=True, blank=True)
+    completion_date = models.DateField(null=True, blank=True)
+    graduation_date = models.DateField(null=True, blank=True)
 
     previous_institution_1 = models.CharField(max_length=150, null=True, blank=True)
     degree_1 = models.CharField(max_length=50, null=True, blank=True)
@@ -194,35 +207,11 @@ class Student(models.Model):
     degree_3 = models.CharField(max_length=50, null=True, blank=True)
     gpa_3 = models.CharField(max_length=20, null=True, blank=True)
 
-    policy_85 = models.BooleanField(default=False)
-
-    note = models.TextField(null=True, blank=True)
-
-    created_on = models.DateField(auto_now_add=True)
-    updated_on = models.DateField(auto_now=True)
-
-    class Meta:
-        ordering = ['last_name', 'first_name']
-
-    def __str__(self):
-        return '{0} {1}'.format(self.last_name, self.first_name)
-
-    def get_full_name(self):
-        return '{0}, {1}'.format(self.last_name, self.first_name)
-
-
-class Professor(models.Model):
-    last_name = models.CharField(max_length=150)
-    first_name = models.CharField(max_length=150)
-    username = models.CharField(max_length=150, unique=True)
-    email = models.CharField(max_length=254, unique=True, null=True, blank=True)
-    title = models.ForeignKey(Title, on_delete=models.SET_NULL, null=True, blank=True)
-    position = models.ForeignKey(Position, on_delete=models.SET_NULL, null=True, blank=True)
-    programs = models.ManyToManyField(Program)
-    is_graduate_advisor = models.BooleanField(default=False)
-    phone = models.CharField(max_length=150, null=True, blank=True)
-    fax = models.CharField(max_length=150, null=True, blank=True)
-    office = models.CharField(max_length=150, null=True, blank=True)
+    thesis_title = models.CharField(max_length=150, null=True, blank=True)
+    current_role = models.CharField(max_length=150, null=True, blank=True)
+    funding_sources = models.CharField(max_length=150, null=True, blank=True)
+    total_funding_awarded = models.CharField(max_length=150, null=True, blank=True)
+    taships = models.CharField(max_length=150, null=True, blank=True)
 
     created_on = models.DateField(auto_now_add=True)
     updated_on = models.DateField(auto_now=True)
@@ -231,17 +220,17 @@ class Professor(models.Model):
         ordering = ['last_name', 'first_name']
 
     def __str__(self):
-        return '{0} {1}'.format(self.last_name, self.first_name)
+        return '{0} {1}, {2}'.format(self.first_name, self.last_name, self.student_number)
 
     def get_full_name(self):
-        return '{0}, {1}'.format(self.last_name, self.first_name)
+        return '{0} {1}'.format(self.first_name, self.last_name)
 
 
-class Supervision(models.Model):
+class Graduate_Supervision(models.Model):
     ''' To make a relationship bewteen students and professors '''
 
     student = models.ForeignKey(Student, on_delete=models.SET_NULL, null=True, blank=True)
-    professor = models.ForeignKey(Professor, on_delete=models.SET_NULL, null=True, blank=True)
+    professor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     professor_role = models.ForeignKey(Professor_Role, on_delete=models.SET_NULL, null=True, blank=True)
 
     created_on = models.DateField(auto_now_add=True)
