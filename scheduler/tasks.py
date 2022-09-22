@@ -18,7 +18,7 @@ from deepdiff import DeepDiff, DeepHash
 
 from gp_admin import api
 
-from gp_admin.models import Sent_Reminder, SIS_Student
+from gp_admin.models import Student, Sent_Reminder
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 PATH = os.path.join(BASE_DIR, 'playground', 'data')
@@ -106,9 +106,7 @@ def read_new_excel(f, stud_nos, items):
     
     return stud_nos, items
 
-def main():
-    print(BASE_DIR)
-    print(PATH)
+def get_sis_students():
     stud_nos = []
     items = []
     for f in listdir(PATH):
@@ -124,50 +122,65 @@ def main():
                
     print(len(stud_nos), len(items))
 
-    old_sis_stduents = SIS_Student.objects.all()
-    old_sis_stduent_nos = [ s.student_number for s in old_sis_stduents ]
+    old_stduents = Student.objects.all()
+    old_stduent_nos = [ s.student_number for s in old_stduents ]
     
     create_students = []
     update_students = []
     new_set = set()
+
     for item in items:
         new_set.add(item['stud_no'])
         hashcode = hashlib.sha256( json.dumps(item).encode('utf-8') ).hexdigest()
-        if item['stud_no'] in old_sis_stduent_nos:
-            student_filtered = SIS_Student.objects.filter(student_number=item['stud_no'])
+        
+        if item['stud_no'] in old_stduent_nos:
+            student_filtered = Student.objects.filter(student_number=item['stud_no'])
+
             if student_filtered.exists() and hashcode != student_filtered.first().hashcode:
                 student = student_filtered.first()
+                student.first_name = item['given_name']
+                student.last_name = item['surname']
+                student.student_number = item['stud_no']
+                student.email = item['email_address']
                 student.json = item
                 student.hashcode = hashcode
                 update_students.append(student)
         else:
-            create_students.append( SIS_Student(student_number=item['stud_no'], json=item, hashcode=hashcode) )
+            create_students.append( Student(
+                first_name = item['given_name'],
+                last_name = item['surname'],
+                student_number = item['stud_no'],
+                email = item['email_address'],
+                json = item, 
+                hashcode = hashcode
+            ) )
 
     # Bulk delete
-    old_set = set(old_sis_stduent_nos)
+    old_set = set(old_stduent_nos)
     delete_student_nos = list(old_set - new_set)
     print('delete_students', len(delete_student_nos))
     if len(delete_student_nos) > 0:
         for student_no in delete_student_nos:
             print(student_no)
-            deleted = SIS_Student.objects.filter(student_number=student_no).delete()
+            deleted = Student.objects.filter(student_number=student_no).delete()
             print(deleted)
 
     # Bulk update
     print('update_students', len(update_students))
     if len(update_students) > 0:
-        updated = SIS_Student.objects.bulk_update(update_students, ['json', 'hashcode'])
+        updated = Student.objects.bulk_update(update_students, ['json', 'hashcode'])
         print('===== updated', updated)
 
     # Bulk create
     print('create_students', len(create_students))
     if len(create_students) > 0:
-        created = SIS_Student.objects.bulk_create(create_students)
+        created = Student.objects.bulk_create(create_students)
         print('===== created', created)
 
 
+    # Testing
     # json_item = json.dumps(items[0])
-    # SIS_Student.objects.create(
+    # Student.objects.create(
     #     student_number = stud_nos[0], 
     #     hashcode = hashlib.sha256(json_item.encode('utf-8')).hexdigest(), 
     #     json = items[0]
@@ -213,16 +226,16 @@ def send_reminders():
                     type = rem.type
                 )
                 print('Success!', stud.id, stud.start_date, new_date, new_date == today)
-                
 
 
 def run():
     print('Scheduling tasks running...')
     # scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
     
-    # scheduler.add_job(main, 'cron', day_of_week='mon-fri', minute='10')
+    # Get SIS students
+    # scheduler.add_job(get_sis_students, 'cron', day_of_week='mon-sun', hour=7, minute='0')
 
     # Send Reminders
-    # scheduler.add_job(send_reminders, 'cron', day_of_week='mon-sun', hour=9, minute='0')
+    # scheduler.add_job(send_reminders, 'cron', day_of_week='mon-sun', hour=15, minute='0')
     
     # scheduler.start()

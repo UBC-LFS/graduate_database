@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.db.models import Q
@@ -14,6 +15,12 @@ from .models import *
 def get_students():
     ''' Get all students '''
     return Student.objects.all()
+
+def get_student(arg):
+    try:
+        return Student.objects.get(student_number=arg)
+    except Studnet.DoesNotExist:
+        raise Http404
 
 
 def get_sis_students():

@@ -9,38 +9,27 @@
     <div class="col-md-2">
       <h2 class="text-center-middle text-center">Students</h2>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-10">
       {% include 'gp_admin/subpages/_search_fields.html' with path='students' %}
-    </div>
-    <div class="col-md-2">
-      <div class="bg-light-gray p-4">
-        <a class="btn btn-primary" href="{% url 'gp_admin:add_student' %}">Add Student</a>
-      </div>
     </div>
   </div>
 
   {% include 'core/subpages/_searched_message.html' with items=students total_items=total_students %}
 
   <table
-    class="table table-striped table-hover table-bordered table-responsive-md text-center table-vertical-middle fs-xs"
+    class="table table-striped table-hover table-bordered table-responsive-md text-center fs-sm"
     data-toggle="table"
     data-sortable="true"
     data-classes=""
   >
     <thead>
       <tr>
-        <th>#</th>
-        <th data-sortable="true">Last <br /> Name</th>
+        <th>SID</th>
         <th data-sortable="true">First <br /> Name</th>
+        <th data-sortable="true">Last <br /> Name</th>
         <th>Student <br /> Number</th>
         <th>Email</th>
-        <th>Additional <br /> Info</th>
-        <th>Current <br /> Degree <br /> Info</th>
-        <th>Previous <br /> Degree <br /> Info</th>
-        <th>Confidential <br /> Info</th>
-        <th>LOA <br /> (Months)</th>
-        <th>LOA <br /> Details</th>
-        <th>Policy 85</th>
+        <th>General <br /> Info</th>
         <th>Note</th>
         <th data-sortable="true">Supervisors</th>
         <th data-sortable="true">Created on</th>
@@ -52,34 +41,17 @@
       {% for stud in students %}
         <tr>
           <td>{{ stud.id }}</td>
-          <td>
-            {{ stud.last_name }}
-            {% if stud.sis_details %}
-              <br />
-              {% include 'gp_admin/subpages/_modal_sis_details.html' with data=stud %}
-            {% endif %}
-          </td>
-          <td>{{ stud.first_name }}</td>
-          <td>{{ stud.student_number }}</td>
-          <td>{{ stud.email }}</td>
-          <td>{% include 'gp_admin/subpages/_modal_additional_info.html' with data=stud %}</td>
-          <td>{% include 'gp_admin/subpages/_modal_curr_degree_info.html' with data=stud %}</td>
-          <td>{% include 'gp_admin/subpages/_modal_prev_degree_info.html' with data=stud %}</td>
-          <td>{% include 'gp_admin/subpages/_modal_confidential_info.html' with data=stud %}</td>
-          <td>{{ stud.loa_months }}</td>
-          <td>{% include 'gp_admin/subpages/_modal_loa_details.html' with data=stud %}</td>
-          <td>
-            {% if stud.policy_85 %}
-              {% include 'gp_admin/subpages/_check_success.html' %}
-            {% endif %}
-          </td>
+          <td>{{ stud.json.given_name }}</td>
+          <td>{{ stud.json.surname }}</td>
+          <td>{{ stud.json.stud_no }}</td>
+          <td>{{ stud.json.email_address }}</td>
+          <td>{% include 'gp_admin/subpages/_modal_general_info.html' with data=stud %}</td>
           <td>
             {% if stud.note %}
               {% include 'gp_admin/subpages/_modal_note.html' with data=stud %}
             {% endif %}
           </td>
           <td>
-
             <span class="d-none">{{ stud.graduate_supervision_set.count }}</span>
             {% if stud.graduate_supervision_set.count > 0 %}
 
@@ -97,13 +69,13 @@
                     <div class="modal-body text-left">
 
                       <h6 class="mb-4">
-                        Student Full Name: <span class="text-dark-blue font-weight-bold">{{ stud.get_full_name }}</span>
+                        Student Full Name: <span class="text-dark-blue">{{ stud.get_full_name }}</span>
                       </h6>
 
                       <table class="modal-table table">
                         <thead>
                           <tr>
-                            <th>#</th>
+                            <th>GSID</th>
                             <th>Professor</th>
                             <th>Professor Role</th>
                             <th>Created on</th>
@@ -136,15 +108,15 @@
 
           </td>
           <td>
-            <span class="d-none">{{ app.created_on|date:"Y m d z" }}</span>
+            <span class="d-none">{{ stud.created_on|date:"Y m d z" }}</span>
             {{ stud.created_on }}
           </td>
           <td>
-            <span class="d-none">{{ app.updated_on|date:"Y m d z" }}</span>
+            <span class="d-none">{{ stud.updated_on|date:"Y m d z" }}</span>
             {{ stud.updated_on }}
           </td>
           <td>
-            <button class="btn btn-warning btn-xs fs-xs mb-2" type="button" name="button">Edit</button> <br />
+            <a class="btn btn-xs btn-link fs-sm d-block mb-1" href="{% url 'gp_admin:edit_student' student_number=stud.student_number %}">Edit</a>
             <button class="btn btn-danger btn-xs fs-xs" type="button" name="button">Delete</button>
           </td>
         </tr>

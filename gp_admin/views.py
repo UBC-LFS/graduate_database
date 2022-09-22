@@ -20,62 +20,62 @@ from scheduler import tasks
 
 
 def index(request):
-    # tasks.main()
+    # tasks.get_sis_students()
     print( request.session.get('loggedin_user') )
-    
+
     return render(request, 'gp_admin/index.html')
 
 
 # Data Tables
 
+def get_sis_students(request):
+    sis_student_list = SIS_Student.objects.all()
+    students = sis_student_list.filter(json__gender="M")
+    student_json = [ s.json for s in sis_student_list ]
+    return render(request, 'gp_admin/data_tables/get_sis_students.html', {
+        'students': student_json,
+        'total_students': len(student_json)
+    })
+
 class Get_Students(View):
     def get(self, request, *args, **kwargs):
-        student_list = Student.objects.all()
-
-        last_name_q = request.GET.get('last_name')
-        first_name_q = request.GET.get('first_name')
-        student_number_q = request.GET.get('student_number')
-        email_q = request.GET.get('email')
-
-        if bool(last_name_q):
-            student_list = student_list.filter(last_name__icontains=last_name_q)
-        if bool(first_name_q):
-            student_list = student_list.filter(first_name__icontains=first_name_q)
-        if bool(student_number_q):
-            student_list = student_list.filter(student_number__icontains=student_number_q)
-        if bool(email_q):
-            student_list = student_list.filter(email__icontains=email_q)
-
-        page = request.GET.get('page', 1)
-        paginator = Paginator(student_list, settings.PAGE_SIZE)
-
-        try:
-            students = paginator.page(page)
-        except PageNotAnInteger:
-            students = paginator.page(1)
-        except EmptyPage:
-            students = paginator.page(paginator.num_pages)
-
-        sis_student_ids = [ s.student_number for s in api.get_sis_students() ]
-        if len(sis_student_ids) > 0:
-            for s in students:
-                if s.student_number in sis_student_ids:
-                    s.sis_details = SIS_Student.objects.filter(student_number=s.student_number).first().json
+        students = Student.objects.all()
 
         return render(request, 'gp_admin/data_tables/get_students.html', {
             'students': students,
-            'total_students': len(student_list)
+            'total_students': len(students)
         })
 
 
-class Add_Student(View):
-    form_class = Student_Form
+class Edit_Student(View):
+    stud_form = Student_Form
 
     def get(self, request, *args, **kwargs):
-        return render(request, 'gp_admin/data_tables/add_student.html', {
-            'students': api.get_students(),
-            'form': self.form_class()
+        stud = api.get_student(kwargs.get('student_number'))
+        return render(request, 'gp_admin/data_tables/edit_student.html', {
+            'stud': stud,
+            'form': self.stud_form(instance=stud),
+            'info': {
+                'btn_label': 'Update',
+                'href': reverse('gp_admin:get_students'),
+                'type': 'edit',
+                'path': 'students'
+            }
         })
+    
+    def post(self, request, *args, **kwargs):
+        stud = api.get_student(kwargs.get('student_number'))
+        form = self.stud_form(request.POST, instance=stud)
+        if form.is_valid():
+            res = form.save()
+            if res:
+                messages.success(request, 'Success! Student ({0}, Student #: {1}) updated'.format(stud.get_full_name(), stud.student_number))
+                return redirect('gp_admin:get_students')
+            else:
+                messages.error(request, 'An error occurred while updating data.')
+        else:
+            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors) )
+        return redirect('gp_admin:edit_student')
 
 
 class Get_Professors(View):
@@ -115,40 +115,6 @@ class Get_Professors(View):
         pass
 
 
-# class Add_Professor(View):
-#     prof_form = Professor_Form
-
-#     def get(self, request, *args, **kwargs):
-#         return render(request, 'gp_admin/data_tables/add_edit_professor.html', {
-#             'professors': api.get_professors(),
-#             'form': self.prof_form(),
-#             'info': {
-#                 'btn_label': 'Create',
-#                 'href': reverse('gp_admin:add_professor'),
-#                 'type': 'add',
-#                 'path': 'professors'
-#             }
-#         })
-    
-#     def post(self, request, *args, **kwargs):
-#         prof_form = self.prof_form(request.POST)
-
-#         if len(errors) == 0:
-#             prof = prof_form.save()
-#             # profile_data = profile_form.cleaned_data
-
-#             # Create a profile and add roles
-#             # profile = Profile.objects.create(user_id=user.id, preferred_name=profile_data.get('preferred_name', None))
-#             # profile.roles.add( *profile_data['roles'] )
-
-#             messages.success(request, 'Success! Professor ({0} {1}, CWL: {2}) created'.format(prof.user.first_name, prof.user.last_name, prof.user.username))
-#             return redirect('gp_admin:get_users')
-#         else:
-#             messages.error(request, 'An error occurred. Form is invalid. {0}'.format(' '.join(errors)) )
-
-#         return redirect('gp_admin:add_user')
-
-
 class Edit_Professor(View):
     prof_form = Professor_Form
 
@@ -159,12 +125,12 @@ class Edit_Professor(View):
             'form': self.prof_form(data=None, instance=prof.profile),
             'info': {
                 'btn_label': 'Update',
-                'href': reverse('gp_admin:add_professor'),
+                'href': reverse('gp_admin:get_professors'),
                 'type': 'edit',
                 'path': 'professors'
             }
         })
-    
+
     def post(self, request, *args, **kwargs):
         prof = api.get_professor(kwargs.get('username'), 'username')
         form = self.prof_form(request.POST, instance=prof.profile)
@@ -175,7 +141,7 @@ class Edit_Professor(View):
         else:
             messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors) )
         return redirect('gp_admin:edit_professor')
-    
+
 
 class Get_Grad_Supervision(View):
     def get(self, request, *args, **kwargs):
@@ -196,7 +162,7 @@ class Add_Grad_Supervision(View):
             'form': self.form,
             'prof_roles': Professor_Role.objects.all()
         })
-    
+
     def post(self, request, *args, **kwargs):
         prof = api.get_professor(kwargs.get('username'), 'username')
         form = self.form(request.POST)
@@ -275,7 +241,7 @@ class Get_Comp_Exams2(View):
 
         reminders = Reminder.objects.all()
         for rem in reminders:
-            print(rem.id, rem.month)
+            print(rem.id, rem.months)
 
         for stud in Student.objects.all():
             pass
@@ -318,7 +284,7 @@ class Get_Comp_Exams(View):
 
 class Sent_Reminders(View):
     def get(self, request, *args, **kwargs):
-        tasks.send_reminders()
+        # tasks.send_reminders()
         sent_reminders = api.sent_reminders()
 
         return render(request, 'gp_admin/data_tables/sent_reminders.html', {
@@ -328,22 +294,6 @@ class Sent_Reminders(View):
 
     def post(self, request, *args, **kwargs):
         pass
-
-
-
-
-def get_sis_students(request):
-    sis_student_list = SIS_Student.objects.all()
-    students = sis_student_list.filter(json__gender="M")
-
-    print(len(students))
-
-    student_json = [ s.json for s in sis_student_list ]
-
-    return render(request, 'gp_admin/data_tables/get_sis_students.html', {
-        'students': student_json,
-        'total_students': len(student_json)
-    })
 
 
 # Users
@@ -356,7 +306,7 @@ class Get_Users(View):
             'users': users,
             'total_users': len(users)
         })
-    
+
     def post(self, request, *args, **kwargs):
         pass
 
@@ -377,7 +327,7 @@ class Add_User(View):
                 'path': 'users'
             }
         })
-    
+
     def post(self, request, *args, **kwargs):
         user_form = self.user_form(request.POST)
         profile_form = self.profile_form(request.POST)
@@ -429,12 +379,12 @@ class Edit_User(View):
                 'type': 'edit'
             }
         })
-    
+
     def post(self, request, *args, **kwargs):
         user = api.get_user(request.POST.get('user'))
         user_form = self.user_form(request.POST, instance=user)
         profile_form = self.profile_form(request.POST, instance=user.profile)
-        
+
         errors = []
         if not user_form.is_valid():
             errors.append( api.get_error_messages(user_form.errors.get_json_data()) )
@@ -451,9 +401,9 @@ class Edit_User(View):
             return redirect('gp_admin:get_users')
         else:
             messages.error(request, 'An error occurred. Form is invalid. {0}'.format(' '.join(errors)) )
-        
+
         return redirect('gp_admin:edit_user')
-        
+
 
 class Get_Roles(View):
     form_class = Role_Form
@@ -463,7 +413,7 @@ class Get_Roles(View):
             'roles': Role.objects.all().order_by('id'),
             'form': self.form_class()
         })
-    
+
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
@@ -475,7 +425,7 @@ class Get_Roles(View):
         else:
             messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
         return redirect('gp_admin:get_roles')
-    
+
 
 @require_http_methods(['POST'])
 def edit_role(request, slug):
@@ -518,7 +468,7 @@ class Get_Statuses(View):
             'statuses': Status.objects.all().order_by('id'),
             'form': self.form_class()
         })
-    
+
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
@@ -569,7 +519,7 @@ class Get_Degrees(View):
             'degrees': Degree.objects.all().order_by('id'),
             'form': self.form_class()
         })
-    
+
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
@@ -611,7 +561,7 @@ def delete_degree(request):
         messages.success(request, 'Success! Degree ({0}) deleted'.format(degree.name))
     else:
         messages.error(request, 'An error occurred.')
-    
+
     return redirect('gp_admin:get_degrees')
 
 
@@ -623,7 +573,7 @@ class Get_Programs(View):
             'programs': Program.objects.all().order_by('id'),
             'form': self.form_class()
         })
-    
+
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
@@ -665,7 +615,7 @@ def delete_program(request):
         messages.success(request, 'Success! Program ({0}) deleted'.format(program.name))
     else:
         messages.error(request, 'An error occurred.')
-    
+
     return redirect('gp_admin:get_programs')
 
 
@@ -677,7 +627,7 @@ class Get_Titles(View):
             'titles': Title.objects.all().order_by('id'),
             'form': self.form_class()
         })
-    
+
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
@@ -718,7 +668,7 @@ def delete_title(request):
         messages.success(request, 'Success! Title ({0}) deleted'.format(title.name))
     else:
         messages.error(request, 'An error occurred.')
-    
+
     return redirect('gp_admin:get_titles')
 
 
@@ -730,7 +680,7 @@ class Get_Positions(View):
             'positions': Position.objects.all().order_by('id'),
             'form': self.form_class()
         })
-    
+
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
@@ -771,7 +721,7 @@ def delete_position(request):
         messages.success(request, 'Success! Position ({0}) deleted'.format(position.name))
     else:
         messages.error(request, 'An error occurred.')
-    
+
     return redirect('gp_admin:get_positions')
 
 
@@ -784,7 +734,7 @@ class Get_Professor_Roles(View):
             'professor_roles': Professor_Role.objects.all().order_by('id'),
             'form': self.form_class()
         })
-    
+
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
@@ -835,13 +785,13 @@ class Get_Reminders(View):
             'reminders': Reminder.objects.all().order_by('id'),
             'form': self.reminder_form()
         })
-    
+
     def post(self, request, *args, **kwargs):
         form = self.reminder_form(request.POST)
         if form.is_valid():
             res = form.save()
             if res:
-                messages.success(request, 'Success! Reminder (Type: {0} and Month: {1}) created.'.format(res.type, res.month))
+                messages.success(request, 'Success! Reminder (Type: {0} and Months: {1}) created.'.format(res.type, res.months))
             else:
                 messages.error(request, 'An error occurred while saving data.')
         else:
@@ -857,14 +807,14 @@ class Edit_Reminder(View):
         return render(request, 'gp_admin/data_tables/edit_reminder.html', {
             'form': self.reminder_form(data=None, instance=reminder)
         })
-    
+
     def post(self, request, *args, **kwargs):
         reminder = api.get_reminder(kwargs['slug'], 'slug')
         form = self.reminder_form(request.POST, instance=reminder)
         if form.is_valid():
             res = form.save()
             if res:
-                messages.success(request, 'Success! Reminder (Type: {0} and Month: {1}) updated.'.format(res.type, res.month))
+                messages.success(request, 'Success! Reminder (Type: {0} and Months: {1}) updated.'.format(res.type, res.months))
             else:
                 messages.error(request, 'An error occurred while updating data.')
         else:
@@ -881,5 +831,42 @@ def delete_reminder(request):
         messages.success(request, 'Success! Reminder (Type: {0}) deleted'.format(reminder.type))
     else:
         messages.error(request, 'An error occurred while deleting it.')
-    
+
     return redirect('gp_admin:get_reminders')
+
+
+
+
+# class Add_Professor(View):
+#     prof_form = Professor_Form
+
+#     def get(self, request, *args, **kwargs):
+#         return render(request, 'gp_admin/data_tables/add_edit_professor.html', {
+#             'professors': api.get_professors(),
+#             'form': self.prof_form(),
+#             'info': {
+#                 'btn_label': 'Create',
+#                 'href': reverse('gp_admin:add_professor'),
+#                 'type': 'add',
+#                 'path': 'professors'
+#             }
+#         })
+
+#     def post(self, request, *args, **kwargs):
+#         prof_form = self.prof_form(request.POST)
+
+#         if len(errors) == 0:
+#             prof = prof_form.save()
+#             # profile_data = profile_form.cleaned_data
+
+#             # Create a profile and add roles
+#             # profile = Profile.objects.create(user_id=user.id, preferred_name=profile_data.get('preferred_name', None))
+#             # profile.roles.add( *profile_data['roles'] )
+
+#             messages.success(request, 'Success! Professor ({0} {1}, CWL: {2}) created'.format(prof.user.first_name, prof.user.last_name, prof.user.username))
+#             return redirect('gp_admin:get_users')
+#         else:
+#             messages.error(request, 'An error occurred. Form is invalid. {0}'.format(' '.join(errors)) )
+
+#         return redirect('gp_admin:add_user')
+

@@ -3,36 +3,23 @@
 
 {% include 'gp_admin/subpages/_menu.html' %}
 
-<div class="container mt-5">
+<div class="container max-width-container">
 
   <div class="row">
-    <div class="col-md-4 pl-0">
-
-      <aside>
-        <div class="bg-prompt text-center">
-          <div class="prompt p-4 mb-4">
-            <h3>Add Student</h3>
-            <hr />
-            <p>There are currently <span class="font-weight-bold text-chocolate">{{ students|length }}</span> students.</p>
-          </div>
-        </div>
-      </aside>
+    <div class="col-md-4">
+      {% include 'core/subpages/_left_aside.html' with data=stud type=info.type path=info.path %}
 
       <div class="left-aside-btn-groups">
         <a class="btn btn-outline-primary" href="{% url 'gp_admin:get_students' %}">Back to Students</a>
       </div>
     </div>
 
-    <div class="col-md-8 pr-0">
+    <div class="col-md-8">
 
-      <div class="board">
-        <h3>Student Create Form</h3>
+      <div class="board col-11 mx-auto">
+        <h3>Student Form</h3>
 
-        <div class="bg-white border p-3">
-          <ul class="text-dark mb-0">
-            <li>All required fields must be filled. (<small class="text-danger"><i class="fa fa-asterisk" aria-hidden="true"></i></small>: This field is required)</li>
-          </ul>
-        </div>
+        {% include 'core/subpages/_form_note.html' %}
 
         <form action="" method="post">
           {% csrf_token %}

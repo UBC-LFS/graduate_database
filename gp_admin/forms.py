@@ -16,40 +16,40 @@ class Student_Form(forms.ModelForm):
         widget = forms.widgets.DateInput(attrs={'type': 'date', 'class':'form-control'}),
         label = 'Date of Birth'
     )
-
     start_date = forms.DateField(
         required = False,
         widget = forms.widgets.DateInput(attrs={'type': 'date', 'class':'form-control'}),
         label = 'Start Date'
     )
+    completion_date = forms.DateField(
+        required = False,
+        widget = forms.widgets.DateInput(attrs={'type': 'date', 'class':'form-control'}),
+        label = 'Completion Date'
+    )
+    graduation_date = forms.DateField(
+        required = False,
+        widget = forms.widgets.DateInput(attrs={'type': 'date', 'class':'form-control'}),
+        label = 'Graduation Date'
+    )
+    comprehensive_exam_date = forms.DateField(
+        required = False,
+        widget = forms.widgets.DateInput(attrs={'type': 'date', 'class':'form-control'}),
+        label = 'Comprehensive Exam Date'
+    )
 
     class Meta:
         model = Student
         fields = [
-            'middle_name', 'student_number', 'gender', 'date_of_birth', 
-            'phone_work', 'phone_home', 'address', 'city', 'province', 'postal_code', 'country', 'perm_address', 
-            'foreign_domestic', 'sin', 'current_degree', 'program_code', 'status', 'start_date', 'loa_months', 'loa_details',
-            'previous_institution_1', 'degree_1', 'gpa_1', 'previous_institution_2', 'degree_2', 'gpa_2', 'previous_institution_3',
-            'degree_3', 'gpa_3', 'policy_85', 'note'
+            'date_of_birth', 'phone', 'sin', 'loa_months', 'loa_details', 'policy_85', 
+            'status', 'start_date', 'completion_date', 'graduation_date', 'comprehensive_exam_date',
+            'previous_institution_1', 'degree_1', 'gpa_1', 'previous_institution_2', 'degree_2', 'gpa_2', 'previous_institution_3', 'degree_3', 'gpa_3',
+            'thesis_title', 'funding_sources', 'total_funding_awarded', 'taships', 'current_role', 'note' 
         ]
         widgets = {
-            'middle_name': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'student_number': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'phone_work': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'phone_home': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'address': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'city': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'province': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'postal_code': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'country': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'perm_address': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'sin': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'current_degree': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'program_code': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'status': forms.TextInput(attrs={ 'class': 'form-control' }),
+            'phone': forms.TextInput(attrs={ 'class': 'form-control' }),
+            'sin': forms.TextInput(attrs={ 'class': 'form-control' }), 
             'loa_months': forms.TextInput(attrs={ 'type':'number', 'class': 'form-control' }),
             'loa_details': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'note': forms.Textarea(attrs={'class': 'form-control'}),
             'previous_institution_1': forms.TextInput(attrs={ 'class': 'form-control' }),
             'degree_1': forms.TextInput(attrs={ 'class': 'form-control' }),
             'gpa_1': forms.TextInput(attrs={ 'class': 'form-control' }),
@@ -58,19 +58,16 @@ class Student_Form(forms.ModelForm):
             'gpa_2': forms.TextInput(attrs={ 'class': 'form-control' }),
             'previous_institution_3': forms.TextInput(attrs={ 'class': 'form-control' }),
             'degree_3': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'gpa_3': forms.TextInput(attrs={ 'class': 'form-control' })
+            'gpa_3': forms.TextInput(attrs={ 'class': 'form-control' }),
+            'thesis_title': forms.TextInput(attrs={ 'class': 'form-control' }), 
+            'funding_sources': forms.TextInput(attrs={ 'class': 'form-control' }), 
+            'total_funding_awarded': forms.TextInput(attrs={ 'class': 'form-control' }), 
+            'taships': forms.TextInput(attrs={ 'class': 'form-control' }), 
+            'current_role': forms.TextInput(attrs={ 'class': 'form-control' }),
+            'note': SummernoteWidget()
         }
         labels = {
-            'middle_name': 'Middle Name',
-            'student_number': 'Student Number',
-            'postal_code': 'Postal Code',
-            'phone_work': 'Phone Number (Work)',
-            'phone_home': 'Phone Number (Home)',
-            'perm_address': 'Permanent Address',
-            'foreign_domestic': 'Foreign/Domestic',
             'sin': 'SIN',
-            'current_degree': 'Current Degree',
-            'program_code': 'Program Code',
             'loa_months': 'LOA (Months)',
             'loa_details': 'LOA Details',
             'previous_institution_1': 'Previous Institution 1',
@@ -81,31 +78,23 @@ class Student_Form(forms.ModelForm):
             'gpa_3': 'GPA 3',
         }
         help_texts = {
-            'middle_name': 'Maximum characters: 150',
-            'student_number': 'Maximum characters: 8',
-            'email': 'This field is unique. Maximum characters: 150',
-            'phone_work': 'Maximum characters: 20',
-            'phone_home': 'Maximum characters: 20',
-            'address': 'Maximum characters: 150',
-            'city': 'Maximum characters: 150',
-            'province': 'Maximum characters: 150',
-            'postal_code': 'Maximum characters: 20',
-            'country': 'Maximum characters: 150',
-            'perm_address': 'Maximum characters: 150',
-            'sin': 'Maximum characters: 20',
-            'current_degree': 'Maximum characters: 150',
-            'program_code': 'Maximum characters: 20',
-            'status': 'Maximum characters: 150',
-            'loa_details': 'Maximum characters: 150',
-            'previous_institution_1': 'Maximum characters: 150',
+            'phone': 'Maximum length is 20 characters.',
+            'sin': 'Maximum length is 20 characters.',
+            'loa_details': 'Maximum length is 150 characters.',
+            'previous_institution_1': 'Maximum length is 150 characters.',
             'degree_1': 'Maximum characters: 50',
-            'gpa_1': 'Maximum characters: 20',
-            'previous_institution_2': 'Maximum characters: 150',
+            'gpa_1': 'Maximum length is 20 characters.',
+            'previous_institution_2': 'Maximum length is 150 characters.',
             'degree_2': 'Maximum characters: 50',
-            'gpa_2': 'Maximum characters: 20',
-            'previous_institution_3': 'Maximum characters: 150',
+            'gpa_2': 'Maximum length is 20 characters.',
+            'previous_institution_3': 'Maximum length is 150 characters.',
             'degree_3': 'Maximum characters: 50',
-            'gpa_3': 'Maximum characters: 20'
+            'gpa_3': 'Maximum length is 20 characters.',
+            'thesis_title': 'Maximum length is 150 characters.', 
+            'funding_sources': 'Maximum length is 150 characters.', 
+            'total_funding_awarded': 'Maximum length is 150 characters.', 
+            'taships': 'Maximum length is 150 characters.', 
+            'current_role': 'Maximum length is 150 characters.'
         }
 
 
@@ -276,7 +265,7 @@ class Role_Form(forms.ModelForm):
             'name': forms.TextInput(attrs={ 'class':'form-control' })
         }
         help_texts = {
-            'name': 'This is a required and unique field. Maximum characters: 150',
+            'name': 'This is a required and unique field. Maximum length is 150 characters.',
         }
 
 
@@ -290,7 +279,7 @@ class Status_Form(forms.ModelForm):
             'name': forms.TextInput(attrs={ 'class':'form-control' })
         }
         help_texts = {
-            'name': 'This is a required and unique field. Maximum characters: 150',
+            'name': 'This is a required and unique field. Maximum length is 150 characters.',
         }
 
 
@@ -303,8 +292,8 @@ class Degree_Form(forms.ModelForm):
             'code': forms.TextInput(attrs={ 'class':'form-control' })
         }
         help_texts = {
-            'name': 'This is a required and unique field. Maximum characters: 150',
-            'code': 'This is a required and unique field. Maximum characters: 10',
+            'name': 'This is a required and unique field. Maximum length is 150 characters.',
+            'code': 'This is a required and unique field. Maximum length is 10 characters.',
         }
 
 
@@ -317,8 +306,8 @@ class Program_Form(forms.ModelForm):
             'code': forms.TextInput(attrs={ 'class':'form-control' })
         }
         help_texts = {
-            'name': 'This is a required and unique field. Maximum characters: 150',
-            'code': 'This is a required and unique field. Maximum characters: 10',
+            'name': 'This is a required and unique field. Maximum length is 150 characters.',
+            'code': 'This is a required and unique field. Maximum length is 10 characters.',
         }
 
 
@@ -330,7 +319,7 @@ class Title_Form(forms.ModelForm):
             'name': forms.TextInput(attrs={ 'class':'form-control' })
         }
         help_texts = {
-            'name': 'This is a required and unique field. Maximum characters: 150',
+            'name': 'This is a required and unique field. Maximum length is 150 characters.',
         }
 
 class Position_Form(forms.ModelForm):
@@ -341,7 +330,7 @@ class Position_Form(forms.ModelForm):
             'name': forms.TextInput(attrs={ 'class':'form-control' })
         }
         help_texts = {
-            'name': 'This is a required and unique field. Maximum characters: 150',
+            'name': 'This is a required and unique field. Maximum length is 150 characters.',
         }
 
 class Professor_Role_Form(forms.ModelForm):
@@ -352,7 +341,7 @@ class Professor_Role_Form(forms.ModelForm):
             'name': forms.TextInput(attrs={ 'class':'form-control' })
         }
         help_texts = {
-            'name': 'This is a required and unique field. Maximum characters: 150',
+            'name': 'This is a required and unique field. Maximum length is 150 characters.',
         }
 
 
@@ -367,8 +356,8 @@ class Reminder_Form(forms.ModelForm):
             'months': forms.TextInput(attrs={ 'class':'form-control' })
         }
         help_texts = {
-            'title': 'This is a required field. Maximum characters: 150',
+            'title': 'This is a required field. Maximum length is 150 characters.',
             'message': 'This is a required field.',
-            'type': 'This is a required and unique field. Maximum characters: 150',
+            'type': 'This is a required and unique field. Maximum length is 150 characters.',
             'months': 'This is a required field. Must be numeric (Minimun value: 1, Maximum Value: 200)'
         }

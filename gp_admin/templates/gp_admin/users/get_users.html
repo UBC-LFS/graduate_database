@@ -13,7 +13,9 @@
       {% include 'gp_admin/subpages/_search_fields.html' with path='users' %}
     </div>
     <div class="col-md-2">
-      <a class="btn btn-primary" href="{% url 'gp_admin:add_user' %}">Add User</a>
+      <div class="item-hv-center">
+        <a class="btn btn-primary" href="{% url 'gp_admin:add_user' %}">Add User</a>
+      </div>
     </div>
   </div>
 
@@ -29,7 +31,7 @@
       <tr>
         <th>UID</th>
         <th data-sortable="true">First <br /> Name</th>
-        <th data-sortable="true">Last <br /> Name</th>        
+        <th data-sortable="true">Last <br /> Name</th>
         <th>Preferred <br /> Name</th>
         <th>CWL</th>
         <th>Email</th>

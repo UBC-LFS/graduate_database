@@ -24,11 +24,15 @@
           <h5>{{ data.get_full_name }}</h5>
           <p class="my-1">{{ data.username }}</p>
 
-          {% for role in data.profile.roles.all %}
-            {% include 'core/subpages/_role.html' with data=role.name %}
-          {% empty %}
-            None
-          {% endfor %}
+          {% if path == 'students' %}
+            {% include 'core/subpages/_role.html' with data='Student' %}
+          {% else %}
+            {% for role in data.profile.roles.all %}
+              {% include 'core/subpages/_role.html' with data=role.name %}
+            {% empty %}
+              None
+            {% endfor %}
+          {% endif %}
 
         {% endif %}
 

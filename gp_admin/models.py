@@ -161,42 +161,23 @@ class Profile(models.Model):
 
 
 class Student(models.Model):
-    GENDER_CHOICES = [ ('F', 'Female'), ('M', 'Male') ]
-    NATIONALITY_CHOICES = [ ('C', 'CDN'), ('P', 'PERM'), ('S', 'STUV') ]
-
-    last_name = models.CharField(max_length=150)
     first_name = models.CharField(max_length=150)
-    middle_name = models.CharField(max_length=150, null=True, blank=True)
+    last_name = models.CharField(max_length=150)
     student_number = models.CharField(max_length=8, unique=True)
-    email = models.CharField(max_length=150)
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
+    email = models.CharField(max_length=150, unique=True)
+
     date_of_birth = models.DateField(null=True, blank=True)
-    phone_work = models.CharField(max_length=20, null=True, blank=True)
-    phone_home = models.CharField(max_length=20, null=True, blank=True)
-
-    address = models.CharField(max_length=150, null=True, blank=True)
-    city = models.CharField(max_length=150, null=True, blank=True)
-    province = models.CharField(max_length=150, null=True, blank=True)
-    postal_code = models.CharField(max_length=20, null=True, blank=True)
-    country = models.CharField(max_length=150, null=True, blank=True)
-    perm_address = models.CharField(max_length=150, null=True, blank=True)
-
-    foreign_domestic = models.CharField(max_length=1, choices=NATIONALITY_CHOICES, null=True, blank=True)
+    phone = models.CharField(max_length=20, null=True, blank=True)
     sin = models.CharField(max_length=20, null=True, blank=True)
-    
-    current_degree = models.CharField(max_length=150, null=True, blank=True)
-    program_code = models.CharField(max_length=20, null=True, blank=True)
-    status = models.CharField(max_length=150, null=True, blank=True)
-    
     loa_months = models.IntegerField(null=True, blank=True)
     loa_details = models.CharField(max_length=150, null=True, blank=True)
     policy_85 = models.BooleanField(default=False)
-    note = models.TextField(null=True, blank=True)
-
+    
+    status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True, blank=True)
     start_date = models.DateField(null=True, blank=True)
-    comprehensive_exam_date = models.DateField(null=True, blank=True)
     completion_date = models.DateField(null=True, blank=True)
     graduation_date = models.DateField(null=True, blank=True)
+    comprehensive_exam_date = models.DateField(null=True, blank=True)
 
     previous_institution_1 = models.CharField(max_length=150, null=True, blank=True)
     degree_1 = models.CharField(max_length=50, null=True, blank=True)
@@ -209,10 +190,15 @@ class Student(models.Model):
     gpa_3 = models.CharField(max_length=20, null=True, blank=True)
 
     thesis_title = models.CharField(max_length=150, null=True, blank=True)
-    current_role = models.CharField(max_length=150, null=True, blank=True)
     funding_sources = models.CharField(max_length=150, null=True, blank=True)
     total_funding_awarded = models.CharField(max_length=150, null=True, blank=True)
     taships = models.CharField(max_length=150, null=True, blank=True)
+    current_role = models.CharField(max_length=150, null=True, blank=True)
+
+    note = models.TextField(null=True, blank=True)
+
+    json = models.JSONField()
+    hashcode = models.CharField(max_length=255)    
 
     created_on = models.DateField(auto_now_add=True)
     updated_on = models.DateField(auto_now=True)
@@ -221,7 +207,7 @@ class Student(models.Model):
         ordering = ['last_name', 'first_name']
 
     def __str__(self):
-        return '{0} {1}, {2}'.format(self.first_name, self.last_name, self.student_number)
+        return '{0} {1}'.format(self.first_name, self.last_name)
 
     def get_full_name(self):
         return '{0} {1}'.format(self.first_name, self.last_name)

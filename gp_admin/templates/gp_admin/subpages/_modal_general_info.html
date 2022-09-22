@@ -1,0 +1,190 @@
+<button class="btn btn-xs btn-link fs-sm" type="button" data-toggle="modal" data-target="#general-info-modal-{{ data.id }}">
+  View
+</button>
+
+<div class="modal fade" id="general-info-modal-{{ data.id }}" tabindex="-1" role="dialog" aria-labelledby="general-info-modal-label-{{ data.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-info" id="general-info-modal-label-{{ data.id }}">General Information</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body text-left">
+
+        <div class="row">
+          <div class="col-6 modal-item">
+            <h5 class="text-primary mb-3">SIS Details</h5>
+
+            <div>
+              <h6>Middle Name:</h6>
+              <span>{{ data.json.middle_name }}</span>
+            </div>
+            <div>
+              <h6>Preferred Name:</h6>
+              <span>{{ data.json.preferred_name }}</span>
+            </div>
+            <div>
+              <h6>Gender:</h6>
+              <span>{{ data.json.gender }}</span>
+            </div>
+            <div>
+              <h6>DEGR PGM CD:</h6>
+              <span>{{ data.json.degr_pgm_cd }}</span>
+            </div>
+            <div>
+              <h6>SPEC1 PRIM SUBJ CD:</h6>
+              <span>{{ data.json.spec1_prim_subj_cd }}</span>
+            </div>
+            <div>
+              <h6>Address1:</h6>
+              <span>{{ data.json.addr1 }}</span>
+            </div>
+            <div>
+              <h6>Address2:</h6>
+              <span>{{ data.json.addr2 }}</span>
+            </div>
+            <div>
+              <h6>City:</h6>
+              <span>{{ data.json.city }}</span>
+            </div>
+            <div>
+              <h6>Province State:</h6>
+              <span>{{ data.json.province_state }}</span>
+            </div>
+            <div>
+              <h6>Country CD:</h6>
+              <span>{{ data.json.country_cd }}</span>
+            </div>
+            <div>
+              <h6>Country:</h6>
+              <span>{{ data.json.country }}</span>
+            </div>
+            <div>
+              <h6>Postal CD:</h6>
+              <span>{{ data.json.postal_cd }}</span>
+            </div>
+            <div>
+              <h6>Country of Citizenship:</h6>
+              <span>{{ data.json.country_of_citizenship }}</span>
+            </div>
+            <div>
+              <h6>Citizenship:</h6>
+              <span>{{ data.json.citizenship }}</span>
+            </div>
+            <div>
+              <h6>Visa Type CD:</h6>
+              <span>{{ data.json.visa_type_cd }}</span>
+            </div>
+            <div>
+              <h6>DOM/INTL:</h6>
+              <span>{{ data.json.dom_intl }}</span>
+            </div>
+          </div>
+          <div class="col-6 modal-item">
+            <div>
+              <h6>Date of Birth:</h6>
+              <span>{{ data.date_of_birth }}</span>
+            </div>
+            <div>
+              <h6>Phone:</h6>
+              <span>{{ data.phone }}</span>
+            </div>
+            <div>
+              <h6>SIN:</h6>
+              <span>{{ data.sin }}</span>
+            </div>
+            <div>
+              <h6>LOA Months:</h6>
+              <span>{{ data.loa_months }}</span>
+            </div>
+            <div>
+              <h6>LOA Details:</h6>
+              <span>{{ data.loa_details }}</span>
+            </div>
+            <div>
+              <h6>Policy 85:</h6>
+              <span>{{ data.policy_85 }}</span>
+            </div>
+            <div>
+              <h6>Status:</h6>
+              <span>{{ data.status.name }}</span>
+            </div>
+            <div>
+              <h6>Start Date:</h6>
+              <span>{{ data.start_date }}</span>
+            </div>
+            <div>
+              <h6>Completion Date:</h6>
+              <span>{{ data.completion_date }}</span>
+            </div>
+            <div>
+              <h6>Graduation Date:</h6>
+              <span>{{ data.graduation_date }}</span>
+            </div>
+            <div>
+              <h6>Comprehensive Exam Date:</h6>
+              <span>{{ data.comprehensive_exam_date }}</span>
+            </div>
+            <div>
+              <h6>Previous Institution 1:</h6>
+              <span>{{ data.previous_institution_1 }}</span>
+            </div>
+            <div>
+              <h6>Degree 1:</h6>
+              <span>{{ data.degree_1 }}</span>
+            </div>
+            <div>
+              <h6>GPA 1:</h6>
+              <span>{{ data.gpa_1 }}</span>
+            </div>
+            <div>
+              <h6>Previous Institution 2:</h6>
+              <span>{{ data.previous_institution_2 }}</span>
+            </div>
+            <div>
+              <h6>Degree 2:</h6>
+              <span>{{ data.degree_2 }}</span>
+            </div>
+            <div>
+              <h6>GPA 2:</h6>
+              <span>{{ data.gpa_2 }}</span>
+            </div>
+            <div>
+              <h6>Previous Institution 3:</h6>
+              <span>{{ data.previous_institution_3 }}</span>
+            </div>
+            <div>
+              <h6>Degree 3:</h6>
+              <span>{{ data.degree_3 }}</span>
+            </div>
+            <div>
+              <h6>GPA 3:</h6>
+              <span>{{ data.gpa_3 }}</span>
+            </div>
+            <div>
+              <h6>Thesis Title:</h6>
+              <span>{{ data.thesis_title }}</span>
+            </div>
+            <div>
+              <h6>Funding Sources:</h6>
+              <span>{{ data.funding_sources }}</span>
+            </div>
+            <div>
+              <h6>Total Funding Awarded:</h6>
+              <span>{{ data.total_funding_awarded }}</span>
+            </div>
+            <div>
+              <h6>TAships:</h6>
+              <span>{{ data.taships }}</span>
+            </div>
+            <div>
+              <h6>Current Role:</h6>
+              <span>{{ data.current_role }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

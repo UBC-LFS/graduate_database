@@ -9,7 +9,7 @@ urlpatterns = [
     # Data Tables
 
     path('students/', views.Get_Students.as_view(), name='get_students'),
-    path('student/add/', views.Add_Student.as_view(), name='add_student'),
+    path('students/<str:student_number>/edit/', views.Edit_Student.as_view(), name='edit_student'),
 
     path('professors/', views.Get_Professors.as_view(), name='get_professors'),
     path('professors/<str:username>/edit/', views.Edit_Professor.as_view(), name='edit_professor'),
@@ -21,12 +21,9 @@ urlpatterns = [
     path('api/graduate-supervision/<str:username>/delete/', views.delete_grad_supervision, name='delete_grad_supervision'),
     
     path('comprehensive-exams/', views.Get_Comp_Exams.as_view(), name='get_comp_exams'),
-    path('comprehensive-exams/reminders/', views.Get_Reminders.as_view(), name='get_reminders'),
-    path('comprehensive-exams/reminders/<str:slug>/edit/', views.Edit_Reminder.as_view(), name='edit_reminder'),
-    path('api/comprehensive-exams/reminder/delete/', views.delete_reminder, name='delete_reminder'),
     path('reminders/sent/', views.Sent_Reminders.as_view(), name='sent_reminders'),
 
-    path('students/sis/', views.get_sis_students, name='get_sis_students'),
+    # path('students/sis/', views.get_sis_students, name='get_sis_students'),
 
 
     # Users
@@ -64,5 +61,9 @@ urlpatterns = [
     path('preparation/professor-roles/', views.Get_Professor_Roles.as_view(), name='get_professor_roles'),
     path('api/professor-roles/<str:slug>/edit/', views.edit_professor_role, name='edit_professor_role'),
     path('api/professor-role/delete/', views.delete_professor_role, name='delete_professor_role'),
+
+    path('preparation/reminders/', views.Get_Reminders.as_view(), name='get_reminders'),
+    path('preparation/reminders/<str:slug>/edit/', views.Edit_Reminder.as_view(), name='edit_reminder'),
+    path('api/preparation/comprehensive-exams/reminder/delete/', views.delete_reminder, name='delete_reminder')
    
 ]

@@ -7,13 +7,8 @@
 
   <div class="row">
     <div class="col-md-4">
-
-      {% if info.type == 'add' %}
-        {% include 'core/subpages/_left_aside.html' with title='New Professor' total=professors|length type=info.type path=info.path %}
-      {% else %}
-        {% include 'core/subpages/_left_aside.html' with data=prof type=info.type %}
-      {% endif %}
-
+      {% include 'core/subpages/_left_aside.html' with data=prof type=info.type %}
+      
       <div class="left-aside-btn-groups">
         <a class="btn btn-outline-primary" href="{% url 'gp_admin:get_professors' %}">Back to Professors</a>
       </div>
@@ -21,7 +16,7 @@
 
     <div class="col-md-8">
 
-      <div class="board">
+      <div class="board col-11 mx-auto">
         <h3>Professor Form</h3>
 
         {% include 'core/subpages/_form_note.html' %}

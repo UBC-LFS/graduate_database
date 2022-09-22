@@ -6,37 +6,38 @@
 <div class="container max-width-container">
 
   <div class="row">
-    <div class="col-md-3">
-
-      <div class="bg-prompt">
-        <div class="prompt p-4 mb-4">
-          <h4>Setup Exam Reminders</h4>
+    <div class="col-md-4">
+      <div class="col-10 mx-auto">
+        <div class="bg-prompt">
+          <div class="prompt p-4 mb-4">
+            <h4>Setup Exam Reminders</h4>
+          </div>
         </div>
-      </div>
 
-      <div class="left-aside-btn-groups">
-        <a class="btn btn-outline-primary" href="{% url 'gp_admin:get_comp_exams' %}">Back to Comprehensive Exams</a>
-      </div>
+        <div class="left-aside-btn-groups">
+          <a class="btn btn-outline-primary" href="{% url 'gp_admin:get_comp_exams' %}">Back to Comprehensive Exams</a>
+        </div>
 
-      {% include 'gp_admin/subpages/_reminder_note.html' %}
+        {% include 'gp_admin/subpages/_reminder_note.html' %}
+      </div>
     </div>
 
-    <div class="col-md-9">
+    <div class="col-md-8">
 
-      <div class="col-11 mx-auto">
-        <h4 class="mb-3">
+      <div class="board col-11 mx-auto">
+        <h5 class="mb-3">
           Reminders
           <small class="text-dark-gray">(Total: {{ reminders|length }})</small>
-        </h4>
+        </h5>
 
-        <table class="table table-bordered table-hover table-striped table-responsive-md text-center">
+        <table class="table table-responsive-md border bg-white text-center">
           <thead>
             <tr>
               <th>RID</th>
               <th>Title</th>
               <th>Message</th>
               <th>Type</th>
-              <th>Month</th>
+              <th>Months</th>
               <th>Created at</th>
               <th>Updated at</th>
               <th>Actions</th>
@@ -59,8 +60,8 @@
                           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         </div>
                         <div class="modal-body text-left">
-                          <div class="h6 text-chocolate mb-3">
-                            Type: {{ reminder.type }}, Month: {{ reminder.month }}
+                          <div class="h6 text-dark-blue mb-3">
+                            Type: {{ reminder.type }}, Months: {{ reminder.months }}
                           </div>
 
                           <h5>{{ reminder.title }}</h5>
@@ -73,7 +74,7 @@
                   </div>
                 </td>
                 <td>{{ reminder.type }}</td>
-                <td>{{ reminder.month }}</td>
+                <td>{{ reminder.months }}</td>
                 <td>{{ reminder.created_at }}</td>
                 <td>{{ reminder.updated_at }}</td>
                 <td>
@@ -96,7 +97,7 @@
           </tbody>
         </table>
 
-        <h4 class="text-primary mt-5">Create Reminder</h4>
+        <h3 class="text-primary mt-5">Create Reminder</h3>
 
         <form action="" method="post">
           {% csrf_token %}

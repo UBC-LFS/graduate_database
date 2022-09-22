@@ -208,12 +208,13 @@ main {
 
 .left-aside-btn-groups {
   text-align: center;
-  margin-top: 1.5rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }
 
 .board {
   background-color: #f3f7f7;
-  padding: 2rem;
+  padding: 3rem;
 }
 
 .board h3 {
@@ -260,23 +261,19 @@ main {
   margin-bottom: 0;
 }
 
-/*.modal-item > div > div:not(:last-child) {
-  margin-bottom: 1.5rem;
-}*/
-
 .modal-item > div > h6,
 .modal-item > div > span {
   display: inline-block;
 }
 
 .modal-item > div > h6 {
-  color: #0D47A1;
+  color: #474d52;
   font-weight: 600;
   margin-bottom: 0.2rem;
 }
 
 .modal-item > div > span {
-  color: #474d52;
+  color: #0D47A1;
   font-size: 1rem;
 }
 
@@ -392,9 +389,18 @@ input[type=radio] {
   height: 100%;
 }
 
-.item-vertical-center {
+.item-v-center {
   display: flex;
   align-items: center;
+  height: 100%;
+}
+
+.item-hv-center {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  align-items: center;
+  height: 100%;
 }
 
 .list-no-bullets {
@@ -405,6 +411,14 @@ input[type=radio] {
 
 .list-left-20 {
   margin-left: 20px;
+}
+
+.list-left-30 {
+  margin-left: 30px;
+}
+
+.list-left-40 {
+  margin-left: 40px;
 }
 
 .badge-orange {

@@ -10,4 +10,4 @@ vagrant
 assets/staticfiles
 core/settings.py
 Thumbs.db
-core/fixtures
+gp_admin/fixtures
