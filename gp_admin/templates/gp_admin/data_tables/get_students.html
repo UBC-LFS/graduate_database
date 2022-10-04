@@ -29,7 +29,7 @@
         <th data-sortable="true">Last <br /> Name</th>
         <th>Student <br /> Number</th>
         <th>Email</th>
-        <th>General <br /> Info</th>
+        <th>Additional <br /> Info</th>
         <th>Note</th>
         <th data-sortable="true">Supervisors</th>
         <th data-sortable="true">Created on</th>
@@ -45,7 +45,7 @@
           <td>{{ stud.json.surname }}</td>
           <td>{{ stud.json.stud_no }}</td>
           <td>{{ stud.json.email_address }}</td>
-          <td>{% include 'gp_admin/subpages/_modal_general_info.html' with data=stud %}</td>
+          <td>{% include 'gp_admin/subpages/_modal_additional_info.html' with data=stud %}</td>
           <td>
             {% if stud.note %}
               {% include 'gp_admin/subpages/_modal_note.html' with data=stud %}
@@ -116,8 +116,7 @@
             {{ stud.updated_on }}
           </td>
           <td>
-            <a class="btn btn-xs btn-link fs-sm d-block mb-1" href="{% url 'gp_admin:edit_student' student_number=stud.student_number %}">Edit</a>
-            <button class="btn btn-danger btn-xs fs-xs" type="button" name="button">Delete</button>
+            <a class="btn btn-xs btn-link fs-sm" href="{% url 'gp_admin:edit_student' student_number=stud.json.stud_no %}?next={{ request.get_full_path }}">Edit</a>
           </td>
         </tr>
       {% empty %}

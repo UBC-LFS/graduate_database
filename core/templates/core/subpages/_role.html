@@ -5,7 +5,7 @@
   <span class="badge badge-primary">{{ data.upper }}</span> <br />
 
 {% elif data == 'Graduate Advisor' %}
-  <span class="badge badge-success">GRADUATE <br /> ADVISOR</span> <br />
+  <span class="badge badge-success">GRADUATE {% if type == 'new-line' %} <br /> {% endif %} ADVISOR</span> <br />
 
 {% elif data == 'Supervisor' %}
   <span class="badge badge-warning">{{ data.upper }}</span> <br />

@@ -8,9 +8,9 @@
   <div class="row">
     <div class="col-md-4">
       {% include 'core/subpages/_left_aside.html' with data=prof type=info.type %}
-      
+
       <div class="left-aside-btn-groups">
-        <a class="btn btn-outline-primary" href="{% url 'gp_admin:get_professors' %}">Back to Professors</a>
+        <a class="btn btn-outline-primary" href="{{ next }}">Back to Professors</a>
       </div>
     </div>
 
@@ -39,7 +39,8 @@
             </div>
           {% endfor %}
 
-          <a class="btn btn-outline-secondary" href="{% url 'gp_admin:get_professors' %}">Cancel</a>
+          <input type="hidden" name="next" value="{{ next }}" />
+          <a class="btn btn-outline-secondary" href="{{ next }}">Cancel</a>
           <input class="btn btn-primary" type="submit" value="Create" />
         </form>
 

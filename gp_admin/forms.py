@@ -98,28 +98,6 @@ class Student_Form(forms.ModelForm):
         }
 
 
-class Professor_Form(forms.ModelForm):
-    programs = forms.ModelMultipleChoiceField(
-        required = True,
-        queryset = Program.objects.all(),
-        widget = forms.CheckboxSelectMultiple(),
-    )
-
-    class Meta:
-        model = Profile
-        fields = ['title', 'position', 'programs', 'phone', 'fax', 'office']
-        widgets = {
-            'phone': forms.TextInput(attrs={ 'class': 'form-control' }), 
-            'fax': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'office': forms.TextInput(attrs={ 'class': 'form-control' })
-        }
-        help_texts = {
-            'phone': 'Maximum length is 150 characters.',
-            'fax': 'Maximum length is 150 characters.',
-            'office': 'Maximum length is 150 characters.'
-        }
-
-
 class Grad_Supervision_Form(forms.ModelForm):
     class Meta:
         model = Graduate_Supervision
@@ -181,23 +159,23 @@ class Student_Additional_Form(forms.ModelForm):
 class User_Form(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['last_name', 'first_name', 'email', 'username', 'is_superuser', 'is_active']
+        fields = ['first_name', 'last_name', 'email', 'username', 'is_superuser', 'is_active']
         labels = {
-            'last_name': 'Last Name',
             'first_name': 'First Name',
+            'last_name': 'Last Name',
             'email': 'Email',
             'username': 'CWL',
             'is_superuser': 'Superuser Status'
         }
         widgets = {
-            'last_name': forms.TextInput(attrs={ 'required': True, 'class': 'form-control' }),
             'first_name': forms.TextInput(attrs={ 'required': True, 'class': 'form-control' }),
+            'last_name': forms.TextInput(attrs={ 'required': True, 'class': 'form-control' }),
             'email': forms.EmailInput(attrs={ 'required': True, 'class': 'form-control' }),
             'username': forms.TextInput(attrs={ 'required': True, 'class': 'form-control' })
         }
         help_texts = {
-            'last_name': 'Maximum length is 150 characters.',
             'first_name': 'Maximum length is 150 characters.',
+            'last_name': 'Maximum length is 150 characters.',
             'email': 'Maximum length is 254 characters.',
             'username': 'This is a unique field. Maximum length is 150 characters.',
             'is_superuser': "This field is necessary for a Superadmin role."
@@ -226,35 +204,84 @@ class Profile_Form(forms.ModelForm):
         widget = forms.CheckboxSelectMultiple(),
     )
 
-    programs = forms.ModelMultipleChoiceField(
-        required = True,
-        queryset = Program.objects.all(),
-        widget = forms.CheckboxSelectMultiple(),
-    )
-
     class Meta:
         model = Profile
-        fields = ['preferred_name', 'roles', 'title', 'position', 'programs', 'phone', 'fax', 'office']
+        fields = ['preferred_name', 'roles']
         labels = {
             'preferred_name': 'Preferred Name'
         }
         widgets = {
-            'preferred_name': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'phone': forms.TextInput(attrs={ 'class': 'form-control' }), 
-            'fax': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'office': forms.TextInput(attrs={ 'class': 'form-control' })
+            'preferred_name': forms.TextInput(attrs={ 'class': 'form-control' })
         }
         help_texts = {
-            'preferred_name': 'Maximum length is 150 characters.',
-            'phone': 'Maximum length is 150 characters.',
-            'fax': 'Maximum length is 150 characters.',
-            'office': 'Maximum length is 150 characters.'
+            'preferred_name': 'Maximum length is 150 characters.'
         }
 
     def clean_roles(self):
         data = self.cleaned_data['roles']
         if not data: raise ValidationError('This field is required.')
         return data
+
+
+class Professor_Form(forms.ModelForm):
+    programs = forms.ModelMultipleChoiceField(
+        required = False,
+        queryset = Program.objects.all(),
+        widget = forms.CheckboxSelectMultiple(),
+    )
+
+    class Meta:
+        model = Profile
+        fields = ['title', 'position', 'programs', 'phone', 'fax', 'office']
+        widgets = {
+            'phone': forms.TextInput(attrs={ 'class': 'form-control' }), 
+            'fax': forms.TextInput(attrs={ 'class': 'form-control' }),
+            'office': forms.TextInput(attrs={ 'class': 'form-control' })
+        }
+        help_texts = {
+            'phone': 'Maximum length is 150 characters.',
+            'fax': 'Maximum length is 150 characters.',
+            'office': 'Maximum length is 150 characters.'
+        }
+
+
+
+# class Profile_Form(forms.ModelForm):
+#     roles = forms.ModelMultipleChoiceField(
+#         required = True,
+#         queryset = Role.objects.all(),
+#         widget = forms.CheckboxSelectMultiple(),
+#     )
+
+#     programs = forms.ModelMultipleChoiceField(
+#         required = True,
+#         queryset = Program.objects.all(),
+#         widget = forms.CheckboxSelectMultiple(),
+#     )
+
+#     class Meta:
+#         model = Profile
+#         fields = ['preferred_name', 'roles', 'title', 'position', 'programs', 'phone', 'fax', 'office']
+#         labels = {
+#             'preferred_name': 'Preferred Name'
+#         }
+#         widgets = {
+#             'preferred_name': forms.TextInput(attrs={ 'class': 'form-control' }),
+#             'phone': forms.TextInput(attrs={ 'class': 'form-control' }), 
+#             'fax': forms.TextInput(attrs={ 'class': 'form-control' }),
+#             'office': forms.TextInput(attrs={ 'class': 'form-control' })
+#         }
+#         help_texts = {
+#             'preferred_name': 'Maximum length is 150 characters.',
+#             'phone': 'Maximum length is 150 characters.',
+#             'fax': 'Maximum length is 150 characters.',
+#             'office': 'Maximum length is 150 characters.'
+#         }
+
+#     def clean_roles(self):
+#         data = self.cleaned_data['roles']
+#         if not data: raise ValidationError('This field is required.')
+#         return data
 
 
 class Role_Form(forms.ModelForm):

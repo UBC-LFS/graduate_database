@@ -15,7 +15,7 @@
       {% endif %}
 
       <div class="left-aside-btn-groups">
-        <a class="btn btn-outline-primary" href="{% url 'gp_admin:get_grad_supervision' %}">Back to Graduate Supervision</a>
+        <a class="btn btn-outline-primary" href="{{ next }}">Back to Graduate Supervision</a>
       </div>
     </div>
 
@@ -45,8 +45,10 @@
           {% endfor %}
 
           <input type="hidden" name="professor" value="{{ prof.id }}" />
-          <a class="btn btn-outline-secondary" href="{% url 'gp_admin:get_professors' %}">Cancel</a>
-          <input class="btn btn-primary" type="submit" value="Create" />
+          <input type="hidden" name="next" value="{{ next }}" />
+
+          <a class="btn btn-outline-secondary" href="{{ next }}">Cancel</a>
+          <input class="btn btn-primary" type="submit" value="Add" />
         </form>
 
         <hr />
@@ -87,7 +89,7 @@
                           </div>
                           <div class="modal-body text-left">
                             <div class="modal-item fs-1">
-                              <form action="{% url 'gp_admin:edit_grad_supervision' username=prof.username %}" method="post">
+                              <form action="{% url 'gp_admin:edit_grad_supervision' username=prof.username %}?next={{ next }}" method="post">
                                 {% csrf_token %}
 
                                 <div class="field-wrapper">
@@ -105,6 +107,7 @@
                                 <input type="hidden" name="graduate_supervision" value="{{ gs.id }}" />
                                 <input type="hidden" name="student" value="{{ gs.student.id }}" />
                                 <input type="hidden" name="professor" value="{{ gs.professor.id }}" />
+                                <input type="hidden" name="next" value="{{ next }}" />
                                 <input class="btn btn-warning" type="submit" value="Update" />
                               </form>
                             </div>
@@ -114,10 +117,11 @@
                       </div>
                     </div>
 
-                    <form action="{% url 'gp_admin:delete_grad_supervision' username=prof.username %}" method="post" onsubmit="return confirm('Are you sure to delete this Graduate Supervision - {{ gs.student.first_name }} {{ gs.student.last_name }}?');">
+                    <form action="{% url 'gp_admin:delete_grad_supervision' username=prof.username %}?next={{ next }}" method="post" onsubmit="return confirm('Are you sure to delete this Graduate Supervision - {{ gs.student.first_name }} {{ gs.student.last_name }}?');">
                       {% csrf_token %}
 
                       <input type="hidden" name="graduate_supervision" value="{{ gs.id }}" />
+                      <input type="hidden" name="next" value="{{ next }}" />
                       <input class="btn btn-xs btn-danger fs-sm" type="submit" value="Delete" />
                     </form>
                   </div>

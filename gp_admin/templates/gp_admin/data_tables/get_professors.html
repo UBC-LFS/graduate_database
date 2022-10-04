@@ -17,7 +17,7 @@
   {% include 'core/subpages/_searched_message.html' with items=professors total_items=total_professors %}
 
   <table
-    class="table table-striped table-hover table-bordered table-responsive-md text-center table-vertical-middle fs-sm"
+    class="table table-striped table-hover table-bordered table-responsive-md text-center fs-sm"
     data-toggle="table"
     data-sortable="true"
     data-classes=""
@@ -59,7 +59,7 @@
           </td>
           <td>
             {% for role in prof.profile.roles.all %}
-              {% include 'core/subpages/_role.html' with data=role.name %}
+              {% include 'core/subpages/_role.html' with data=role.name type='new-line' %}
             {% empty %}
               None
             {% endfor %}
@@ -117,7 +117,8 @@
                     <div class="modal-body text-left">
 
                       <h6 class="mb-4">
-                        Professor Full Name: <span class="text-dark-blue font-weight-bold">{{ prof.get_full_name }}</span>
+                        Professor Full Name:
+                        <a class="d-inline" href="{% url 'gp_admin:get_grad_supervision' %}?first_name={{ prof.first_name }}&last_name={{ prof.last_name }}">{{ prof.get_full_name }}</a>
                       </h6>
 
                       <table class="modal-table table">
@@ -163,8 +164,7 @@
             {{ prof.profile.updated_on }}
           </td>
           <td>
-            <a class="btn btn-xs btn-link fs-sm d-block mb-1" href="{% url 'gp_admin:edit_professor' username=prof.username %}">Edit</a>
-            <a class="btn btn-xs btn-danger fs-sm" href="#">Delete</a>
+            <a class="btn btn-xs btn-link fs-sm" href="{% url 'gp_admin:edit_professor' username=prof.username %}?next={{ request.get_full_path }}">Edit</a>
           </td>
         </tr>
       {% endfor %}

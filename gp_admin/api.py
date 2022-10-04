@@ -1,16 +1,14 @@
+from django.conf import settings
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from .models import *
 
-# ROLES = {
-#     'Superadmin': 1,
-#     'Admin': 2,
-#     'Supervisor': 3,
-#     'Guest': 4
-# }
+
+# Student
 
 def get_students():
     ''' Get all students '''
@@ -23,16 +21,13 @@ def get_student(arg):
         raise Http404
 
 
-def get_sis_students():
-    ''' Get all sis students '''
-    return SIS_Student.objects.all()
-
-
 # Professor
 
-def get_professors():
+def get_professors(program=None):
     ''' Get all professors '''
-    return User.objects.filter(profile__roles__in=[get_role('graduate-advisor', 'slug'), get_role('supervisor', 'slug')])
+    if program is not None:
+        pass
+    return User.objects.filter(profile__roles__in=[get_role('graduate-advisor', 'slug'), get_role('supervisor', 'slug')]).order_by('last_name', 'first_name')
 
 
 def get_professor(arg, type='id'):
@@ -81,22 +76,7 @@ def create_user(username, first_name, last_name):
 
     return user
 
-def create_profile(user, data=None):
-    if data:
-        preferred_name = data.get('preferred_name', None)
-        title = data.get('title', None)
-        position = data.get('position', None)
-        phone = data.get('phone', None)
-        fax = data.get('fax', None)
-        office = data.get('office', None)
-        return Profile.objects.create(
-            user_id = user.id,
-            title = title,
-            position = position,
-            phone = phone,
-            fax = fax,
-            office = office
-        )
+def create_profile(user):
     return Profile.objects.create(user_id=user.id)
 
 
@@ -238,7 +218,45 @@ def get_professor_role(arg, type='id'):
     return get_object_or_404(Professor_Role, id=arg)
 
 
+def get_filtered_items(request, all_list, path):
+
+    first_name_q = request.GET.get('first_name')
+    last_name_q = request.GET.get('last_name')
+    cwl_q = request.GET.get('cwl')
+    email_q = request.GET.get('email')
+
+    if bool(first_name_q):
+        all_list = all_list.filter(first_name__icontains=first_name_q)
+    if bool(last_name_q):
+        all_list = all_list.filter(last_name__icontains=last_name_q)
+    if bool(cwl_q):
+        all_list = all_list.filter(username__icontains=cwl_q)
+    if bool(email_q):
+        all_list = all_list.filter(email__icontains=email_q)
+
+    page = request.GET.get('page', 1)
+    paginator = Paginator(all_list, settings.PAGE_SIZE)
+    # paginator = Paginator(all_list, 2)
+
+    try:
+        items = paginator.page(page)
+    except PageNotAnInteger:
+        items = paginator.page(1)
+    except EmptyPage:
+        items = paginator.page(paginator.num_pages)
+    
+    if path == 'users':
+        pass
+    
+    return items
+
+
+
+
 # Helper functions
+
+def build_url(path, next_path, tab):
+    return "{0}?next={1}&t={2}".format(path, next_path, tab)
 
 def get_error_messages(errors):
     messages = ''
@@ -246,3 +264,12 @@ def get_error_messages(errors):
         value = errors[key]
         messages += key.replace('_', ' ').upper() + ': ' + value[0]['message'] + ' '
     return messages.strip()
+
+
+
+# ROLES = {
+#     'Superadmin': 1,
+#     'Admin': 2,
+#     'Supervisor': 3,
+#     'Guest': 4
+# }

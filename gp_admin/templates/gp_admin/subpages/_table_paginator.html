@@ -5,18 +5,20 @@
       {% if data.has_previous %}
         <li class="page-item">
           <a class="page-link" href="?page=1
-{% if request.GET.last_name %}&last_name={{ request.GET.last_name }}{% endif %}
 {% if request.GET.first_name %}&first_name={{ request.GET.first_name }}{% endif %}
+{% if request.GET.last_name %}&last_name={{ request.GET.last_name }}{% endif %}
 {% if request.GET.student_number %}&student_number={{ request.GET.student_number }}{% endif %}
+{% if request.GET.cwl %}&cwl={{ request.GET.cwl }}{% endif %}
 {% if request.GET.email %}&email={{ request.GET.email }}{% endif %}
 {% if request.GET.exam_date %}&exam_date={{ request.GET.exam_date }}{% endif %}"
           ><i class="fa fa-angle-double-left" aria-hidden="true"></i></a>
         </li>
         <li class="page-item">
           <a class="page-link" href="?page={{ data.previous_page_number }}
-{% if request.GET.last_name %}&last_name={{ request.GET.last_name }}{% endif %}
 {% if request.GET.first_name %}&first_name={{ request.GET.first_name }}{% endif %}
+{% if request.GET.last_name %}&last_name={{ request.GET.last_name }}{% endif %}
 {% if request.GET.student_number %}&student_number={{ request.GET.student_number }}{% endif %}
+{% if request.GET.cwl %}&cwl={{ request.GET.cwl }}{% endif %}
 {% if request.GET.email %}&email={{ request.GET.email }}{% endif %}
 {% if request.GET.exam_date %}&exam_date={{ request.GET.exam_date }}{% endif %}"
           ><i class="fa fa-angle-left" aria-hidden="true"></i></a>
@@ -40,9 +42,10 @@
 
             {% if i|add:"-3" <= data.number and data.number <= i|add:"3" %}
               <a class="page-link" href="?page={{ i }}
-{% if request.GET.last_name %}&last_name={{ request.GET.last_name }}{% endif %}
 {% if request.GET.first_name %}&first_name={{ request.GET.first_name }}{% endif %}
+{% if request.GET.last_name %}&last_name={{ request.GET.last_name }}{% endif %}
 {% if request.GET.student_number %}&student_number={{ request.GET.student_number }}{% endif %}
+{% if request.GET.cwl %}&cwl={{ request.GET.cwl }}{% endif %}
 {% if request.GET.email %}&email={{ request.GET.email }}{% endif %}
 {% if request.GET.exam_date %}&exam_date={{ request.GET.exam_date }}{% endif %}"
               >{{ i }}</a>
@@ -55,18 +58,20 @@
       {% if data.has_next %}
         <li class="page-item">
           <a class="page-link" href="?page={{ data.next_page_number }}
-{% if request.GET.last_name %}&last_name={{ request.GET.last_name }}{% endif %}
 {% if request.GET.first_name %}&first_name={{ request.GET.first_name }}{% endif %}
+{% if request.GET.last_name %}&last_name={{ request.GET.last_name }}{% endif %}
 {% if request.GET.student_number %}&student_number={{ request.GET.student_number }}{% endif %}
+{% if request.GET.cwl %}&cwl={{ request.GET.cwl }}{% endif %}
 {% if request.GET.email %}&email={{ request.GET.email }}{% endif %}
 {% if request.GET.exam_date %}&exam_date={{ request.GET.exam_date }}{% endif %}"
           ><i class="fa fa-angle-right" aria-hidden="true"></i></a>
         </li>
         <li class="page-item">
           <a class="page-link" href="?page={{ data.paginator.num_pages }}
-{% if request.GET.last_name %}&last_name={{ request.GET.last_name }}{% endif %}
 {% if request.GET.first_name %}&first_name={{ request.GET.first_name }}{% endif %}
+{% if request.GET.last_name %}&last_name={{ request.GET.last_name }}{% endif %}
 {% if request.GET.student_number %}&student_number={{ request.GET.student_number }}{% endif %}
+{% if request.GET.cwl %}&cwl={{ request.GET.cwl }}{% endif %}
 {% if request.GET.email %}&email={{ request.GET.email }}{% endif %}
 {% if request.GET.exam_date %}&exam_date={{ request.GET.exam_date }}{% endif %}"
           ><i class="fa fa-angle-double-right" aria-hidden="true"></i></a>

@@ -179,6 +179,12 @@ class Student(models.Model):
     graduation_date = models.DateField(null=True, blank=True)
     comprehensive_exam_date = models.DateField(null=True, blank=True)
 
+    thesis_title = models.CharField(max_length=150, null=True, blank=True)
+    funding_sources = models.CharField(max_length=150, null=True, blank=True)
+    total_funding_awarded = models.CharField(max_length=150, null=True, blank=True)
+    taships = models.CharField(max_length=150, null=True, blank=True)
+    current_role = models.CharField(max_length=150, null=True, blank=True)
+
     previous_institution_1 = models.CharField(max_length=150, null=True, blank=True)
     degree_1 = models.CharField(max_length=50, null=True, blank=True)
     gpa_1 = models.CharField(max_length=20, null=True, blank=True)
@@ -189,16 +195,10 @@ class Student(models.Model):
     degree_3 = models.CharField(max_length=50, null=True, blank=True)
     gpa_3 = models.CharField(max_length=20, null=True, blank=True)
 
-    thesis_title = models.CharField(max_length=150, null=True, blank=True)
-    funding_sources = models.CharField(max_length=150, null=True, blank=True)
-    total_funding_awarded = models.CharField(max_length=150, null=True, blank=True)
-    taships = models.CharField(max_length=150, null=True, blank=True)
-    current_role = models.CharField(max_length=150, null=True, blank=True)
-
     note = models.TextField(null=True, blank=True)
 
     json = models.JSONField()
-    hashcode = models.CharField(max_length=255)    
+    hashcode = models.CharField(max_length=255)
 
     created_on = models.DateField(auto_now_add=True)
     updated_on = models.DateField(auto_now=True)

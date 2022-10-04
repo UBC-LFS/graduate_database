@@ -1,0 +1,139 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+{% include 'gp_admin/subpages/_menu.html' %}
+
+<div class="container max-width-container">
+
+  <div class="row">
+    <div class="col-md-4">
+      {% if info.type == 'add' %}
+        {% include 'core/subpages/_left_aside.html' with title='New User' total=users|length type=info.type path=info.path %}
+      {% else %}
+        {% include 'core/subpages/_left_aside.html' with data=user type=info.type %}
+      {% endif %}
+
+      <div class="left-aside-btn-groups">
+        <a class="btn btn-outline-primary" href="{{ next }}">Back to All Users</a>
+      </div>
+
+      <div class="col-10 mx-auto">
+        <div class="bd-callout bd-callout-warning">
+          <h4>
+            <i class="fa fa-bell-o" aria-hidden="true"></i> Note
+          </h4>
+          <p>If a user has a <span class="font-weight-bold">Graduate Advisor</span> or <span class="font-weight-bold">Supervisor</span> role, please fill out the Professor Form in the tab.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+
+      <nav class="mb-4">
+        <div class="nav nav-tabs">
+          <a class="nav-item nav-link {% if current_tab == 'User' %} active {% endif %}" href="{{ tab_urls.user }}">
+            <span class="mobile-hide-xs"><i class="fa fa-user-circle-o" aria-hidden="true"></i></span>
+            User Form
+          </a>
+          <a class="nav-item nav-link {% if current_tab == 'Professor' %} active {% endif %}" href="{{ tab_urls.professor }}">
+            <span class="mobile-hide-xs"><i class="fa fa-id-card-o" aria-hidden="true"></i></span>
+            Professor Form
+          </a>
+        </div>
+      </nav>
+
+      <div id="response-message"></div>
+
+      <div class="board col-11 mx-auto">
+        <h3>{{ current_tab }} Form</h3>
+        {% include 'core/subpages/_form_note.html' %}
+
+        <form id="form-user-add-edit" action="{{ info.href }}" method="post">
+          {% csrf_token %}
+
+          {% if current_tab == 'User' %}
+
+            {% for field in user_form.visible_fields  %}
+              <div class="field-wrapper">
+                <label for="{{ field.id_for_label }}">
+                  {{ field.label }}:
+                  {% if field.name == 'first_name' or field.name == 'last_name' or field.name == 'email' or field.name == 'username' %}
+                    <small class="text-danger"><i class="fa fa-asterisk" aria-hidden="true"></i></small>
+                  {% endif %}
+                </label>
+
+                {% if field.help_text %}
+                  <div class="help">{{ field.help_text|safe }}</div>
+                {% endif %}
+                {{ field }}
+              </div>
+            {% endfor %}
+
+            {% for field in profile_form.visible_fields  %}
+              <div class="field-wrapper">
+                <label for="{{ field.id_for_label }}">
+                  {{ field.label }}:
+                  {% if field.name == 'roles' %}
+                    <small class="text-danger"><i class="fa fa-asterisk" aria-hidden="true"></i></small>
+                  {% endif %}
+                </label>
+
+                {% if field.help_text %}
+                  <div class="help">{{ field.help_text|safe }}</div>
+                {% endif %}
+                {{ field }}
+              </div>
+            {% endfor %}
+
+          {% elif current_tab == 'Professor' %}
+
+            {% for field in prof_form.visible_fields  %}
+              <div class="field-wrapper">
+                <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+
+                {% if field.help_text %}
+                  <div class="help">{{ field.help_text|safe }}</div>
+                {% endif %}
+                {{ field }}
+              </div>
+            {% endfor %}
+
+          {% else %}
+
+            <p class="my-4">A form is not available at the moment.</p>
+
+          {% endif %}
+
+          {% if info.type == 'edit' %}
+            <input type="hidden" name="user" value="{{ user.id }}" />
+          {% endif %}
+
+          <input type="hidden" name="current_page" value="{{ request.get_full_path }}" />
+          <input type="hidden" name="next" value="{{ next }}" />
+          <input type="hidden" name="current_tab" value="{{ current_tab }}" />
+
+          <a class="btn btn-outline-secondary" href="{% url 'gp_admin:get_users' %}">Cancel</a>
+
+          {% if current_tab == 'User' %}
+            <button id="btn-user-form" class="btn btn-outline-info" type="button" data-url="{% url 'gp_admin:save_user' %}" data-href="{{ tab_urls.professor }}">Save and go to Professor Form</button>
+          {% elif current_tab == 'Professor' %}
+            <button id="btn-prof-form" class="btn btn-outline-info" type="button" data-url="{% url 'gp_admin:save_user' %}" data-href="{{ tab_urls.user }}">Save and go back to User Form</button>
+          {% endif %}
+
+          <input class="btn btn-primary" type="submit" value="{{ info.btn_label }}" />
+        </form>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block js %}
+  {% load static %}
+  <script type="text/javascript" src="{% static 'js/save_user.js' %}"></script>
+{% endblock %}

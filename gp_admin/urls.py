@@ -13,7 +13,6 @@ urlpatterns = [
 
     path('professors/', views.Get_Professors.as_view(), name='get_professors'),
     path('professors/<str:username>/edit/', views.Edit_Professor.as_view(), name='edit_professor'),
-    # path('professor/add/', views.Add_Professor.as_view(), name='add_professor'),
     
     path('graduate-supervision/', views.Get_Grad_Supervision.as_view(), name='get_grad_supervision'),
     path('graduate-supervision/<str:username>/add/', views.Add_Grad_Supervision.as_view(), name='add_grad_supervision'),
@@ -23,14 +22,13 @@ urlpatterns = [
     path('comprehensive-exams/', views.Get_Comp_Exams.as_view(), name='get_comp_exams'),
     path('reminders/sent/', views.Sent_Reminders.as_view(), name='sent_reminders'),
 
-    # path('students/sis/', views.get_sis_students, name='get_sis_students'),
-
 
     # Users
     
     path('users/all/', views.Get_Users.as_view(), name='get_users'),
     path('users/<str:username>/edit/', views.Edit_User.as_view(), name='edit_user'),
-    path('user/add/', views.Add_User.as_view(), name='add_user'),
+    path('user/create/', views.Create_User.as_view(), name='create_user'),
+    path('api/user/save/', views.save_user, name='save_user'),
 
     path('users/roles/', views.Get_Roles.as_view(), name='get_roles'),
     path('api/roles/<str:slug>/edit/', views.edit_role, name='edit_role'),
@@ -65,5 +63,7 @@ urlpatterns = [
     path('preparation/reminders/', views.Get_Reminders.as_view(), name='get_reminders'),
     path('preparation/reminders/<str:slug>/edit/', views.Edit_Reminder.as_view(), name='edit_reminder'),
     path('api/preparation/comprehensive-exams/reminder/delete/', views.delete_reminder, name='delete_reminder')
-   
+
+    # path('professor/add/', views.Add_Professor.as_view(), name='add_professor'),
+    # path('students/sis/', views.get_sis_students, name='get_sis_students'),  
 ]

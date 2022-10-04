@@ -106,6 +106,10 @@ main {
     color: #17a2b8;
 }
 
+.height-100 {
+  height: 100%;
+}
+
 .bg-prompt {
     background-image: linear-gradient(180deg,hsla(0,0%,100%,0) 50%,#fff),linear-gradient(70deg,#eaf5ff 32%,#f6fff8);
 }
@@ -324,6 +328,11 @@ input[type=radio] {
     background-color: rgba(0,0,0,.075);
 }
 
+.h7 {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
 .mt-2rem {
   margin-top: 2rem;
 }
@@ -337,14 +346,14 @@ input[type=radio] {
 }
 
 .fs-1 {
-  font-size: 1rem;
+  font-size: 1rem !important;
 }
 .fs-sm {
-  font-size: 0.9rem;
+  font-size: 0.9rem !important;
 }
 
 .fs-xs {
-  font-size: 0.8rem;
+  font-size: 0.8rem !important;
 }
 
 .btn-xs {
@@ -433,6 +442,19 @@ input[type=radio] {
 
 .badge-warning {
   color: #212529 !important;
+}
+
+
+.nav-tabs .nav-link.active {
+    color: #495057;
+    font-weight: 600;
+    background-color: #fff;
+    border-top-width: 3px;
+    border-color: #f0ad4e #dee2e6 #fff;
+}
+
+.nav-item {
+  color: #6c757d;
 }
 
 

@@ -1,22 +1,18 @@
 <div class="search-field p-3 fs-sm">
   <form method="GET">
-    <input type="text" name="last_name" value="{{ request.GET.last_name }}" placeholder="Last Name" /> and
-    <input type="text" name="first_name" value="{{ request.GET.first_name }}" placeholder="First Name" />
+    <input type="text" name="first_name" value="{{ request.GET.first_name }}" placeholder="{% if path == 'grad_supervision' %}Professor{% endif %} First Name" /> and
+    <input type="text" name="last_name" value="{{ request.GET.last_name }}" placeholder="{% if path == 'grad_supervision' %}Professor{% endif %} Last Name" />
 
-    {% if path == 'students' or path == 'comp_exams' %}
+    {% if path == 'students' %}
       and <input type="text" name="student_number" value="{{ request.GET.student_number }}" placeholder="Student Number" />
     {% endif %}
 
-    {% if path == 'professors' or path == 'students' or path == 'comp_exams' %}
-      and <input type="text" name="email" value="{{ request.GET.email }}" placeholder="Email" /> <br />
+    {% if path == 'professors' or path == 'users' %}
+      and <input type="text" name="cwl" value="{{ request.GET.cwl }}" placeholder="CWL" />
     {% endif %}
 
-    {% if path == 'grad_supervision' %}
-      <br />
-      <span class="mr-3">
-        Supervisor only:
-        <input class="custom-input-mb-7" type="checkbox" name="supervisor_only" value="filled" {% if request.GET.supervisor_only %}checked{% endif %} />
-      </span>
+    {% if path == 'students' or path == 'professors' or path == 'users' %}
+      and <input type="text" name="email" value="{{ request.GET.email }}" placeholder="Email" /> <br />
     {% endif %}
 
     {% if path == 'comp_exams' %}
@@ -30,13 +26,6 @@
           <label for="empty">Empty</label>
         </span>
       </div>
-    {% endif %}
-
-    {% if path == 'users' %}
-      and
-      <input type="text" name="preferred_name" value="{{ request.GET.preferred_name }}" placeholder="Preferred Name" /> and
-      <input type="text" name="username" value="{{ request.GET.username }}" placeholder="CWL" /> and
-      <input type="text" name="email" value="{{ request.GET.email }}" placeholder="Email" />
     {% endif %}
 
     <div class="mt-2">
