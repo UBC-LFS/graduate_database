@@ -168,10 +168,10 @@ class User_Form(forms.ModelForm):
             'is_superuser': 'Superuser Status'
         }
         widgets = {
-            'first_name': forms.TextInput(attrs={ 'required': True, 'class': 'form-control' }),
-            'last_name': forms.TextInput(attrs={ 'required': True, 'class': 'form-control' }),
-            'email': forms.EmailInput(attrs={ 'required': True, 'class': 'form-control' }),
-            'username': forms.TextInput(attrs={ 'required': True, 'class': 'form-control' })
+            'first_name': forms.TextInput(attrs={ 'required': True, 'class': 'form-control-sm' }),
+            'last_name': forms.TextInput(attrs={ 'required': True, 'class': 'form-control-sm' }),
+            'email': forms.EmailInput(attrs={ 'required': True, 'class': 'form-control-sm' }),
+            'username': forms.TextInput(attrs={ 'required': True, 'class': 'form-control-sm' })
         }
         help_texts = {
             'first_name': 'Maximum length is 150 characters.',
@@ -206,15 +206,19 @@ class Profile_Form(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ['preferred_name', 'roles']
+        fields = ['preferred_name', 'roles', 'phone', 'office']
         labels = {
             'preferred_name': 'Preferred Name'
         }
         widgets = {
-            'preferred_name': forms.TextInput(attrs={ 'class': 'form-control' })
+            'preferred_name': forms.TextInput(attrs={ 'class': 'form-control-sm' }),
+            'phone': forms.TextInput(attrs={ 'class': 'form-control-sm' }), 
+            'office': forms.TextInput(attrs={ 'class': 'form-control-sm' })
         }
         help_texts = {
-            'preferred_name': 'Maximum length is 150 characters.'
+            'preferred_name': 'Maximum length is 150 characters.',
+            'phone': 'Maximum length is 150 characters.',
+            'office': 'Maximum length is 150 characters.'
         }
 
     def clean_roles(self):
@@ -232,18 +236,7 @@ class Professor_Form(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = ['title', 'position', 'programs', 'phone', 'fax', 'office']
-        widgets = {
-            'phone': forms.TextInput(attrs={ 'class': 'form-control' }), 
-            'fax': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'office': forms.TextInput(attrs={ 'class': 'form-control' })
-        }
-        help_texts = {
-            'phone': 'Maximum length is 150 characters.',
-            'fax': 'Maximum length is 150 characters.',
-            'office': 'Maximum length is 150 characters.'
-        }
-
+        fields = ['title', 'position', 'programs']
 
 
 # class Profile_Form(forms.ModelForm):

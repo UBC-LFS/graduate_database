@@ -289,85 +289,6 @@ class Get_Users(View):
         pass
 
 
-def post_user(request):
-    ''' Helper function to add or edit a user '''
-
-    current_tab = request.POST.get('current_tab')
-    user_id = request.POST.get('user', None)
-
-
-    user = api.get_user(user_id)
-    current_tab = request.POST.get('current_tab')
-
-    user_profile_data = request.POST
-    prof_data = request.POST
-
-    if current_tab == 'User':
-        prof_data = request.session.get('save_prof_form', None)
-    elif current_tab == 'Professor':
-        user_profile_data = request.session.get('save_user_profile_form', None)
-
-    user_form = self.user_form(user_profile_data)
-    profile_form = self.profile_form(user_profile_data)
-    prof_form = self.prof_form(prof_data)
-
-    errors = []
-    if user_profile_data:
-        if not user_form.is_valid():
-            errors.append( api.get_error_messages(user_form.errors.get_json_data()) )
-        if not profile_form.is_valid():
-            errors.append( api.get_error_messages(profile_form.errors.get_json_data()) )
-
-    if prof_data and not prof_form.is_valid():
-        errors.append( api.get_error_messages(prof_form.errors.get_json_data()) )
-
-    if len(errors) == 0:
-        user = user_form.save()
-        profile = api.create_profile(user)
-
-        # Create a profile and add roles and programs if they exist
-        update_fields = []
-        if user_profile_data:
-            profile_data = profile_form.cleaned_data
-
-            profile.preferred_name = profile_data.get('preferred_name', None)
-            roles = profile_data.get('roles', None)
-
-            if roles:
-                profile.roles.add( *roles )
-
-            update_fields.append('preferred_name')
-
-        if prof_data:
-            prof_data = prof_form.cleaned_data
-
-            programs = prof_data.get('programs', None)
-            profile.title = prof_data.get('title', None)
-            profile.position = prof_data.get('position', None)
-            profile.phone = prof_data.get('phone', None)
-            profile.fax = prof_data.get('fax', None)
-            profile.office = prof_data.get('office', None)
-
-            if programs:
-                profile.programs.add( *programs )
-
-            update_fields.extend( ['title', 'position', 'phone', 'fax', 'office'] )
-
-        profile.save(update_fields=update_fields)
-
-        # Delete a form session if it exists
-        if 'save_user_profile_form' in request.session:
-            del request.session['save_user_profile_form']
-        if 'save_prof_form' in request.session:
-            del request.session['save_prof_form']
-
-        messages.success(request, 'Success! User ({0} {1}, CWL: {2}) created'.format(user.first_name, user.last_name, user.username))
-        return HttpResponseRedirect(request.POST.get('next'))
-    else:
-        messages.error(request, 'An error occurred. Form is invalid. {0}'.format(' '.join(errors)) )
-
-    return HttpResponseRedirect(request.POST.get('current_page'))
-
 
 
 class Create_User(View):
@@ -377,14 +298,6 @@ class Create_User(View):
 
     def get(self, request, *args, **kwargs):
         next = request.GET.get('next')
-        # print(request.session.get('save_user_form', None))
-        # print(request.session.get('save_prof_form', None))
-
-        # initial = {
-        #     'is_superuser': 'on',
-        #     'is_active': 'on',
-        #     'roles': ['1','2']
-        # }
 
         return render(request, 'gp_admin/users/create_user.html', {
             'users': api.get_users(),
@@ -400,8 +313,8 @@ class Create_User(View):
             'next': next,
             'current_tab': request.GET.get('t'),
             'tab_urls': {
-                'user': api.build_url(request.path, next, 'User'),
-                'professor': api.build_url(request.path, next, 'Professor')
+                'basic_user': api.build_url(request.path, next, 'basic_user'),
+                'role_details': api.build_url(request.path, next, 'role_details')
             }
         })
 
@@ -411,9 +324,9 @@ class Create_User(View):
         user_profile_data = request.POST
         prof_data = request.POST
 
-        if current_tab == 'User':
+        if current_tab == 'basic_user':
             prof_data = request.session.get('save_prof_form', None)
-        elif current_tab == 'Professor':
+        elif current_tab == 'role_details':
             user_profile_data = request.session.get('save_user_profile_form', None)
 
         user_form = self.user_form(user_profile_data)
@@ -440,27 +353,26 @@ class Create_User(View):
                 profile_data = profile_form.cleaned_data
 
                 profile.preferred_name = profile_data.get('preferred_name', None)
-                roles = profile_data.get('roles', None)
+                profile.phone = profile_data.get('phone', None)
+                profile.office = profile_data.get('office', None)
 
+                roles = profile_data.get('roles', None)
                 if roles:
                     profile.roles.add( *roles )
 
-                update_fields.append('preferred_name')
+                update_fields.extend( ['preferred_name', 'phone', 'office'] )
 
             if prof_data:
                 prof_data = prof_form.cleaned_data
 
-                programs = prof_data.get('programs', None)
                 profile.title = prof_data.get('title', None)
                 profile.position = prof_data.get('position', None)
-                profile.phone = prof_data.get('phone', None)
-                profile.fax = prof_data.get('fax', None)
-                profile.office = prof_data.get('office', None)
 
+                programs = prof_data.get('programs', None)
                 if programs:
                     profile.programs.add( *programs )
 
-                update_fields.extend( ['title', 'position', 'phone', 'fax', 'office'] )
+                update_fields.extend( ['title', 'position'] )
 
             profile.save(update_fields=update_fields)
 
@@ -478,6 +390,85 @@ class Create_User(View):
         return HttpResponseRedirect(request.POST.get('current_page'))
 
 
+"""def post_user(session, post):
+    ''' Helper function to add or edit a user '''
+    
+    # user_id = request.POST.get('user', None)
+    # print('user_id', user_id)
+    # user = api.get_user(user_id)
+
+    current_tab = post.get('current_tab')
+
+    user_profile_data = post
+    prof_data = post
+
+    if current_tab == 'User':
+        prof_data = session.get('save_prof_form', None)
+    elif current_tab == 'Professor':
+        user_profile_data = session.get('save_user_profile_form', None)
+
+    user_form = User_Form(user_profile_data)
+    profile_form = Profile_Form(user_profile_data)
+    prof_form = Professor_Form(prof_data)
+
+    errors = []
+    if user_profile_data:
+        if not user_form.is_valid():
+            errors.append( api.get_error_messages(user_form.errors.get_json_data()) )
+        if not profile_form.is_valid():
+            errors.append( api.get_error_messages(profile_form.errors.get_json_data()) )
+
+    if prof_data and not prof_form.is_valid():
+        errors.append( api.get_error_messages(prof_form.errors.get_json_data()) )
+
+    if len(errors) == 0:
+        user = user_form.save()
+        profile = api.create_profile(user)
+
+        # Create a profile and add roles and programs if they exist
+        update_fields = []
+        if user_profile_data:
+            profile_data = profile_form.cleaned_data
+
+            profile.preferred_name = profile_data.get('preferred_name', None)
+            profile.phone = profile_data.get('phone', None)
+            profile.office = profile_data.get('office', None)
+
+            roles = profile_data.get('roles', None)
+            if roles:
+                profile.roles.add( *roles )
+
+            update_fields.extend( ['preferred_name', 'phone', 'office'] )
+
+        if prof_data:
+            prof_data = prof_form.cleaned_data
+
+            profile.title = prof_data.get('title', None)
+            profile.position = prof_data.get('position', None)
+            
+            programs = prof_data.get('programs', None)
+            if programs:
+                profile.programs.add( *programs )
+
+            update_fields.extend( ['title', 'position'] )
+
+        profile.save(update_fields=update_fields)
+
+        # Delete a form session if it exists
+        if 'save_user_profile_form' in session:
+            del session['save_user_profile_form']
+        if 'save_prof_form' in session:
+            del session['save_prof_form']
+
+        messages.success(request, 'Success! User ({0} {1}, CWL: {2}) created'.format(user.first_name, user.last_name, user.username))
+        return HttpResponseRedirect(post.get('next'))
+    else:
+        messages.error(request, 'An error occurred. Form is invalid. {0}'.format(' '.join(errors)) )
+
+    return HttpResponseRedirect(post.get('current_page'))"""
+
+
+
 class Edit_User(View):
     user_form = User_Form
     profile_form = Profile_Form
@@ -489,7 +480,7 @@ class Edit_User(View):
         user = api.get_user(kwargs.get('username'), 'username')
         profile = api.has_profile_created(user)
 
-        return render(request, 'gp_admin/users/add_edit_user.html', {
+        return render(request, 'gp_admin/users/create_user.html', {
             'user': user,
             'user_form': self.user_form(instance=user),
             'profile_form': self.profile_form(instance=profile),
@@ -508,8 +499,78 @@ class Edit_User(View):
         })
 
     def post(self, request, *args, **kwargs):
+        current_tab = request.POST.get('current_tab')
         user = api.get_user(request.POST.get('user'))
-        user_form = self.user_form(request.POST, instance=user)
+
+        user_profile_data = request.POST
+        prof_data = request.POST
+
+        if current_tab == 'basic_user':
+            prof_data = request.session.get('save_prof_form', None)
+        elif current_tab == 'role_details':
+            user_profile_data = request.session.get('save_user_profile_form', None)
+
+        user_form = self.user_form(user_profile_data)
+        profile_form = self.profile_form(user_profile_data)
+        prof_form = self.prof_form(prof_data)
+
+        errors = []
+        if user_profile_data:
+            if not user_form.is_valid():
+                errors.append( api.get_error_messages(user_form.errors.get_json_data()) )
+            if not profile_form.is_valid():
+                errors.append( api.get_error_messages(profile_form.errors.get_json_data()) )
+
+        if prof_data and not prof_form.is_valid():
+            errors.append( api.get_error_messages(prof_form.errors.get_json_data()) )
+
+        if len(errors) == 0:
+            user = user_form.save()
+            profile = api.create_profile(user)
+
+            # Create a profile and add roles and programs if they exist
+            update_fields = []
+            if user_profile_data:
+                profile_data = profile_form.cleaned_data
+
+                profile.preferred_name = profile_data.get('preferred_name', None)
+                profile.phone = profile_data.get('phone', None)
+                profile.office = profile_data.get('office', None)
+
+                roles = profile_data.get('roles', None)
+                if roles:
+                    profile.roles.add( *roles )
+
+                update_fields.extend( ['preferred_name', 'phone', 'office'] )
+
+            if prof_data:
+                prof_data = prof_form.cleaned_data
+
+                profile.title = prof_data.get('title', None)
+                profile.position = prof_data.get('position', None)
+
+                programs = prof_data.get('programs', None)
+                if programs:
+                    profile.programs.add( *programs )
+
+                update_fields.extend( ['title', 'position'] )
+
+            profile.save(update_fields=update_fields)
+
+            # Delete a form session if it exists
+            if 'save_user_profile_form' in request.session:
+                del request.session['save_user_profile_form']
+            if 'save_prof_form' in request.session:
+                del request.session['save_prof_form']
+
+            messages.success(request, 'Success! User ({0} {1}, CWL: {2}) created.'.format(user.first_name, user.last_name, user.username))
+            return HttpResponseRedirect(request.POST.get('next'))
+        else:
+            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(' '.join(errors)) )
+
+        return HttpResponseRedirect(request.POST.get('current_page'))
+
+        """user_form = self.user_form(request.POST, instance=user)
         profile_form = self.profile_form(request.POST, instance=user.profile)
 
         errors = []
@@ -529,13 +590,13 @@ class Edit_User(View):
         else:
             messages.error(request, 'An error occurred. Form is invalid. {0}'.format(' '.join(errors)) )
 
-        return redirect('gp_admin:edit_user')
+        return redirect('gp_admin:edit_user')"""
 
 
 def save_user(request):
     data = request.GET
     path = request.GET.get('path')
-    if path == 'User':
+    if path == 'basic_user':
         roles = request.GET.getlist('roles[]', [])
         if len(roles) == 0:
             roles = [ request.GET.get('roles', '') ]
@@ -548,9 +609,11 @@ def save_user(request):
             'is_superuser': data.get('is_superuser') if data.get('is_superuser', None) else '',
             'is_active': data.get('is_active') if data.get('is_active', None) else '',
             'preferred_name': data.get('preferred_name', ''),
-            'roles': roles
+            'roles': roles,
+            'phone': data.get('phone', ''),
+            'office': data.get('office', '')
         }
-    elif path == 'Professor':
+    elif path == 'role_details':
         programs = request.GET.getlist('programs[]', [])
         if len(programs) == 0:
             programs = [ request.GET.get('programs', '') ]
@@ -559,9 +622,7 @@ def save_user(request):
             'title': data.get('title', ''),
             'position': data.get('position', ''),
             'programs': programs,
-            'phone': data.get('phone', ''),
-            'fax': data.get('fax', ''),
-            'office': data.get('office', '')
+            
         }
 
     return JsonResponse({ 'status': 'success', 'message': 'Success! {0} Form saved.'.format(path) })

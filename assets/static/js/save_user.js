@@ -15,7 +15,7 @@ $(document).ready(function() {
     const url = $(this).data('url');
     const href = $(this).data('href');
 
-    const form_data = $('#form-user-add-edit').serializeArray();
+    const form_data = $('#create-user-form').serializeArray();
     const json = convert_object_to_json(form_data, 'User');
     send_data(url, json, href);
     // localStorage.setItem('prof-form', json);
@@ -35,7 +35,7 @@ $(document).ready(function() {
     const url = $(this).data('url');
     const href = $(this).data('href');
 
-    const form_data = $('#form-user-add-edit').serializeArray();
+    const form_data = $('#create-user-form').serializeArray();
     const json = convert_object_to_json(form_data, 'Professor');
     send_data(url, json, href);
 

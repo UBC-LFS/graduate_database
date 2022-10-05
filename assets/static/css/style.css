@@ -172,20 +172,34 @@ main {
 }
 
 .field-wrapper {
-  margin-top: 1.8rem;
-  margin-bottom: 1.8rem;
+  margin-top: 1.2rem;
+  margin-bottom: 1.2rem;
 }
 
 .field-wrapper > label {
   margin: 0;
   font-weight: bold;
   display: block;
-  margin-bottom: 5px;
 }
 
 .field-wrapper > ul {
   list-style: none;
   margin-left: -20px;
+}
+
+.form-control-sm {
+  width: 100%;
+  border: 1px solid #ced4da;
+  color: #495057;
+  font-size: 1rem;
+}
+
+.form-control-sm:focus {
+  color: #495057;
+  background-color: #fff;
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.25);
 }
 
 .search-field input {
@@ -229,7 +243,7 @@ main {
 .board > h4,
 .board > div,
 .board > form > div {
-  margin-top: 1.5rem;
+  margin-top: 1.2rem;
 }
 
 .board > div > h5,
@@ -334,15 +348,19 @@ input[type=radio] {
 }
 
 .mt-2rem {
-  margin-top: 2rem;
+  margin-top: 2rem !important;;
 }
 
-.mt-6 {
-  margin-top: 4rem;
+.mt-2-5rem {
+  margin-top: 2.5rem !important;;
 }
 
-.mt-7 {
-  margin-top: 5rem;
+.mt-4rem {
+  margin-top: 4rem !important;
+}
+
+.mt-5rem {
+  margin-top: 5rem !important;
 }
 
 .fs-1 {

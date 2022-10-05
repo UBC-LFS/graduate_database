@@ -144,7 +144,6 @@ class Profile(models.Model):
     position = models.ForeignKey(Position, on_delete=models.SET_NULL, null=True, blank=True)
     programs = models.ManyToManyField(Program)
     phone = models.CharField(max_length=150, null=True, blank=True)
-    fax = models.CharField(max_length=150, null=True, blank=True)
     office = models.CharField(max_length=150, null=True, blank=True)
 
     created_on = models.DateField(auto_now_add=True)

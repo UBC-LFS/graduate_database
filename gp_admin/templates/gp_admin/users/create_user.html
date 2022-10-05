@@ -22,7 +22,12 @@
           <h4>
             <i class="fa fa-bell-o" aria-hidden="true"></i> Note
           </h4>
-          <p>If a user has a <span class="font-weight-bold">Graduate Advisor</span> or <span class="font-weight-bold">Supervisor</span> role, please fill out the Professor Form in the tab.</p>
+          <p>
+            If a user has a
+            <span class="font-weight-bold">Graduate Advisor</span> or
+            <span class="font-weight-bold">Supervisor</span> role,
+            please fill out the <a href="{% url 'gp_admin:create_user' %}?next={{ next }}&t=role_details">Role Details</a> Form in the tab.
+          </p>
         </div>
       </div>
     </div>
@@ -31,13 +36,13 @@
 
       <nav class="mb-4">
         <div class="nav nav-tabs">
-          <a class="nav-item nav-link {% if current_tab == 'User' %} active {% endif %}" href="{{ tab_urls.user }}">
+          <a class="nav-item nav-link {% if current_tab == 'basic_user' %} active {% endif %}" href="{{ tab_urls.basic_user }}">
             <span class="mobile-hide-xs"><i class="fa fa-user-circle-o" aria-hidden="true"></i></span>
-            User Form
+            Basic User Form
           </a>
-          <a class="nav-item nav-link {% if current_tab == 'Professor' %} active {% endif %}" href="{{ tab_urls.professor }}">
+          <a class="nav-item nav-link {% if current_tab == 'role_details' %} active {% endif %}" href="{{ tab_urls.role_details }}">
             <span class="mobile-hide-xs"><i class="fa fa-id-card-o" aria-hidden="true"></i></span>
-            Professor Form
+            Role Details Form
           </a>
         </div>
       </nav>
@@ -45,13 +50,20 @@
       <div id="response-message"></div>
 
       <div class="board col-11 mx-auto">
-        <h3>{{ current_tab }} Form</h3>
+        <h3>
+          {% if current_tab == 'basic_user' %}
+            Basic User
+          {% else %}
+            Role Details
+          {% endif %}
+          Form
+        </h3>
         {% include 'core/subpages/_form_note.html' %}
 
-        <form id="form-user-add-edit" action="{{ info.href }}" method="post">
+        <form id="create-user-form" action="{{ info.href }}" method="post">
           {% csrf_token %}
 
-          {% if current_tab == 'User' %}
+          {% if current_tab == 'basic_user' %}
 
             {% for field in user_form.visible_fields  %}
               <div class="field-wrapper">
@@ -85,7 +97,7 @@
               </div>
             {% endfor %}
 
-          {% elif current_tab == 'Professor' %}
+          {% elif current_tab == 'role_details' %}
 
             {% for field in prof_form.visible_fields  %}
               <div class="field-wrapper">
@@ -112,15 +124,17 @@
           <input type="hidden" name="next" value="{{ next }}" />
           <input type="hidden" name="current_tab" value="{{ current_tab }}" />
 
-          <a class="btn btn-outline-secondary" href="{% url 'gp_admin:get_users' %}">Cancel</a>
+          <div class="mt-2-5rem">
+            <a class="btn btn-outline-secondary" href="{% url 'gp_admin:get_users' %}">Cancel</a>
 
-          {% if current_tab == 'User' %}
-            <button id="btn-user-form" class="btn btn-outline-info" type="button" data-url="{% url 'gp_admin:save_user' %}" data-href="{{ tab_urls.professor }}">Save and go to Professor Form</button>
-          {% elif current_tab == 'Professor' %}
-            <button id="btn-prof-form" class="btn btn-outline-info" type="button" data-url="{% url 'gp_admin:save_user' %}" data-href="{{ tab_urls.user }}">Save and go back to User Form</button>
-          {% endif %}
+            {% if current_tab == 'User' %}
+              <button id="btn-user-form" class="btn btn-outline-info" type="button" data-url="{% url 'gp_admin:save_user' %}" data-href="{{ tab_urls.professor }}">Save and go to Professor Form</button>
+            {% elif current_tab == 'Professor' %}
+              <button id="btn-prof-form" class="btn btn-outline-info" type="button" data-url="{% url 'gp_admin:save_user' %}" data-href="{{ tab_urls.user }}">Save and go back to User Form</button>
+            {% endif %}
 
-          <input class="btn btn-primary" type="submit" value="{{ info.btn_label }}" />
+            <input class="btn btn-primary" type="submit" value="{{ info.btn_label }}" />
+          </div>
         </form>
 
       </div>

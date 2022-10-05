@@ -187,7 +187,7 @@ class UserTest(TestCase):
         print('- Test: create an user - user profile form only')
         self.login()
 
-        data = {
+        user_profile_form = {
             'first_name': 'firstname',
             'last_name': 'lastname',
             'email': 'email@example.com',
@@ -201,30 +201,37 @@ class UserTest(TestCase):
             'current_tab': 'User'
         }
 
-        res = self.client.post(reverse('gp_admin:create_user'), data=urlencode(data, True), content_type=ContentType)
+        res = self.client.post(reverse('gp_admin:create_user'), data=urlencode(user_profile_form, True), content_type=ContentType)
         messages = self.messages(res) 
         self.assertEqual(messages[0], 'Success! User (firstname lastname, CWL: username) created.')
         self.assertEqual(res.status_code, 302)
         self.assertRedirects(res, res.url)
 
-        u = api.get_user(data['username'], 'username')
-        self.assertEqual(u.first_name, data['first_name'])
-        self.assertEqual(u.last_name, data['last_name'])
-        self.assertEqual(u.email, data['email'])
-        self.assertEqual(u.username, data['username'])
+        u = api.get_user(user_profile_form['username'], 'username')
+        self.assertEqual(u.first_name, user_profile_form['first_name'])
+        self.assertEqual(u.last_name, user_profile_form['last_name'])
+        self.assertEqual(u.email, user_profile_form['email'])
+        self.assertEqual(u.username, user_profile_form['username'])
         self.assertFalse(u.is_superuser)
         self.assertTrue(u.is_active)
-        self.assertEqual(u.profile.preferred_name, data['preferred_name'])
+        self.assertEqual(u.profile.preferred_name, user_profile_form['preferred_name'])
+        self.assertEqual(u.profile.roles.count(), len(user_profile_form['roles']))
 
-        roles = [ role.name for role in u.profile.roles.all() ]
-        self.assertEqual(roles, ['Supervisor'])
+        roles = [ str(role.id) for role in u.profile.roles.all() ]
+        self.assertEqual(roles, user_profile_form['roles'])
+
+        self.assertIsNone(u.profile.title)
+        self.assertIsNone(u.profile.position)
+        self.assertIsNone(u.profile.phone)
+        self.assertIsNone(u.profile.office)
+        self.assertEqual(u.profile.programs.count(), 0)
 
 
     def test_create_prof_form_success1(self):
         print('- Test: create an user - prof form - success [1] [1]')
         self.login()
 
-        TAB = 'Professor'
+        TAB = 'role_details'
 
         user_profile_form = {
             'first_name': 'firstname',
@@ -235,6 +242,8 @@ class UserTest(TestCase):
             'is_superuser': 'on',
             'is_active': 'on',
             'roles': ['4'],
+            'phone': 'phone',
+            'office': 'office',
             'current_page': CURRENT_PAGE,
             'next': NEXT,
             'current_tab': TAB
@@ -246,11 +255,8 @@ class UserTest(TestCase):
 
         prof_form = {
             'title': '1',
-            'position': '',
+            'position': '3',
             'programs': ['1'],
-            'phone': 'phone',
-            'fax': 'fax',
-            'office': 'office',
             'current_page': CURRENT_PAGE,
             'next': NEXT,
             'current_tab': TAB
@@ -270,18 +276,27 @@ class UserTest(TestCase):
         self.assertEqual(u.username, user_profile_form['username'])
         self.assertTrue(u.is_superuser)
         self.assertTrue(u.is_active)
-        self.assertEqual(u.profile.preferred_name, data['preferred_name'])
-        self.assertEqual(u.profile.title, '')
+        self.assertEqual(u.profile.phone, user_profile_form['phone'])
+        self.assertEqual(u.profile.office, user_profile_form['office'])
+        self.assertEqual(u.profile.preferred_name, user_profile_form['preferred_name'])
+        self.assertEqual(u.profile.roles.count(), len(user_profile_form['roles']))
 
-        roles = [ role.name for role in u.profile.roles.all() ]
-        self.assertEqual(roles, ['Supervisor'])
+        roles = [ str(role.id) for role in u.profile.roles.all() ]
+        self.assertEqual(roles, user_profile_form['roles'])
+
+        self.assertEqual(u.profile.title.id, int(prof_form['title']))
+        self.assertEqual(u.profile.position.id, int(prof_form['position']))
+        self.assertEqual(u.profile.programs.count(), len(prof_form['programs']))
+
+        programs = [ str(program.id) for program in u.profile.programs.all() ]
+        self.assertEqual(programs, prof_form['programs'])
 
 
     def test_create_prof_form_success2(self):
         print('- Test: create an user - prof form - success [3,4] [1]')
         self.login()
 
-        TAB = 'Professor'
+        TAB = 'role_details'
 
         user_profile_form = {
             'first_name': 'firstname',
@@ -292,6 +307,8 @@ class UserTest(TestCase):
             'is_superuser': 'on',
             'is_active': 'on',
             'roles': ['3', '4'],
+            'phone': 'phone',
+            'office': 'office',
             'current_page': CURRENT_PAGE,
             'next': NEXT,
             'current_tab': TAB
@@ -303,11 +320,8 @@ class UserTest(TestCase):
 
         prof_form = {
             'title': '1',
-            'position': '',
+            'position': '3',
             'programs': ['1'],
-            'phone': 'phone',
-            'fax': 'fax',
-            'office': 'office',
             'current_page': CURRENT_PAGE,
             'next': NEXT,
             'current_tab': TAB
@@ -320,13 +334,35 @@ class UserTest(TestCase):
         self.assertEqual(res.url, NEXT)
         self.assertRedirects(res, res.url)
 
+        u = api.get_user(user_profile_form['username'], 'username')
+        self.assertEqual(u.first_name, user_profile_form['first_name'])
+        self.assertEqual(u.last_name, user_profile_form['last_name'])
+        self.assertEqual(u.email, user_profile_form['email'])
+        self.assertEqual(u.username, user_profile_form['username'])
+        self.assertTrue(u.is_superuser)
+        self.assertTrue(u.is_active)
+        self.assertEqual(u.profile.phone, user_profile_form['phone'])
+        self.assertEqual(u.profile.office, user_profile_form['office'])
+        self.assertEqual(u.profile.preferred_name, user_profile_form['preferred_name'])
+        self.assertEqual(u.profile.roles.count(), len(user_profile_form['roles']))
+
+        roles = [ str(role.id) for role in u.profile.roles.all() ]
+        self.assertEqual(roles, user_profile_form['roles'])
+
+        self.assertEqual(u.profile.title.id, int(prof_form['title']))
+        self.assertEqual(u.profile.position.id, int(prof_form['position']))
+        self.assertEqual(u.profile.programs.count(), len(prof_form['programs']))
+
+        programs = [ str(program.id) for program in u.profile.programs.all() ]
+        self.assertEqual(programs, prof_form['programs'])
 
 
-    def test_create_user_profile_form_success1(self):
+
+    def test_create_user_user_profile_form_success1(self):
         print('- Test: create an user - user profile form - success [3,4] [1,2]')
         self.login()
 
-        TAB = 'User'
+        TAB = 'basic_user'
 
         user_profile_form = {
             'first_name': 'firstname',
@@ -337,6 +373,8 @@ class UserTest(TestCase):
             'is_superuser': 'on',
             'is_active': 'on',
             'roles': ['3', '4'],
+            'phone': 'phone',
+            'office': 'office',
             'current_page': CURRENT_PAGE,
             'next': NEXT,
             'current_tab': TAB
@@ -344,11 +382,8 @@ class UserTest(TestCase):
 
         prof_form = {
             'title': '1',
-            'position': '',
+            'position': '3',
             'programs': ['1','2'],
-            'phone': 'phone',
-            'fax': 'fax',
-            'office': 'office',
             'current_page': CURRENT_PAGE,
             'next': NEXT,
             'current_tab': TAB
@@ -358,11 +393,188 @@ class UserTest(TestCase):
         session['save_prof_form'] = prof_form
         session.save()
 
-        res = self.client.post(reverse('gp_admin:create_user'), data=urlencode(prof_form, True), content_type=ContentType)
+        res = self.client.post(reverse('gp_admin:create_user'), data=urlencode(user_profile_form, True), content_type=ContentType)
         messages = self.messages(res)
         self.assertEqual(messages[0], 'Success! User (firstname lastname, CWL: username) created.')
         self.assertEqual(res.status_code, 302)
         self.assertEqual(res.url, NEXT)
         self.assertRedirects(res, res.url)
 
+        u = api.get_user(user_profile_form['username'], 'username')
+        self.assertEqual(u.first_name, user_profile_form['first_name'])
+        self.assertEqual(u.last_name, user_profile_form['last_name'])
+        self.assertEqual(u.email, user_profile_form['email'])
+        self.assertEqual(u.username, user_profile_form['username'])
+        self.assertTrue(u.is_superuser)
+        self.assertTrue(u.is_active)
+        self.assertEqual(u.profile.phone, user_profile_form['phone'])
+        self.assertEqual(u.profile.office, user_profile_form['office'])
+        self.assertEqual(u.profile.preferred_name, user_profile_form['preferred_name'])
+        self.assertEqual(u.profile.roles.count(), len(user_profile_form['roles']))
 
+        roles = [ str(role.id) for role in u.profile.roles.all() ]
+        self.assertEqual(roles, user_profile_form['roles'])
+
+        self.assertEqual(u.profile.title.id, int(prof_form['title']))
+        self.assertEqual(u.profile.position.id, int(prof_form['position']))
+        self.assertEqual(u.profile.programs.count(), len(prof_form['programs']))
+
+        programs = [ str(program.id) for program in u.profile.programs.all() ]
+        self.assertEqual(programs, prof_form['programs'])
+
+
+    def test_create_user_user_profile_form_success2(self):
+        print('- Test: create an user - user profile form with different data - success [3,4] [1,2]')
+        self.login()
+
+        TAB = 'basic_user'
+
+        user_profile_form = {
+            'first_name': 'firstname',
+            'last_name': 'lastname',
+            'email': 'email@example.com',
+            'username': 'username',
+            'preferred_name': 'preferred name',
+            'is_superuser': 'on',
+            'is_active': 'on',
+            'roles': ['3', '4'],
+            'phone': 'phone',
+            'office': 'office',
+            'current_page': CURRENT_PAGE,
+            'next': NEXT,
+            'current_tab': TAB
+        }
+
+        prof_form = {
+            'title': '1',
+            'position': '3',
+            'programs': ['1','2'],
+            'current_page': CURRENT_PAGE,
+            'next': NEXT,
+            'current_tab': TAB
+        }
+
+        session = self.client.session
+        session['save_user_profile_form'] = user_profile_form
+        session['save_prof_form'] = prof_form
+        session.save()
+
+        data = {
+            'first_name': 'firstname2',
+            'last_name': 'lastname2',
+            'email': 'email2@example.com',
+            'username': 'username2',
+            'preferred_name': 'preferred name2',
+            'is_superuser': '',
+            'is_active': '',
+            'phone': '',
+            'office': '',
+            'roles': ['1'],
+            'current_page': CURRENT_PAGE,
+            'next': NEXT,
+            'current_tab': TAB
+        }
+
+        res = self.client.post(reverse('gp_admin:create_user'), data=urlencode(data, True), content_type=ContentType)
+        messages = self.messages(res)
+        self.assertEqual(messages[0], 'Success! User (firstname2 lastname2, CWL: username2) created.')
+        self.assertEqual(res.status_code, 302)
+        self.assertEqual(res.url, NEXT)
+        self.assertRedirects(res, res.url)
+
+        u = api.get_user(data['username'], 'username')
+        self.assertEqual(u.first_name, data['first_name'])
+        self.assertEqual(u.last_name, data['last_name'])
+        self.assertEqual(u.email, data['email'])
+        self.assertEqual(u.username, data['username'])
+        self.assertFalse(u.is_superuser)
+        self.assertFalse(u.is_active)
+        self.assertIsNone(u.profile.phone)
+        self.assertIsNone(u.profile.office)
+        self.assertEqual(u.profile.preferred_name, data['preferred_name'])
+        self.assertEqual(u.profile.roles.count(), len(data['roles']))
+
+        roles = [ str(role.id) for role in u.profile.roles.all() ]
+        self.assertEqual(roles, data['roles'])
+
+        self.assertEqual(u.profile.title.id, int(prof_form['title']))
+        self.assertEqual(u.profile.position.id, int(prof_form['position']))
+        self.assertEqual(u.profile.programs.count(), len(prof_form['programs']))
+
+        programs = [ str(program.id) for program in u.profile.programs.all() ]
+        self.assertEqual(programs, prof_form['programs'])
+
+
+    def test_create_user_prof_form_success3(self):
+        print('- Test: create an user - prof form with different data - success [3,4] []')
+        self.login()
+
+        TAB = 'role_details'
+
+        user_profile_form = {
+            'first_name': 'firstname',
+            'last_name': 'lastname',
+            'email': 'email@example.com',
+            'username': 'username',
+            'preferred_name': 'preferred name',
+            'is_superuser': 'on',
+            'is_active': 'on',
+            'roles': ['3', '4'],
+            'phone': 'phone',
+            'office': 'office',
+            'current_page': CURRENT_PAGE,
+            'next': NEXT,
+            'current_tab': TAB
+        }
+
+        prof_form = {
+            'title': '1',
+            'position': '3',
+            'programs': ['1','2'],
+            'current_page': CURRENT_PAGE,
+            'next': NEXT,
+            'current_tab': TAB
+        }
+
+        session = self.client.session
+        session['save_user_profile_form'] = user_profile_form
+        session['save_prof_form'] = prof_form
+        session.save()
+
+        data = {
+            'title': '3',
+            'position': '1',
+            'programs': [],
+            'current_page': CURRENT_PAGE,
+            'next': NEXT,
+            'current_tab': TAB
+        }
+
+        res = self.client.post(reverse('gp_admin:create_user'), data=urlencode(data, True), content_type=ContentType)
+        messages = self.messages(res)
+        self.assertEqual(messages[0], 'Success! User (firstname lastname, CWL: username) created.')
+        self.assertEqual(res.status_code, 302)
+        self.assertEqual(res.url, NEXT)
+        self.assertRedirects(res, res.url)
+
+        u = api.get_user(user_profile_form['username'], 'username')
+        self.assertEqual(u.first_name, user_profile_form['first_name'])
+        self.assertEqual(u.last_name, user_profile_form['last_name'])
+        self.assertEqual(u.email, user_profile_form['email'])
+        self.assertEqual(u.username, user_profile_form['username'])
+        self.assertTrue(u.is_superuser)
+        self.assertTrue(u.is_active)
+        self.assertEqual(u.profile.phone, user_profile_form['phone'])
+        self.assertEqual(u.profile.office, user_profile_form['office'])
+        self.assertEqual(u.profile.preferred_name, user_profile_form['preferred_name'])
+        self.assertEqual(u.profile.roles.count(), len(user_profile_form['roles']))
+
+        roles = [ str(role.id) for role in u.profile.roles.all() ]
+        self.assertEqual(roles, user_profile_form['roles'])
+
+        self.assertEqual(u.profile.title.id, int(data['title']))
+        self.assertEqual(u.profile.position.id, int(data['position']))
+        self.assertEqual(u.profile.programs.count(), len(data['programs']))
+
+        programs = [ str(program.id) for program in u.profile.programs.all() ]
+        self.assertEqual(programs, data['programs'])

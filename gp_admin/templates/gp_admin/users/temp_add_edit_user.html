@@ -48,7 +48,7 @@
         <h3>{{ current_tab }} Form</h3>
         {% include 'core/subpages/_form_note.html' %}
 
-        <form id="form-user-add-edit" action="{{ info.href }}" method="post">
+        <form id="create-user-form" action="{{ info.href }}" method="post">
           {% csrf_token %}
 
           {% if current_tab == 'User' %}

@@ -251,8 +251,6 @@ def get_filtered_items(request, all_list, path):
     return items
 
 
-
-
 # Helper functions
 
 def build_url(path, next_path, tab):
