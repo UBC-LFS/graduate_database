@@ -7,7 +7,7 @@
 
   <div class="row">
     <div class="col-md-4">
-      {% if info.type == 'add' %}
+      {% if info.type == 'create' %}
         {% include 'core/subpages/_left_aside.html' with title='New User' total=users|length type=info.type path=info.path %}
       {% else %}
         {% include 'core/subpages/_left_aside.html' with data=user type=info.type %}
@@ -22,12 +22,16 @@
           <h4>
             <i class="fa fa-bell-o" aria-hidden="true"></i> Note
           </h4>
-          <p>
-            If a user has a
-            <span class="font-weight-bold">Graduate Advisor</span> or
-            <span class="font-weight-bold">Supervisor</span> role,
-            please fill out the <a href="{% url 'gp_admin:create_user' %}?next={{ next }}&t=role_details">Role Details</a> Form in the tab.
-          </p>
+
+          <ul class="list-left-20">
+            <li>
+              If a user has a
+              <span class="font-weight-bold">Graduate Advisor</span> or
+              <span class="font-weight-bold">Supervisor</span> role,
+              please fill out the <a href="{% url 'gp_admin:create_user' %}?next={{ next }}&t=role_details">Role Details</a> Form in the tab.
+            </li>
+            <li>Please click on the <span class="font-weight-bold">Cancel</span> button to clear saved data after saving.</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -125,12 +129,12 @@
           <input type="hidden" name="current_tab" value="{{ current_tab }}" />
 
           <div class="mt-2-5rem">
-            <a class="btn btn-outline-secondary" href="{% url 'gp_admin:get_users' %}">Cancel</a>
+            <a class="btn btn-outline-secondary" href="{% url 'gp_admin:cancel_user' %}?next={{ next }}">Cancel</a>
 
-            {% if current_tab == 'User' %}
-              <button id="btn-user-form" class="btn btn-outline-info" type="button" data-url="{% url 'gp_admin:save_user' %}" data-href="{{ tab_urls.professor }}">Save and go to Professor Form</button>
-            {% elif current_tab == 'Professor' %}
-              <button id="btn-prof-form" class="btn btn-outline-info" type="button" data-url="{% url 'gp_admin:save_user' %}" data-href="{{ tab_urls.user }}">Save and go back to User Form</button>
+            {% if current_tab == 'basic_user' %}
+              <button id="btn-user-form" class="btn btn-outline-info" type="button" data-url="{% url 'gp_admin:save_user' %}" data-href="{{ tab_urls.role_details }}">Save and go to Role Details Form</button>
+            {% elif current_tab == 'role_details' %}
+              <button id="btn-prof-form" class="btn btn-outline-info" type="button" data-url="{% url 'gp_admin:save_user' %}" data-href="{{ tab_urls.basic_user }}">Save and go back to Basic User Form</button>
             {% endif %}
 
             <input class="btn btn-primary" type="submit" value="{{ info.btn_label }}" />

@@ -29,10 +29,12 @@ urlpatterns = [
     path('users/<str:username>/edit/', views.Edit_User.as_view(), name='edit_user'),
     path('user/create/', views.Create_User.as_view(), name='create_user'),
     path('api/user/save/', views.save_user, name='save_user'),
+    path('user/cancel/', views.cancel_user, name='cancel_user'),
 
     path('users/roles/', views.Get_Roles.as_view(), name='get_roles'),
     path('api/roles/<str:slug>/edit/', views.edit_role, name='edit_role'),
     path('api/role/delete/', views.delete_role, name='delete_role'),
+
 
     # Preparation
     

@@ -1,34 +1,12 @@
 $(document).ready(function() {
-  console.log("here");
-
-  // const user_form = sessionStorage.getItem('user-form');
-  // const prof_form = localStorage.getItem('prof-form');
-  //
-  // if (prof_form) {
-  //   let json = JSON.parse(prof_form);
-  //   console.log(json);
-  //   console.log($('#id_office'));
-  //   // $('#id_office').val(json.office);
-  // }
 
   $('#btn-user-form').on('click', function() {
     const url = $(this).data('url');
     const href = $(this).data('href');
 
     const form_data = $('#create-user-form').serializeArray();
-    const json = convert_object_to_json(form_data, 'User');
+    const json = convert_object_to_json(form_data, 'basic_user');
     send_data(url, json, href);
-    // localStorage.setItem('prof-form', json);
-
-
-    // const temp = JSON.stringify(form_data);
-    // console.log("btn user form", href, url);
-
-    // console.log(form_data);
-    // console.log(temp);
-    // localStorage.setItem('prof-form', temp);
-
-    //send_data(url, form_data, href);
   });
 
   $('#btn-prof-form').on('click', function() {
@@ -36,21 +14,12 @@ $(document).ready(function() {
     const href = $(this).data('href');
 
     const form_data = $('#create-user-form').serializeArray();
-    const json = convert_object_to_json(form_data, 'Professor');
+    const json = convert_object_to_json(form_data, 'role_details');
     send_data(url, json, href);
-
-    // const temp = JSON.stringify(form_data);
-    // console.log("btn prof form", href, url);
-    //
-    // console.log(form_data);
-    // console.log(temp);
-
-    // localStorage.setItem('user-form', temp);
-
-    // send_data(url, form_data, href);
   });
 
 });
+
 
 function convert_object_to_json(data, path) {
   let obj = { 'path': path };
@@ -70,6 +39,7 @@ function convert_object_to_json(data, path) {
 
   return obj;
 }
+
 
 function send_data(url, data, href) {
   console.log(url, href);
