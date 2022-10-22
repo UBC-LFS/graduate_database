@@ -8,7 +8,7 @@ from gp_admin import api
 
 
 LOGIN_URL = '/accounts/local_login/'
-ContentType='application/x-www-form-urlencoded'
+ContentType = 'application/x-www-form-urlencoded'
 
 DATA = [
     'gp_admin/fixtures/degrees.json',
@@ -25,7 +25,7 @@ DATA = [
     'gp_admin/fixtures/statuses.json',
     'gp_admin/fixtures/students.json',
     'gp_admin/fixtures/titles.json',
-    'gp_admin/fixtures/users.json',
+    'gp_admin/fixtures/users.json'
 ]
 
 USERS = ['user1.prof', 'test.guest1']
@@ -41,7 +41,7 @@ class UserTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        print('\nSession testing has started ==>')
+        #print('\User testing has started ==>')
         cls.user = api.get_user(USERS[0], 'username')
 
     def login(self, username=None, password=None):

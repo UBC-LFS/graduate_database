@@ -9,8 +9,17 @@
     <div class="col-md-2">
       <h2 class="text-center-middle text-center">Students</h2>
     </div>
-    <div class="col-md-10">
+    <div class="col-md-7">
       {% include 'gp_admin/subpages/_search_fields.html' with path='students' %}
+    </div>
+
+    <div class="col-md-3 bg-white">
+      <div class="bg-prompt height-100">
+        <div class="prompt height-100 text-center pt-3">
+          <p>Please click to create a new student.</p>
+          <a class="btn btn-outline-primary btn-sm mt-3" href="{% url 'gp_admin:create_student' %}?next={{ request.get_full_path }}&t=basic_student">Create Student</a>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -116,7 +125,10 @@
             {{ stud.updated_on }}
           </td>
           <td>
+            {{ stud.json.stud.no }}
+            {% comment %}
             <a class="btn btn-xs btn-link fs-sm" href="{% url 'gp_admin:edit_student' student_number=stud.json.stud_no %}?next={{ request.get_full_path }}">Edit</a>
+            {% endcomment %}
           </td>
         </tr>
       {% empty %}

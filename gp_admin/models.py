@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.text import slugify
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, EmailValidator
 
 
 # Preparation
@@ -153,37 +153,41 @@ class Profile(models.Model):
         return self.user.username
 
 
-
-
-
 # Data Tables
 
 
 class Student(models.Model):
+
+    # Basic Student
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
     student_number = models.CharField(max_length=8, unique=True)
-    email = models.CharField(max_length=150, unique=True)
-
+    email = models.EmailField(max_length=150, unique=True)
     date_of_birth = models.DateField(null=True, blank=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
     sin = models.CharField(max_length=20, null=True, blank=True)
-    loa_months = models.IntegerField(null=True, blank=True)
+    loa_months = models.IntegerField(
+        null=True, 
+        blank=True,
+        validators=[MinValueValidator(0),  MaxValueValidator(200)]
+    )
     loa_details = models.CharField(max_length=150, null=True, blank=True)
     policy_85 = models.BooleanField(default=False)
+    note = models.TextField(null=True, blank=True)
     
+    # Current School Information
     status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True, blank=True)
     start_date = models.DateField(null=True, blank=True)
     completion_date = models.DateField(null=True, blank=True)
     graduation_date = models.DateField(null=True, blank=True)
     comprehensive_exam_date = models.DateField(null=True, blank=True)
-
     thesis_title = models.CharField(max_length=150, null=True, blank=True)
     funding_sources = models.CharField(max_length=150, null=True, blank=True)
     total_funding_awarded = models.CharField(max_length=150, null=True, blank=True)
     taships = models.CharField(max_length=150, null=True, blank=True)
     current_role = models.CharField(max_length=150, null=True, blank=True)
 
+    # Previous School Information
     previous_institution_1 = models.CharField(max_length=150, null=True, blank=True)
     degree_1 = models.CharField(max_length=50, null=True, blank=True)
     gpa_1 = models.CharField(max_length=20, null=True, blank=True)
@@ -194,10 +198,8 @@ class Student(models.Model):
     degree_3 = models.CharField(max_length=50, null=True, blank=True)
     gpa_3 = models.CharField(max_length=20, null=True, blank=True)
 
-    note = models.TextField(null=True, blank=True)
-
     json = models.JSONField()
-    hashcode = models.CharField(max_length=255)
+    hashcode = models.CharField(max_length=254)
 
     created_on = models.DateField(auto_now_add=True)
     updated_on = models.DateField(auto_now=True)

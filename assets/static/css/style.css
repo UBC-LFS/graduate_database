@@ -171,6 +171,12 @@ main {
   margin-top: 0 !important;
 }
 
+.board form table td:first-child label {
+  margin: 0;
+  font-weight: bold;
+  display: block;
+}
+
 .field-wrapper {
   margin-top: 1.2rem;
   margin-bottom: 1.2rem;

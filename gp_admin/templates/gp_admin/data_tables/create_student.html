@@ -1,0 +1,129 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+{% include 'gp_admin/subpages/_menu.html' %}
+
+<div class="container max-width-container">
+
+  <div class="row">
+    <div class="col-md-4">
+      {% if info.type == 'create' %}
+        {% include 'core/subpages/_left_aside.html' with title='New Student' total=students|length type=info.type path=info.path %}
+      {% else %}
+
+      {% endif %}
+
+      <div class="left-aside-btn-groups">
+        <a class="btn btn-outline-primary" href="{{ next }}">Back to Students</a>
+      </div>
+
+      <div class="col-10 mx-auto">
+        <div class="bd-callout bd-callout-warning">
+          <h4>
+            <i class="fa fa-bell-o" aria-hidden="true"></i> Note
+          </h4>
+
+          <ul class="list-left-20">
+            <li>
+              Please fill the <span class="font-weight-bold">Comprehensive Exam Date</span> field in the <span class="font-weight-bold">Current School Information Form</span> to send reminder emails to students automatically.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-md-8">
+
+      <nav class="mb-4">
+        <div class="nav nav-tabs">
+          <a class="nav-item nav-link {% if current_tab == 'basic_student' %} active {% endif %}" href="{{ tab_urls.basic_student }}">
+            <span class="mobile-hide-xs"><i class="fa fa-user-circle-o" aria-hidden="true"></i></span>
+            Basic Student
+          </a>
+          <a class="nav-item nav-link {% if current_tab == 'current_school_info' %} active {% endif %}" href="{{ tab_urls.current_school_info }}">
+            <span class="mobile-hide-xs"><i class="fa fa-id-card-o" aria-hidden="true"></i></span>
+            Current School Info
+          </a>
+          <a class="nav-item nav-link {% if current_tab == 'previous_school_info' %} active {% endif %}" href="{{ tab_urls.previous_school_info }}">
+            <span class="mobile-hide-xs"><i class="fa fa-id-card-o" aria-hidden="true"></i></span>
+            Previous School Info
+          </a>
+        </div>
+      </nav>
+
+      <div class="board col-11 mx-auto">
+        <h3>
+          {% if current_tab == 'basic_student' %}
+            Basic Student
+          {% elif current_tab == 'current_school_info' %}
+            Current School Infomation
+          {% elif current_tab == 'previous_school_info' %}
+            Previous School Infomation
+          {% endif %}
+          Form
+        </h3>
+        {% include 'core/subpages/_form_note.html' %}
+
+        <form action="" method="post">
+          {% csrf_token %}
+
+          {% if form %}
+            <table class="table table-borderless fs-1">
+              {% for field in form.visible_fields  %}
+                <tr>
+                  <td class="col-md-4">
+                    <label for="{{ field.id_for_label }}">
+                      {{ field.label }}
+                      {% if field.name == 'last_name' or field.name == 'first_name' or field.name == 'student_number' or field.name == 'email' %}
+                        <small class="text-danger"><i class="fa fa-asterisk" aria-hidden="true"></i></small>
+                      {% endif %}
+                    </label>
+
+                    {% if field.help_text %}
+                      <div class="help">{{ field.help_text|safe }}</div>
+                    {% endif %}
+                  </td>
+                  <td class="col-md-8">{{ field }}</td>
+                </tr>
+              {% endfor %}
+            </table>
+
+          {% else %}
+
+            <p class="my-4">A form is not available at the moment.</p>
+
+          {% endif %}
+
+          <input type="hidden" name="current_page" value="{{ request.get_full_path }}" />
+          <input type="hidden" name="next" value="{{ next }}" />
+          <input type="hidden" name="current_tab" value="{{ current_tab }}" />
+
+          <div class="text-center mt-2-5rem">
+            <a class="btn btn-outline-secondary" href="{% url 'gp_admin:cancel_student' %}?next={{ next }}">Cancel</a>
+            <input class="btn btn-info" type="submit" name="save" value="Save" />
+            <input class="btn btn-primary" type="submit" value="{{ info.btn_label }}" />
+
+            <div class="mt-3">
+              {% if current_tab == 'basic_student' %}
+                <a class="btn btn-outline-info mb-2" href="{{ tab_urls.current_school_info }}">Current School Info Form</a><br />
+                <a class="btn btn-outline-info" href="{{ tab_urls.previous_school_info }}">Previous School Info Form</a>
+              {% elif current_tab == 'current_school_info' %}
+                <a class="btn btn-outline-info mb-2" href="{{ tab_urls.basic_student }}">Basic Student Form</a><br />
+                <a class="btn btn-outline-info" href="{{ tab_urls.previous_school_info }}">Previous School Info Form</a>
+              {% elif current_tab == 'previous_school_info' %}
+                <a class="btn btn-outline-info mb-2" href="{{ tab_urls.basic_student }}">Basic Student Form</a><br />
+                <a class="btn btn-outline-info" href="{{ tab_urls.current_school_info }}">Current School Info Form</a>
+              {% endif %}
+            </div>
+
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

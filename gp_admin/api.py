@@ -4,7 +4,8 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.db.models import Q
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+import json
+import hashlib
 from .models import *
 
 
@@ -253,6 +254,9 @@ def get_filtered_items(request, all_list, path):
 
 # Helper functions
 
+def make_hash(data):
+    return hashlib.sha256( json.dumps(data).encode('utf-8') ).hexdigest()
+
 def build_url(path, next_path, tab):
     return "{0}?next={1}&t={2}".format(path, next_path, tab)
 
@@ -264,6 +268,9 @@ def get_error_messages(errors):
     return messages.strip()
 
 
+def split_capitalize(s):
+    words = [ word.capitalize() for word in s.split('_') ]
+    return ' '.join(words)
 
 # ROLES = {
 #     'Superadmin': 1,
