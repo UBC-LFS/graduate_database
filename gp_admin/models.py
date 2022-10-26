@@ -158,7 +158,7 @@ class Profile(models.Model):
 
 class Student(models.Model):
 
-    # Basic Student
+    # Basic Information
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
     student_number = models.CharField(max_length=8, unique=True)
@@ -175,7 +175,7 @@ class Student(models.Model):
     policy_85 = models.BooleanField(default=False)
     note = models.TextField(null=True, blank=True)
     
-    # Current School Information
+    # Additional Information
     status = models.ForeignKey(Status, on_delete=models.SET_NULL, null=True, blank=True)
     start_date = models.DateField(null=True, blank=True)
     completion_date = models.DateField(null=True, blank=True)
@@ -198,8 +198,8 @@ class Student(models.Model):
     degree_3 = models.CharField(max_length=50, null=True, blank=True)
     gpa_3 = models.CharField(max_length=20, null=True, blank=True)
 
-    json = models.JSONField()
-    hashcode = models.CharField(max_length=254)
+    json = models.JSONField(null=True, blank=True)
+    hashcode = models.CharField(max_length=254, null=True, blank=True)
 
     created_on = models.DateField(auto_now_add=True)
     updated_on = models.DateField(auto_now=True)

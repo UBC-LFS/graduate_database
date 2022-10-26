@@ -10,7 +10,7 @@ from .models import *
 
 # Data Table
 
-class Basic_Student_Form(forms.ModelForm):
+class Basic_Info_Form(forms.ModelForm):
     date_of_birth = forms.DateField(
         required = False,
         widget = forms.widgets.DateInput(attrs={'type': 'date', 'class':'form-control'}),
@@ -53,7 +53,7 @@ class Basic_Student_Form(forms.ModelForm):
             'loa_details': 'Maximum length is 150 characters.'
         }
 
-class Current_School_Info_Form(forms.ModelForm):
+class Additional_Info_Form(forms.ModelForm):
     start_date = forms.DateField(
         required = False,
         widget = forms.widgets.DateInput(attrs={'type': 'date', 'class':'form-control'}),
@@ -149,8 +149,7 @@ class Student_Form(forms.ModelForm):
         fields = [
             'first_name', 'last_name', 'student_number', 'email', 'date_of_birth', 'phone', 'sin', 'loa_months', 'loa_details', 'policy_85', 'note',
             'status', 'start_date', 'completion_date', 'graduation_date', 'comprehensive_exam_date', 'thesis_title', 'funding_sources', 'total_funding_awarded', 'taships', 'current_role',
-            'previous_institution_1', 'degree_1', 'gpa_1', 'previous_institution_2', 'degree_2', 'gpa_2', 'previous_institution_3', 'degree_3', 'gpa_3',
-            'json', 'hashcode'
+            'previous_institution_1', 'degree_1', 'gpa_1', 'previous_institution_2', 'degree_2', 'gpa_2', 'previous_institution_3', 'degree_3', 'gpa_3'
         ]
     
     '''def clean_loa_months(self):

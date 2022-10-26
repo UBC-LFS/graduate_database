@@ -17,7 +17,7 @@
       <div class="bg-prompt height-100">
         <div class="prompt height-100 text-center pt-3">
           <p>Please click to create a new student.</p>
-          <a class="btn btn-outline-primary btn-sm mt-3" href="{% url 'gp_admin:create_student' %}?next={{ request.get_full_path }}&t=basic_student">Create Student</a>
+          <a class="btn btn-outline-primary btn-sm mt-3" href="{% url 'gp_admin:create_student' %}?next={{ request.get_full_path }}&t=basic_info">Create Student</a>
         </div>
       </div>
     </div>
@@ -50,10 +50,10 @@
       {% for stud in students %}
         <tr>
           <td>{{ stud.id }}</td>
-          <td>{{ stud.json.given_name }}</td>
-          <td>{{ stud.json.surname }}</td>
-          <td>{{ stud.json.stud_no }}</td>
-          <td>{{ stud.json.email_address }}</td>
+          <td>{{ stud.first_name }}</td>
+          <td>{{ stud.last_name }}</td>
+          <td>{{ stud.student_number }}</td>
+          <td>{{ stud.email }}</td>
           <td>{% include 'gp_admin/subpages/_modal_additional_info.html' with data=stud %}</td>
           <td>
             {% if stud.note %}
@@ -125,10 +125,7 @@
             {{ stud.updated_on }}
           </td>
           <td>
-            {{ stud.json.stud.no }}
-            {% comment %}
-            <a class="btn btn-xs btn-link fs-sm" href="{% url 'gp_admin:edit_student' student_number=stud.json.stud_no %}?next={{ request.get_full_path }}">Edit</a>
-            {% endcomment %}
+            <a class="btn btn-xs btn-link fs-sm" href="{% url 'gp_admin:edit_student' student_number=stud.student_number %}?next={{ request.get_full_path }}&t=basic_info">Edit</a>
           </td>
         </tr>
       {% empty %}

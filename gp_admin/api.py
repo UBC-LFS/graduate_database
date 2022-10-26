@@ -18,8 +18,19 @@ def get_students():
 def get_student(arg):
     try:
         return Student.objects.get(student_number=arg)
-    except Studnet.DoesNotExist:
+    except Student.DoesNotExist:
         raise Http404
+
+
+def queryset_to_dict(post):
+    data = {}
+    for key, value in dict(post).items():
+        if key not in ['current_page', 'next', 'tab', 'save']:
+            data[key] = value[0]
+    return data
+
+
+
 
 
 # Professor

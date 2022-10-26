@@ -9,7 +9,7 @@ urlpatterns = [
     # Data Tables
 
     path('students/', views.Get_Students.as_view(), name='get_students'),
-    #path('students/<str:student_number>/edit/', views.Edit_Student.as_view(), name='edit_student'),
+    path('students/<str:student_number>/edit/', views.Edit_Student.as_view(), name='edit_student'),
     path('student/create/', views.Create_Student.as_view(), name='create_student'),
     path('student/cancel/', views.cancel_student, name='cancel_student'),
 

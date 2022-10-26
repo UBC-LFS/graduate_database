@@ -66,30 +66,17 @@ class Get_Students(View):
 class Create_Student(View):
     def get(self, request, *args, **kwargs):
         next = request.GET.get('next')
-        current_tab = request.GET.get('t')
-
-        #print(request.session.get('save_student_form'))
-        save_student_form = request.session.get('save_student_form', None)
+        tab = request.GET.get('t')
 
         form = None
-        if current_tab == 'basic_student':
-            data = None
-            if save_student_form and 'basic_student' in save_student_form:
-                data = save_student_form['basic_student'] 
-            form = Basic_Student_Form(data=data)
+        if tab == 'basic_info':
+            form = Basic_Info_Form(initial=request.session.get('create_basic_info_form', None))
 
-        elif current_tab == 'current_school_info':
-            data = None
-            if save_student_form and 'current_school_info' in save_student_form:
-                data = save_student_form['current_school_info']
-            form = Current_School_Info_Form(data=data)
+        elif tab == 'additional_info':
+            form = Additional_Info_Form(initial=request.session.get('create_additional_info_form', None))
 
-        elif current_tab == 'previous_school_info':
-            data = None
-            if save_student_form and 'previous_school_info' in save_student_form:
-                data = save_student_form['previous_school_info'] 
-            form = Previous_School_Info_Form(data=data)
-
+        elif tab == 'previous_school_info':
+            form = Previous_School_Info_Form(initial=request.session.get('create_previous_school_info_form', None))
 
         return render(request, 'gp_admin/data_tables/create_student.html', {
             'students': api.get_students(),
@@ -100,150 +87,153 @@ class Create_Student(View):
                 'path': 'students'
             },
             'next': next,
-            'current_tab': current_tab,
+            'tab': tab,
             'tab_urls': {
-                'basic_student': api.build_url(request.path, next, 'basic_student'),
-                'current_school_info': api.build_url(request.path, next, 'current_school_info'),
+                'basic_info': api.build_url(request.path, next, 'basic_info'),
+                'additional_info': api.build_url(request.path, next, 'additional_info'),
                 'previous_school_info': api.build_url(request.path, next, 'previous_school_info')
             }
         })
 
     def post(self, request, *args, **kwargs):
-        current_tab = request.POST.get('current_tab')
-        
+        tab = request.POST.get('tab')
+        data = api.queryset_to_dict(request.POST.copy())
+
         if 'save' in request.POST.keys():
-            current_data = request.POST.copy()
-            del current_data['current_page']
-            del current_data['next']
-            del current_data['current_tab']
-            del current_data['save']
-
-            if current_tab == 'basic_student':
-                request.session['save_student_form'] = { 'basic_student': current_data }
-
-            elif current_tab == 'current_school_info':
-                request.session['save_student_form'] = { 'current_school_info': current_data }
-
-            elif current_tab == 'previous_school_info':
-                request.session['save_student_form'] = { 'previous_school_info': current_data }
+            if tab == 'basic_info':
+                request.session['create_basic_info_form'] = data
+            elif tab == 'additional_info':
+                request.session['create_additional_info_form'] = data
+            elif tab == 'previous_school_info':
+                request.session['create_previous_school_info_form'] = data
+            else:
+                messages.error(request, 'An error occurred. No valid tab.')
+                return HttpResponseRedirect(request.POST.get('current_page'))
             
-            messages.success(request, 'Success! {0} Form saved.'.format( api.split_capitalize(current_tab) ))
+            messages.success(request, 'Success! {0}rmation Form saved.'.format( api.split_capitalize(tab) ))
         
         else:
-            session_data = request.session.get('save_student_form', None)
-            print( type(session_data) )
-            form = Student_Form(session_data)
-            print(form.is_valid(), form.errors)
+            basic_info = request.session.get('create_basic_info_form', None)
+            additional_info = request.session.get('create_additional_info_form', None)
+            previous_school_info = request.session.get('create_previous_school_info_form', None)
 
-            if current_tab == 'basic_student':
-                pass
-            elif current_tab == 'current_school_info':
-                pass
-            elif current_tab == 'previous_school_info':
-                pass
-            
-            #data = { key: value[0] for key, value in dict(request.POST).items() }
-            #print(data)
-            
-            #post['json'] = data
-            #post['hashcode'] = api.make_hash(data)
-            #print(post)
+            if tab == 'basic_info':
+                if additional_info: data.update(additional_info)
+                if previous_school_info: data.update(previous_school_info)
 
-            # form = Student_Form(post)
-            # if form.is_valid():
-            #     res = form.save()
-            #     if res:
-            #         messages.success(request, 'Success! Student ({0}, Student #: {1}) created.'.format(res.get_full_name(), res.student_number))
-            #         return HttpResponseRedirect(request.POST.get('next'))
-            #     else:
-            #         messages.error(request, 'An error occurred while creating data.')
-            # else:
-            #     messages.error(request, 'An error occurred. Form is invalid. {0}'.format(api.get_error_messages(form.errors.get_json_data())))
+            elif tab == 'additional_info':
+                if basic_info: data.update(basic_info)
+                if previous_school_info: data.update(previous_school_info)
+
+            elif tab == 'previous_school_info':
+                if basic_info: data.update(basic_info)
+                if additional_info: data.update(additional_info)
+
+            else:
+                messages.error(request, 'An error occurred. No valid tab.')
+                return HttpResponseRedirect(request.POST.get('current_page'))
+
+            form = Student_Form(data)
+            if form.is_valid():
+                res = form.save()
+                if res:
+                    messages.success(request, 'Success! Student ({0}, Student #: {1}) created.'.format(res.get_full_name(), res.student_number))
+                    return HttpResponseRedirect(request.POST.get('next'))
+                else:
+                    messages.error(request, 'An error occurred while creating data.')
+            else:
+                messages.error(request, 'An error occurred. Form is invalid. {0}'.format(api.get_error_messages(form.errors.get_json_data())))
         
         return HttpResponseRedirect(request.POST.get('current_page'))
 
 
 def cancel_student(request):
-    print('save_student_form' in request.session, request.GET.get('next'))
-    # Delete a form session if it exists
-    if 'save_student_form' in request.session:
-        del request.session['save_student_form']
-        #request.session.pop('save_student_form')
 
-    print('cancel student', request.session.get('save_student_form'))
+    # Delete forms in session if they exist
+    if 'create_basic_info_form' in request.session:
+        del request.session['create_basic_info_form']
+    if 'create_additional_info_form' in request.session:
+        del request.session['create_additional_info_form']
+    if 'create_previous_school_info_form' in request.session:
+        del request.session['create_previous_school_info_form']
+
+    if 'edit_basic_info_form' in request.session:
+        del request.session['edit_basic_info_form']
+    if 'edit_additional_info_form' in request.session:
+        del request.session['edit_additional_info_form']
+    if 'edit_previous_school_info_form' in request.session:
+        del request.session['edit_previous_school_info_form']
+
     return HttpResponseRedirect(request.GET.get('next'))
-    #return redirect('gp_admin:get_students')
-
-
-def save_student(request):
-    print(request.POST)
-
-
-def save_student2(request):
-    data = request.GET
-    path = request.GET.get('path')
-    if path == 'basic_user':
-        roles = request.GET.getlist('roles[]', [])
-        if len(roles) == 0:
-            roles = [ request.GET.get('roles', '') ]
-
-        request.session['save_user_profile_form'] = {
-            'first_name': data.get('first_name', ''),
-            'last_name': data.get('last_name', ''),
-            'email': data.get('email', ''),
-            'username': data.get('username', ''),
-            'is_superuser': data.get('is_superuser') if data.get('is_superuser', None) else '',
-            'is_active': data.get('is_active') if data.get('is_active', None) else '',
-            'preferred_name': data.get('preferred_name', ''),
-            'roles': roles,
-            'phone': data.get('phone', ''),
-            'office': data.get('office', '')
-        }
-    elif path == 'role_details':
-        programs = request.GET.getlist('programs[]', [])
-        if len(programs) == 0:
-            programs = [ request.GET.get('programs', '') ]
-
-        request.session['save_prof_form'] = {
-            'title': data.get('title', ''),
-            'position': data.get('position', ''),
-            'programs': programs,
-            
-        }
-
-    return JsonResponse({ 'status': 'success', 'message': 'Success! {0} Form saved.'.format(path) })
-
 
 
 class Edit_Student(View):
-    stud_form = Student_Form
-
     def get(self, request, *args, **kwargs):
+        next = request.GET.get('next')
+        tab = request.GET.get('t')
+
         stud = api.get_student(kwargs.get('student_number'))
-        return render(request, 'gp_admin/data_tables/edit_student.html', {
+
+        form = None
+        if tab == 'basic_info':
+            form = Basic_Info_Form(instance=stud)
+
+        elif tab == 'additional_info':
+            form = Additional_Info_Form(instance=stud)
+
+        elif tab == 'previous_school_info':
+            form = Previous_School_Info_Form(instance=stud)
+
+        else:
+            messages.error(request, 'An error occurred. No valid tab.')
+            return HttpResponseRedirect( reverse('gp_admin:edit_student', args=[stud.student_number]) + '?next=' + next + '&t=' + tab)
+
+        return render(request, 'gp_admin/data_tables/create_student.html', {
             'stud': stud,
-            'form': self.stud_form(instance=stud),
+            'form': form,
             'info': {
                 'btn_label': 'Update',
                 'type': 'edit',
                 'path': 'students'
             },
-            'next': request.GET.get('next')
+            'next': next,
+            'tab': tab,
+            'tab_urls': {
+                'basic_info': api.build_url(request.path, next, 'basic_info'),
+                'additional_info': api.build_url(request.path, next, 'additional_info'),
+                'previous_school_info': api.build_url(request.path, next, 'previous_school_info')
+            }
         })
 
     def post(self, request, *args, **kwargs):
+        tab = request.POST.get('tab')
         stud = api.get_student(kwargs.get('student_number'))
-        form = self.stud_form(request.POST, instance=stud)
+        
+        form = None
+        if tab == 'basic_info':
+            form = Basic_Info_Form(request.POST, instance=stud)
+
+        elif tab == 'additional_info':
+            form = Additional_Info_Form(request.POST, instance=stud)
+
+        elif tab == 'previous_school_info':
+            form = Previous_School_Info_Form(request.POST, instance=stud)
+
+        else:
+            messages.error(request, 'An error occurred. No valid tab.')
+            return HttpResponseRedirect(request.POST.get('current_page'))
+
         if form.is_valid():
             res = form.save()
             if res:
-                messages.success(request, 'Success! Student ({0}, Student #: {1}) updated'.format(stud.get_full_name(), stud.student_number))
+                messages.success(request, 'Success! Student ({0}, Student #: {1}) updated.'.format(stud.get_full_name(), stud.student_number))
                 return HttpResponseRedirect(request.POST.get('next'))
             else:
                 messages.error(request, 'An error occurred while updating data.')
         else:
-            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors) )
-        return HttpResponseRedirect( reverse('gp_admin:edit_student') + '?next=' + request.POST.get('next'))
+            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(api.get_error_messages(form.errors.get_json_data())))
+    
+        return HttpResponseRedirect(request.POST.get('current_page'))
 
 
 class Get_Professors(View):
