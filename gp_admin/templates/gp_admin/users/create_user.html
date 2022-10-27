@@ -62,7 +62,7 @@
         </h3>
         {% include 'core/subpages/_form_note.html' %}
 
-        <form action="" method="post">
+        <form action="{{ info.href }}" method="post">
           {% csrf_token %}
 
           {% if tab == 'basic_info' %}

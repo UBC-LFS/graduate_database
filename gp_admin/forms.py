@@ -353,7 +353,7 @@ class Profile_Form(forms.ModelForm):
     roles = forms.ModelMultipleChoiceField(
         required = True,
         queryset = Role.objects.all(),
-        widget = forms.CheckboxSelectMultiple(),
+        widget = forms.CheckboxSelectMultiple()
     )
 
     class Meta:

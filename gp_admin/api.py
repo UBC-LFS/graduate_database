@@ -22,17 +22,6 @@ def get_student(arg):
         raise Http404
 
 
-def queryset_to_dict(post):
-    data = {}
-    for key, value in dict(post).items():
-        if key not in ['current_page', 'next', 'tab', 'save']:
-            data[key] = value[0]
-    return data
-
-
-
-
-
 # Professor
 
 def get_professors(program=None):
@@ -263,13 +252,35 @@ def get_filtered_items(request, all_list, path):
     return items
 
 
+# Session
+
+
+def remove_session(session):
+    ''' Delete forms in session if they exist '''
+
+    print(session.keys())
+    if 'basic_info_form' in session:
+        del session['basic_info_form']
+    
+    if 'additional_info_form' in session:
+        del session['additional_info_form']
+    
+    if 'previous_school_info_form' in session:
+        del session['previous_school_info_form']
+    
+    print(session.keys())
+
+
+
 # Helper functions
 
 def make_hash(data):
     return hashlib.sha256( json.dumps(data).encode('utf-8') ).hexdigest()
 
+
 def build_url(path, next_path, tab):
     return "{0}?next={1}&t={2}".format(path, next_path, tab)
+
 
 def get_error_messages(errors):
     messages = ''
@@ -282,6 +293,16 @@ def get_error_messages(errors):
 def split_capitalize(s):
     words = [ word.capitalize() for word in s.split('_') ]
     return ' '.join(words)
+
+
+def queryset_to_dict(post):
+    data = {}
+    for key, value in dict(post).items():
+        if key not in ['current_page', 'next', 'tab', 'save']:
+            data[key] = value if key in ['roles', 'programs'] else value[0]    
+    return data
+
+
 
 # ROLES = {
 #     'Superadmin': 1,
