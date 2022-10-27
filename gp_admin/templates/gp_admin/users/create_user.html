@@ -40,23 +40,21 @@
 
       <nav class="mb-4">
         <div class="nav nav-tabs">
-          <a class="nav-item nav-link {% if current_tab == 'basic_user' %} active {% endif %}" href="{{ tab_urls.basic_user }}">
+          <a class="nav-item nav-link {% if tab == 'basic_info' %} active {% endif %}" href="{{ tab_urls.basic_info }}">
             <span class="mobile-hide-xs"><i class="fa fa-user-circle-o" aria-hidden="true"></i></span>
-            Basic User Form
+            Basic Info Form
           </a>
-          <a class="nav-item nav-link {% if current_tab == 'role_details' %} active {% endif %}" href="{{ tab_urls.role_details }}">
+          <a class="nav-item nav-link {% if tab == 'role_details' %} active {% endif %}" href="{{ tab_urls.role_details }}">
             <span class="mobile-hide-xs"><i class="fa fa-id-card-o" aria-hidden="true"></i></span>
             Role Details Form
           </a>
         </div>
       </nav>
 
-      <div id="response-message"></div>
-
       <div class="board col-11 mx-auto">
         <h3>
-          {% if current_tab == 'basic_user' %}
-            Basic User
+          {% if tab == 'basic_info' %}
+            Basic Information
           {% else %}
             Role Details
           {% endif %}
@@ -64,55 +62,67 @@
         </h3>
         {% include 'core/subpages/_form_note.html' %}
 
-        <form id="create-user-form" action="{{ info.href }}" method="post">
+        <form action="" method="post">
           {% csrf_token %}
 
-          {% if current_tab == 'basic_user' %}
+          {% if tab == 'basic_info' %}
 
-            {% for field in user_form.visible_fields  %}
-              <div class="field-wrapper">
-                <label for="{{ field.id_for_label }}">
-                  {{ field.label }}:
-                  {% if field.name == 'first_name' or field.name == 'last_name' or field.name == 'email' or field.name == 'username' %}
-                    <small class="text-danger"><i class="fa fa-asterisk" aria-hidden="true"></i></small>
-                  {% endif %}
-                </label>
+            <table class="table table-borderless fs-1">
+              {% for field in user_form.visible_fields  %}
+                <tr>
+                  <td class="col-md-4">
+                    <label for="{{ field.id_for_label }}">
+                      {{ field.label }}:
+                      {% if field.name == 'first_name' or field.name == 'last_name' or field.name == 'email' or field.name == 'username' %}
+                        <small class="text-danger"><i class="fa fa-asterisk" aria-hidden="true"></i></small>
+                      {% endif %}
+                    </label>
 
-                {% if field.help_text %}
-                  <div class="help">{{ field.help_text|safe }}</div>
-                {% endif %}
-                {{ field }}
-              </div>
-            {% endfor %}
+                    {% if field.help_text %}
+                      <div class="help">{{ field.help_text|safe }}</div>
+                    {% endif %}
+                  </td>
+                  <td class="col-md-8">{{ field }}</td>
+                </tr>
+              {% endfor %}
 
-            {% for field in profile_form.visible_fields  %}
-              <div class="field-wrapper">
-                <label for="{{ field.id_for_label }}">
-                  {{ field.label }}:
-                  {% if field.name == 'roles' %}
-                    <small class="text-danger"><i class="fa fa-asterisk" aria-hidden="true"></i></small>
-                  {% endif %}
-                </label>
+              {% for field in profile_form.visible_fields %}
+                <tr>
+                  <td class="col-md-4">
+                    <label for="{{ field.id_for_label }}">
+                      {{ field.label }}:
+                      {% if field.name == 'roles' %}
+                        <small class="text-danger"><i class="fa fa-asterisk" aria-hidden="true"></i></small>
+                      {% endif %}
+                    </label>
 
-                {% if field.help_text %}
-                  <div class="help">{{ field.help_text|safe }}</div>
-                {% endif %}
-                {{ field }}
-              </div>
-            {% endfor %}
+                    {% if field.help_text %}
+                      <div class="help">{{ field.help_text|safe }}</div>
+                    {% endif %}
+                  </td>
+                  <td class="col-md-8">{{ field }}</td>
+                </tr>
+              {% endfor %}
+            </table>
 
-          {% elif current_tab == 'role_details' %}
+          {% elif tab == 'role_details' %}
 
-            {% for field in prof_form.visible_fields  %}
-              <div class="field-wrapper">
-                <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+            <table class="table table-borderless fs-1">
+              {% for field in prof_form.visible_fields  %}
+                <tr>
+                  <td class="col-md-4">
+                    <label for="{{ field.id_for_label }}">
+                      {{ field.label }}:
+                    </label>
 
-                {% if field.help_text %}
-                  <div class="help">{{ field.help_text|safe }}</div>
-                {% endif %}
-                {{ field }}
-              </div>
-            {% endfor %}
+                    {% if field.help_text %}
+                      <div class="help">{{ field.help_text|safe }}</div>
+                    {% endif %}
+                  </td>
+                  <td class="col-md-8">{{ field }}</td>
+                </tr>
+              {% endfor %}
+            </table>
 
           {% else %}
 
@@ -126,18 +136,25 @@
 
           <input type="hidden" name="current_page" value="{{ request.get_full_path }}" />
           <input type="hidden" name="next" value="{{ next }}" />
-          <input type="hidden" name="current_tab" value="{{ current_tab }}" />
+          <input type="hidden" name="tab" value="{{ tab }}" />
 
-          <div class="mt-2-5rem">
+          <div class="text-center mt-2-5rem">
             <a class="btn btn-outline-secondary" href="{% url 'gp_admin:cancel_user' %}?next={{ next }}">Cancel</a>
 
-            {% if current_tab == 'basic_user' %}
-              <button id="btn-user-form" class="btn btn-outline-info" type="button" data-url="{% url 'gp_admin:save_user' %}" data-href="{{ tab_urls.role_details }}">Save and go to Role Details Form</button>
-            {% elif current_tab == 'role_details' %}
-              <button id="btn-prof-form" class="btn btn-outline-info" type="button" data-url="{% url 'gp_admin:save_user' %}" data-href="{{ tab_urls.basic_user }}">Save and go back to Basic User Form</button>
+            {% if info.type == 'create' %}
+              <input class="btn btn-info" type="submit" name="save" value="Save" />
             {% endif %}
 
             <input class="btn btn-primary" type="submit" value="{{ info.btn_label }}" />
+
+            <div class="mt-3">
+              {% if tab == 'basic_info' %}
+                <a class="btn btn-outline-info" type="button" href="{{ tab_urls.role_details }}">Role Details Form</a>
+              {% elif tab == 'role_details' %}
+                <a class="btn btn-outline-info" type="button" href="{{ tab_urls.basic_info }}">Basic Information Form</a>
+              {% endif %}
+            </div>
+
           </div>
         </form>
 
@@ -148,10 +165,4 @@
 
 </div>
 
-{% endblock %}
-
-
-{% block js %}
-  {% load static %}
-  <script type="text/javascript" src="{% static 'js/save_user.js' %}"></script>
 {% endblock %}

@@ -97,6 +97,10 @@
 
           {% endif %}
 
+          {% if info.type == 'edit' %}
+            <input type="hidden" name="user" value="{{ stud.id }}" />
+          {% endif %}
+
           <input type="hidden" name="current_page" value="{{ request.get_full_path }}" />
           <input type="hidden" name="next" value="{{ next }}" />
           <input type="hidden" name="tab" value="{{ tab }}" />
@@ -107,7 +111,7 @@
             {% if info.type == 'create' %}
               <input class="btn btn-info" type="submit" name="save" value="Save" />
             {% endif %}
-            
+
             <input class="btn btn-primary" type="submit" value="{{ info.btn_label }}" />
 
             <div class="mt-3">

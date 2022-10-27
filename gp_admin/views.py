@@ -77,6 +77,8 @@ class Create_Student(View):
 
         elif tab == 'previous_school_info':
             form = Previous_School_Info_Form(initial=request.session.get('create_previous_school_info_form', None))
+        else:
+            raise Http404
 
         return render(request, 'gp_admin/data_tables/create_student.html', {
             'students': api.get_students(),
@@ -107,8 +109,7 @@ class Create_Student(View):
             elif tab == 'previous_school_info':
                 request.session['create_previous_school_info_form'] = data
             else:
-                messages.error(request, 'An error occurred. No valid tab.')
-                return HttpResponseRedirect(request.POST.get('current_page'))
+                raise Http404
             
             messages.success(request, 'Success! {0}rmation Form saved.'.format( api.split_capitalize(tab) ))
         
@@ -130,13 +131,21 @@ class Create_Student(View):
                 if additional_info: data.update(additional_info)
 
             else:
-                messages.error(request, 'An error occurred. No valid tab.')
-                return HttpResponseRedirect(request.POST.get('current_page'))
+                raise Http404
 
             form = Student_Form(data)
             if form.is_valid():
                 res = form.save()
                 if res:
+                    
+                    # Delete forms in session if they exist
+                    if 'create_basic_info_form' in request.session:
+                        del request.session['create_basic_info_form']
+                    if 'create_additional_info_form' in request.session:
+                        del request.session['create_additional_info_form']
+                    if 'create_previous_school_info_form' in request.session:
+                        del request.session['create_previous_school_info_form']
+                        
                     messages.success(request, 'Success! Student ({0}, Student #: {1}) created.'.format(res.get_full_name(), res.student_number))
                     return HttpResponseRedirect(request.POST.get('next'))
                 else:
@@ -156,13 +165,6 @@ def cancel_student(request):
         del request.session['create_additional_info_form']
     if 'create_previous_school_info_form' in request.session:
         del request.session['create_previous_school_info_form']
-
-    if 'edit_basic_info_form' in request.session:
-        del request.session['edit_basic_info_form']
-    if 'edit_additional_info_form' in request.session:
-        del request.session['edit_additional_info_form']
-    if 'edit_previous_school_info_form' in request.session:
-        del request.session['edit_previous_school_info_form']
 
     return HttpResponseRedirect(request.GET.get('next'))
 
@@ -185,8 +187,7 @@ class Edit_Student(View):
             form = Previous_School_Info_Form(instance=stud)
 
         else:
-            messages.error(request, 'An error occurred. No valid tab.')
-            return HttpResponseRedirect( reverse('gp_admin:edit_student', args=[stud.student_number]) + '?next=' + next + '&t=' + tab)
+            raise Http404
 
         return render(request, 'gp_admin/data_tables/create_student.html', {
             'stud': stud,
@@ -220,8 +221,7 @@ class Edit_Student(View):
             form = Previous_School_Info_Form(request.POST, instance=stud)
 
         else:
-            messages.error(request, 'An error occurred. No valid tab.')
-            return HttpResponseRedirect(request.POST.get('current_page'))
+            raise Http404
 
         if form.is_valid():
             res = form.save()
@@ -445,94 +445,122 @@ class Create_User(View):
 
     def get(self, request, *args, **kwargs):
         next = request.GET.get('next')
+        tab = request.GET.get('t')
+        
+        if tab not in ['basic_info', 'role_details']:
+            raise Http404
 
         return render(request, 'gp_admin/users/create_user.html', {
             'users': api.get_users(),
-            'user_form': self.user_form(initial=request.session.get('save_user_profile_form', None)),
-            'profile_form': self.profile_form(initial=request.session.get('save_user_profile_form', None)),
-            'prof_form': self.prof_form(initial=request.session.get('save_prof_form', None)),
+            'user_form': self.user_form(initial=request.session.get('create_user_profile_form', None)),
+            'profile_form': self.profile_form(initial=request.session.get('create_user_profile_form', None)),
+            'prof_form': self.prof_form(initial=request.session.get('create_prof_form', None)),
             'info': {
                 'btn_label': 'Create',
-                'href': reverse('gp_admin:create_user'),
                 'type': 'create',
                 'path': 'users'
             },
             'next': next,
-            'current_tab': request.GET.get('t'),
+            'tab': tab,
             'tab_urls': {
-                'basic_user': api.build_url(request.path, next, 'basic_user'),
+                'basic_info': api.build_url(request.path, next, 'basic_info'),
                 'role_details': api.build_url(request.path, next, 'role_details')
             }
         })
 
     def post(self, request, *args, **kwargs):
-        current_tab = request.POST.get('current_tab')
+        tab = request.POST.get('tab')
+        data = api.queryset_to_dict(request.POST.copy())
 
-        user_profile_data = request.POST
-        prof_data = request.POST
+        if 'save' in request.POST.keys():
 
-        if current_tab == 'basic_user' and 'save_prof_form' in request.session:
-            prof_data = request.session.get('save_prof_form')
-        elif current_tab == 'role_details' and 'save_user_profile_form' in request.session:
-            user_profile_data = request.session.get('save_user_profile_form')
+            name = ''
+            if tab == 'basic_info':
+                request.session['user_profile_form'] = data
+                name = api.split_capitalize(tab) + 'rmation'
+            elif tab == 'role_details':
+                request.session['role_details_form'] = data
+                name = api.split_capitalize(tab)
+            else:
+                raise Http404
+            
+            messages.success(request, 'Success! {0} Form saved.'.format(name))
 
-        user_form = self.user_form(user_profile_data)
-        profile_form = self.profile_form(user_profile_data)
-        prof_form = self.prof_form(prof_data)
-
-        errors = []
-        if user_profile_data:
-            if not user_form.is_valid():
-                errors.append( api.get_error_messages(user_form.errors.get_json_data()) )
-            if not profile_form.is_valid():
-                errors.append( api.get_error_messages(profile_form.errors.get_json_data()) )
-
-        if prof_data and not prof_form.is_valid():
-            errors.append( api.get_error_messages(prof_form.errors.get_json_data()) )
-
-        if len(errors) == 0:
-            user = user_form.save()
-            profile = api.create_profile(user)
-
-            # Create a profile and add roles and programs if they exist
-            update_fields = []
-            if user_profile_data:
-                profile_data = profile_form.cleaned_data
-
-                profile.preferred_name = profile_data.get('preferred_name', None)
-                profile.phone = profile_data.get('phone', None)
-                profile.office = profile_data.get('office', None)
-
-                roles = profile_data.get('roles', None)
-                if roles:
-                    profile.roles.add( *roles )
-
-                update_fields.extend( ['preferred_name', 'phone', 'office'] )
-
-            if prof_data:
-                prof_data = prof_form.cleaned_data
-
-                profile.title = prof_data.get('title', None)
-                profile.position = prof_data.get('position', None)
-
-                programs = prof_data.get('programs', None)
-                if programs:
-                    profile.programs.add( *programs )
-
-                update_fields.extend( ['title', 'position'] )
-
-            profile.save(update_fields=update_fields)
-
-            # Delete a form session if it exists
-            if 'save_user_profile_form' in request.session:
-                del request.session['save_user_profile_form']
-            if 'save_prof_form' in request.session:
-                del request.session['save_prof_form']
-
-            messages.success(request, 'Success! User ({0} {1}, CWL: {2}) created.'.format(user.first_name, user.last_name, user.username))
-            return HttpResponseRedirect(request.POST.get('next'))
         else:
-            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(' '.join(errors)) )
+            user_profile = request.session.get('user_profile_form', None)
+            role_details = request.session.get('role_details_form', None)
+            
+            user_form = None
+            profile_form = None
+            prof_form = None
+            if tab == 'basic_info':
+                user_form = self.user_form(data)
+                profile_form = self.profile_form(data)
+                if role_details: 
+                    prof_form = self.prof_form(role_details)
+
+            elif tab == 'role_details':
+                prof_form = self.prof_form(data)
+                if basic_info: 
+                    user_form = self.user_form(user_profile)
+                    profile_form = self.profile_form(user_profile)
+            
+            else:
+                raise Http404
+
+            errors = []
+            if user_profile_data:
+                if not user_form.is_valid():
+                    errors.append( api.get_error_messages(user_form.errors.get_json_data()) )
+                if not profile_form.is_valid():
+                    errors.append( api.get_error_messages(profile_form.errors.get_json_data()) )
+
+            if prof_data and not prof_form.is_valid():
+                errors.append( api.get_error_messages(prof_form.errors.get_json_data()) )
+
+            if len(errors) == 0:
+                user = user_form.save()
+                profile = api.create_profile(user)
+
+                # Create a profile and add roles and programs if they exist
+                update_fields = []
+                if user_profile_data:
+                    profile_data = profile_form.cleaned_data
+
+                    profile.preferred_name = profile_data.get('preferred_name', None)
+                    profile.phone = profile_data.get('phone', None)
+                    profile.office = profile_data.get('office', None)
+
+                    roles = profile_data.get('roles', None)
+                    if roles:
+                        profile.roles.add( *roles )
+
+                    update_fields.extend( ['preferred_name', 'phone', 'office'] )
+
+                if prof_data:
+                    prof_data = prof_form.cleaned_data
+
+                    profile.title = prof_data.get('title', None)
+                    profile.position = prof_data.get('position', None)
+
+                    programs = prof_data.get('programs', None)
+                    if programs:
+                        profile.programs.add( *programs )
+
+                    update_fields.extend( ['title', 'position'] )
+
+                profile.save(update_fields=update_fields)
+
+                # Delete a form session if it exists
+                if 'user_profile_form' in request.session:
+                    del request.session['user_profile_form']
+                if 'role_details_form' in request.session:
+                    del request.session['role_details_form']
+
+                messages.success(request, 'Success! User ({0} {1}, CWL: {2}) created.'.format(user.first_name, user.last_name, user.username))
+                return HttpResponseRedirect(request.POST.get('next'))
+            else:
+                messages.error(request, 'An error occurred. Form is invalid. {0}'.format(' '.join(errors)) )
 
         return HttpResponseRedirect(request.POST.get('current_page'))
 
