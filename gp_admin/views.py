@@ -208,7 +208,7 @@ class Edit_Student(View):
 
     def post(self, request, *args, **kwargs):
         tab = request.POST.get('tab')
-        stud = api.get_student(kwargs.get('student_number'))
+        stud = api.get_student(request.POST.get('student'))
         
         form = None
         if tab == 'basic_info':

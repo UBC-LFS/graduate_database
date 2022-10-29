@@ -98,7 +98,7 @@
           {% endif %}
 
           {% if info.type == 'edit' %}
-            <input type="hidden" name="user" value="{{ stud.id }}" />
+            <input type="hidden" name="student" value="{{ stud.student_number }}" />
           {% endif %}
 
           <input type="hidden" name="current_page" value="{{ request.get_full_path }}" />
