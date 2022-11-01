@@ -18,7 +18,7 @@
 		<div class="container px-0">
 			<nav class="navbar navbar-expand-lg navbar-dark">
         <img class="mr-3" src="{% static 'images/UBC-logo-2018-crest-white-rgb300.png' %}" alt="UBC logo" height="40" />
-				<span class="navbar-brand">Database for Graduate & Postdoctoral Studies</span>
+				<span class="navbar-brand">G+P Studies - Database</span>
 
 				{% if request.user.is_authenticated %}
 					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,6 +26,40 @@
 					</button>
 
 					<div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+						{% if user_roles|length > 1 %}
+							<ul class="navbar-nav mr-auto">
+								<li class="nav-item dropdown">
+									<a class="dropdown-toggle text-white ml-4" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-expanded="false">
+										Current View
+										(<div class="d-inline-block current-view">
+											<span id="view-admin" class="d-none">Admin</span>
+											<span id="view-graduate-advisor" class="d-none">Graduate Advisor</span>
+											<span id="view-supervisor" class="d-none">Supervisor</span>
+											<span id="view-guest" class="d-none">Guest</span>
+										</div>)
+									</a>
+									<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+										{% if 'superadmin' in user_roles or 'admin' in user_roles %}
+											<a id="nav-admin" class="dropdown-item" href="{% url 'gp_admin:index' %}">Admin</a>
+										{% endif %}
+
+										{% if 'graduate-advisor' in user_roles %}
+											<a id="nav-graduate-advisor" class="dropdown-item" href="{% url 'gp_grad_advisor:index' %}">Graduate Advisor</a>
+										{% endif %}
+
+										{% if 'supervisor' in user_roles %}
+											<a id="nav-supervisor" class="dropdown-item" href="{% url 'gp_supervisor:index' %}">Supervisor</a>
+										{% endif %}
+
+										{% if 'guest' in user_roles %}
+											<a id="nav-guest" class="dropdown-item" href="{% url 'gp_guest:index' %}">Guest</a>
+										{% endif %}
+									</div>
+								</li>
+							</ul>
+						{% endif %}
+
 						<div class="ml-auto">
 							<span class="text-white">Hi, {{ request.user.get_full_name }}</span>
 							<a id="btn-logout" class="text-white ml-4" href="#">

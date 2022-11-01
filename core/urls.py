@@ -21,9 +21,10 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('accounts/', include('accounts.urls')),
     path('admin/', include('gp_admin.urls')),
+    path('graduate-advisor/', include('gp_grad_advisor.urls')),
     path('supervisor/', include('gp_supervisor.urls')),
     path('guest/', include('gp_guest.urls')),
-    
+
     path('summernote/', include('django_summernote.urls')),
     #path('admin/', admin.site.urls)
 ]

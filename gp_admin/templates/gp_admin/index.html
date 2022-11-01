@@ -24,16 +24,34 @@
         <div class="prompt p-4 text-center">
           <h4>Welcome</h4>
           <p class="col-8 mx-auto">
-
+            If you would like to view a list of students or professors, please click
+            <a href="{% url 'gp_admin:get_students' %}">Students</a> or
+            <a href="{% url 'gp_admin:get_professors' %}">Professors</a>.
           </p>
         </div>
       </div>
 
       <div class="col-8 mx-auto text-center mt-5">
         <h5 class="text-info mb-3">Overview</h5>
+        <table class="table fs-1">
+          <tbody>
+            <tr>
+              <td class="font-weight-bold">Number of Students</td>
+              <td>{{ num_students}}</td>
+            </tr>
+            <tr>
+              <td class="font-weight-bold">Number of Professors</td>
+              <td>{{ num_professors}}</td>
+            </tr>
+            <tr>
+              <td class="font-weight-bold">Number of Users</td>
+              <td>{{ num_users}}</td>
+            </tr>
+          </tbody>
+        </table>
 
         <h5 class="text-info mt-5 mb-3">
-          Quick View
+          Quick View - Student Updates
         </h5>
       </div>
 

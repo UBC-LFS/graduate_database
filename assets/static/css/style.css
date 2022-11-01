@@ -171,9 +171,13 @@ main {
   margin-top: 0 !important;
 }
 
+.board table td:first-child,
 .board form table td:first-child label {
   margin: 0;
   font-weight: bold;
+}
+
+.board form table td:first-child label {
   display: block;
 }
 

@@ -23,8 +23,10 @@
     </button>
     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
       <a class="dropdown-item" href="{% url 'gp_admin:get_users' %}">All</a>
-      {% comment %}<a class="dropdown-item" href="{% url 'gp_admin:create_user' %}?t=basic">Create User</a>{% endcomment %}
-      <a class="dropdown-item" href="{% url 'gp_admin:get_roles' %}">Roles</a>
+      
+      {% if 'superadmin' in user_roles %}
+        <a class="dropdown-item" href="{% url 'gp_admin:get_roles' %}">Roles</a>
+      {% endif %}
     </div>
   </div>
 

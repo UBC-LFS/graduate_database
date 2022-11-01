@@ -51,6 +51,18 @@ def get_reminders():
 def sent_reminders():
     return Sent_Reminder.objects.all()
 
+def get_grad_supervision_view(username):
+    prof = get_professor(username, 'username')
+
+    prof.is_grad_advisor = False
+    prof.colleages = None
+    if prof.profile.roles.filter(slug='graduate-advisor').exists():
+        prof.is_grad_advisor = True
+        programs = [program for program in prof.profile.programs.all()]
+        prof.colleages = User.objects.filter( Q(profile__programs__in=programs) & Q(profile__roles__in=[get_role('graduate-advisor', 'slug'), get_role('supervisor', 'slug')]) ).exclude(id=prof.id).order_by('last_name', 'first_name')
+
+    return prof
+
 # User
 
 def get_users():
@@ -92,15 +104,15 @@ def has_profile_created(user):
 def redirect_to_index_page(roles):
     ''' Redirect to an index page given roles '''
 
-    if 'Superadmin' in roles or 'Admin' in roles:
+    if 'superadmin' in roles or 'admin' in roles:
         return '/admin/'
 
-    elif 'Graduate Advisor' in roles:
-        return '/gradudate-advisor/'    
+    elif 'graduate-advisor' in roles:
+        return '/graduate-advisor/'    
 
-    elif 'Supervisor' in roles:
+    elif 'supervisor' in roles:
         return '/supervisor/'
-    
+
     return '/guest/'
 
 
@@ -109,20 +121,20 @@ def get_roles(user):
 
     roles = []
     for role in user.profile.roles.all():
-        if role.name == 'Superadmin':
-            roles.append('Superadmin')
+        if role.slug == 'superadmin':
+            roles.append('superadmin')
 
-        elif role.name == 'Admin':
-            roles.append('Admin')
+        elif role.slug == 'admin':
+            roles.append('admin')
 
-        elif role.name == 'Graduate Advisor':
-            roles.append('Graduate Advisor')
+        elif role.slug == 'graduate-advisor':
+            roles.append('graduate-advisor')
 
-        elif role.name == 'Supervisor':
-            roles.append('Supervisor')
+        elif role.slug == 'supervisor':
+            roles.append('supervisor')
 
-        elif role.name == 'Guest':
-            roles.append('Guest')
+        elif role.slug == 'guest':
+            roles.append('guest')
 
     return roles
 
@@ -245,10 +257,10 @@ def get_filtered_items(request, all_list, path):
         items = paginator.page(1)
     except EmptyPage:
         items = paginator.page(paginator.num_pages)
-    
+
     if path == 'users':
         pass
-    
+
     return items
 
 
@@ -261,13 +273,13 @@ def remove_session(session):
     print(session.keys())
     if 'basic_info_form' in session:
         del session['basic_info_form']
-    
+
     if 'additional_info_form' in session:
         del session['additional_info_form']
-    
+
     if 'previous_school_info_form' in session:
         del session['previous_school_info_form']
-    
+
     print(session.keys())
 
 
@@ -299,7 +311,7 @@ def queryset_to_dict(post):
     data = {}
     for key, value in dict(post).items():
         if key not in ['current_page', 'next', 'tab', 'save']:
-            data[key] = value if key in ['roles', 'programs'] else value[0]    
+            data[key] = value if key in ['roles', 'programs'] else value[0]
     return data
 
 
