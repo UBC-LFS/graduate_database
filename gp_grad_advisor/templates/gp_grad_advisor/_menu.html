@@ -1,8 +1,0 @@
-<nav class="container menu">
-  <div class="dropdown">
-    <a class="btn dropdown-item" href="{% if path == 'grad-advisor' %}{% url 'gp_grad_advisor:index' %}{% elif path == 'supervisor' %}{% url 'gp_supervisor:index' %}{% endif %}{% url 'gp_grad_advisor:index' %}">Home</a>
-  </div>
-  <div class="dropdown">
-    <a class="btn dropdown-item" href="{% if path == 'grad-advisor' %}{% url 'gp_grad_advisor:get_grad_supervision' %}{% elif path == 'supervisor' %}{% url 'gp_supervisor:get_grad_supervision' %}{% endif %}{% url 'gp_grad_advisor:index' %}">Graduate Supervision</a>
-  </div>
-</nav>

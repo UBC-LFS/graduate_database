@@ -18,9 +18,9 @@ from core.auth import supervisor_access_only
 def index(request):
     print( request.session.get('loggedin_user') )
 
-    return render(request, 'gp_grad_advisor/index.html', {
+    return render(request, 'gp_supervisor/index.html', {
         'info': {
-            'href': reverse('gp_supervisor:get_grad_supervision')
+            'href': reverse('gp_supervisor:get_grad_supervision') + '?t=students'
         }
     })
 
@@ -30,12 +30,13 @@ class GetGradSupervision(View):
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
-
-        prof = api.get_grad_supervision_view(request.user.username)
-
-        return render(request, 'gp_grad_advisor/get_grad_supervision.html', {
-            'prof': prof,
+        return render(request, 'gp_supervisor/get_grad_supervision.html', {
+            'prof': api.get_grad_supervision_view(request.user.username),
             'info': {
                 'href': reverse('gp_supervisor:index')
+            },
+            'tab': request.GET.get('t'),
+            'tab_urls': {
+                'students': api.build_tab_url(request.path, 'students')
             }
         })

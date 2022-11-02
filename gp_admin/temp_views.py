@@ -319,8 +319,8 @@ class Create_User(View):
             'next': next,
             'current_tab': request.GET.get('t'),
             'tab_urls': {
-                'user': api.build_url(request.path, next, 'User'),
-                'professor': api.build_url(request.path, next, 'Professor')
+                'user': api.build_next_tab_url(request.path, next, 'User'),
+                'professor': api.build_next_tab_url(request.path, next, 'Professor')
             }
         })
 

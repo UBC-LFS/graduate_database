@@ -1,0 +1,87 @@
+<div class="board col-11 mx-auto">
+  <h3 class="mb-3">Basic Information</h3>
+
+  <table class="table table-borderless fs-1">
+    <tr>
+      <td class="col-md-4">Email</td>
+      <td class="col-md-8">
+        {% if request.user.email %}
+          {{ request.user.email }}
+        {% else %}
+          None
+        {% endif %}
+      </td>
+    </tr>
+    <tr>
+      <td class="col-md-4">Preferred Name</td>
+      <td class="col-md-8">
+        {% if request.user.profile.preferred_name %}
+          {{ request.user.profile.preferred_name }}
+        {% else %}
+          None
+        {% endif %}
+      </td>
+    </tr>
+    <tr>
+      <td class="col-md-4">Title</td>
+      <td class="col-md-8">
+        {% if request.user.profile.title %}
+          {{ request.user.profile.title.name }}
+        {% else %}
+          None
+        {% endif %}
+      </td>
+    </tr>
+    <tr>
+      <td class="col-md-4">Position</td>
+      <td class="col-md-8">
+        {% if request.user.profile.position %}
+          {{ request.user.profile.position.name }}
+        {% else %}
+          None
+        {% endif %}
+      </td>
+    </tr>
+    <tr>
+      <td class="col-md-4">Phone</td>
+      <td class="col-md-8">
+        {% if request.user.profile.phone %}
+          {{ request.user.profile.phone }}
+        {% else %}
+          None
+        {% endif %}
+      </td>
+    </tr>
+    <tr>
+      <td class="col-md-4">Office</td>
+      <td class="col-md-8">
+        {% if request.user.profile.office %}
+          {{ request.user.profile.office }}
+        {% else %}
+          None
+        {% endif %}
+      </td>
+    </tr>
+    <tr>
+      <td class="col-md-4">Date Joined</td>
+      <td class="col-md-8">
+        {% if request.user.date_joined %}
+          {{ request.user.date_joined }}
+        {% else %}
+          None
+        {% endif %}
+      </td>
+    </tr>
+    <tr>
+      <td class="col-md-4">Last Login</td>
+      <td class="col-md-8">
+        {% if request.user.last_login %}
+          {{ request.user.last_login }}
+        {% else %}
+          None
+        {% endif %}
+      </td>
+    </tr>
+  </table>
+
+</div>

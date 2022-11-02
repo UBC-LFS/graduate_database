@@ -290,7 +290,11 @@ def make_hash(data):
     return hashlib.sha256( json.dumps(data).encode('utf-8') ).hexdigest()
 
 
-def build_url(path, next_path, tab):
+def build_tab_url(path, tab):
+    return "{0}?t={1}".format(path, tab)
+
+
+def build_next_tab_url(path, next_path, tab):
     return "{0}?next={1}&t={2}".format(path, next_path, tab)
 
 

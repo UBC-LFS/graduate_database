@@ -108,9 +108,9 @@ class Create_Student(View):
             'next': next,
             'tab': tab,
             'tab_urls': {
-                'basic_info': api.build_url(request.path, next, 'basic_info'),
-                'additional_info': api.build_url(request.path, next, 'additional_info'),
-                'previous_school_info': api.build_url(request.path, next, 'previous_school_info')
+                'basic_info': api.build_next_tab_url(request.path, next, 'basic_info'),
+                'additional_info': api.build_next_tab_url(request.path, next, 'additional_info'),
+                'previous_school_info': api.build_next_tab_url(request.path, next, 'previous_school_info')
             }
         })
 
@@ -226,9 +226,9 @@ class Edit_Student(View):
             'next': next,
             'tab': tab,
             'tab_urls': {
-                'basic_info': api.build_url(request.path, next, 'basic_info'),
-                'additional_info': api.build_url(request.path, next, 'additional_info'),
-                'previous_school_info': api.build_url(request.path, next, 'previous_school_info')
+                'basic_info': api.build_next_tab_url(request.path, next, 'basic_info'),
+                'additional_info': api.build_next_tab_url(request.path, next, 'additional_info'),
+                'previous_school_info': api.build_next_tab_url(request.path, next, 'previous_school_info')
             }
         })
 
@@ -339,6 +339,9 @@ class Get_Grad_Supervision(View):
     def get(self, request, *args, **kwargs):
         prof_list = api.get_professors()
 
+        tab = request.GET.get('t')
+
+
         first_name_q = request.GET.get('first_name')
         last_name_q = request.GET.get('last_name')
 
@@ -364,11 +367,21 @@ class Get_Grad_Supervision(View):
                 prof.is_grad_advisor = True
                 programs = [program for program in prof.profile.programs.all()]
                 prof.colleages = User.objects.filter( Q(profile__programs__in=programs) & Q(profile__roles__in=[api.get_role('graduate-advisor', 'slug'), api.get_role('supervisor', 'slug')]) ).exclude(id=prof.id).order_by('last_name', 'first_name')
-                
+
+        tab_url = request.path + '?page=' + page
+        if bool(first_name_q):
+            tab_url += '&first_name=' + first_name_q
+        if bool(last_name_q):
+            tab_url += '&last_name=' + last_name_q
 
         return render(request, 'gp_admin/data_tables/get_grad_supervision.html', {
             'professors': professors,
-            'total_professors': len(prof_list)
+            'total_professors': len(prof_list),
+            'tab': tab,
+            'tab_urls': {
+                'students': tab_url + '&t=students',
+                'professors': tab_url + '&t=professors'
+            }
         })
 
 
@@ -532,8 +545,8 @@ class Create_User(View):
             'next': next,
             'tab': tab,
             'tab_urls': {
-                'basic_info': api.build_url(request.path, next, 'basic_info'),
-                'role_details': api.build_url(request.path, next, 'role_details')
+                'basic_info': api.build_next_tab_url(request.path, next, 'basic_info'),
+                'role_details': api.build_next_tab_url(request.path, next, 'role_details')
             }
         })
 
@@ -681,8 +694,8 @@ class Edit_User(View):
             'next': next,
             'tab': tab,
             'tab_urls': {
-                'basic_info': api.build_url(request.path, next, 'basic_info'),
-                'role_details': api.build_url(request.path, next, 'role_details')
+                'basic_info': api.build_next_tab_url(request.path, next, 'basic_info'),
+                'role_details': api.build_next_tab_url(request.path, next, 'role_details')
             }
         })
 

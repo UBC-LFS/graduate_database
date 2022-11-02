@@ -1,7 +1,7 @@
 {% extends 'core/base.html' %}
 {% block content %}
 
-{% include 'gp_grad_advisor/_menu.html' with path='grad-advisor' %}
+{% include 'gp_grad_advisor/subpages/_menu.html' with path='grad-advisor' %}
 
 <div class="container max-width-container">
   <div class="row">
@@ -10,7 +10,7 @@
       {% include 'core/subpages/_left_aside.html' with data=request.user %}
 
       <div class="left-aside-btn-groups">
-        <a class="btn btn-outline-primary" href="{% url 'gp_grad_advisor:get_grad_supervision' %}">Graduate Supervision</a>
+        <a class="btn btn-outline-primary" href="{{ info.href }}">Graduate Supervision</a>
       </div>
 
       <div class="col-10 mx-auto mt-5">
@@ -23,95 +23,7 @@
     </div>
 
     <div class="col-md-8">
-
-      <div class="board col-11 mx-auto">
-        <h3 class="mb-3">Basic Information</h3>
-
-        <table class="table table-borderless fs-1">
-          <tr>
-            <td class="col-md-4">Email</td>
-            <td class="col-md-8">
-              {% if request.user.email %}
-                {{ request.user.email }}
-              {% else %}
-                None
-              {% endif %}
-            </td>
-          </tr>
-          <tr>
-            <td class="col-md-4">Preferred Name</td>
-            <td class="col-md-8">
-              {% if request.user.profile.preferred_name %}
-                {{ request.user.profile.preferred_name }}
-              {% else %}
-                None
-              {% endif %}
-            </td>
-          </tr>
-          <tr>
-            <td class="col-md-4">Title</td>
-            <td class="col-md-8">
-              {% if request.user.profile.title %}
-                {{ request.user.profile.title.name }}
-              {% else %}
-                None
-              {% endif %}
-            </td>
-          </tr>
-          <tr>
-            <td class="col-md-4">Position</td>
-            <td class="col-md-8">
-              {% if request.user.profile.position %}
-                {{ request.user.profile.position.name }}
-              {% else %}
-                None
-              {% endif %}
-            </td>
-          </tr>
-          <tr>
-            <td class="col-md-4">Phone</td>
-            <td class="col-md-8">
-              {% if request.user.profile.phone %}
-                {{ request.user.profile.phone }}
-              {% else %}
-                None
-              {% endif %}
-            </td>
-          </tr>
-          <tr>
-            <td class="col-md-4">Office</td>
-            <td class="col-md-8">
-              {% if request.user.profile.office %}
-                {{ request.user.profile.office }}
-              {% else %}
-                None
-              {% endif %}
-            </td>
-          </tr>
-          <tr>
-            <td class="col-md-4">Date Joined</td>
-            <td class="col-md-8">
-              {% if request.user.date_joined %}
-                {{ request.user.date_joined }}
-              {% else %}
-                None
-              {% endif %}
-            </td>
-          </tr>
-          <tr>
-            <td class="col-md-4">Last Login</td>
-            <td class="col-md-8">
-              {% if request.user.last_login %}
-                {{ request.user.last_login }}
-              {% else %}
-                None
-              {% endif %}
-            </td>
-          </tr>
-        </table>
-
-      </div>
-
+      {% include 'gp_grad_advisor/subpages/_basic_info.html' %}
     </div>
   </div>
 </div>

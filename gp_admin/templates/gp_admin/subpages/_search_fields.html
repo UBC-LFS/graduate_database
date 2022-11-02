@@ -15,6 +15,10 @@
       and <input type="text" name="email" value="{{ request.GET.email }}" placeholder="Email" /> <br />
     {% endif %}
 
+    {% if path == 'grad_supervision' %}
+      <input type="hidden" name="t" value="{{ request.GET.t }}" placeholder="Email" />
+    {% endif %}
+
     {% if path == 'comp_exams' %}
       <div>
         <span class="mr-3">
@@ -38,7 +42,7 @@
         <a class="btn btn-sm fs-xs btn-secondary" href="{% url 'gp_admin:get_students' %}">Clear</a>
 
       {% elif path == 'grad_supervision' %}
-        <a class="btn btn-sm fs-xs btn-secondary" href="{% url 'gp_admin:get_grad_supervision' %}">Clear</a>
+        <a class="btn btn-sm fs-xs btn-secondary" href="{% url 'gp_admin:get_grad_supervision' %}?page=1&t=students">Clear</a>
 
       {% elif path == 'comp_exams' %}
         <a class="btn btn-sm fs-xs btn-secondary" href="{% url 'gp_admin:get_comp_exams' %}">Clear</a>

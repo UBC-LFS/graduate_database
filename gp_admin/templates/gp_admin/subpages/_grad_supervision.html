@@ -1,0 +1,85 @@
+<div class="row mb-5">
+
+  <div class="col-md-3">
+
+    <div class="bg-prompt">
+      <div class="prompt p-4 mb-4">
+        <h5 class="text-dark-blue mb-3">
+          {% if data.profile.title %}
+            {{ data.profile.title }}
+          {% endif %}
+          {{ data.get_full_name }}
+        </h5>
+        <p class="font-italic mb-2">{{ data.profile.position.name }}</p>
+
+        {% if data.is_grad_advisor %}
+          <div>
+            <small class="text-success"><i class="fa fa-check" aria-hidden="true"></i></small>
+            Number of professors:
+            <span class="text-chocolate font-weight-bold">{{ data.colleages.count }}</span>
+          </div>
+        {% endif %}
+        <div>
+          <p class="d-inline">
+            <small class="text-success"><i class="fa fa-check" aria-hidden="true"></i></small>
+            Number of students:
+            <span class="text-chocolate font-weight-bold">{{ data.graduate_supervision_set.count }}</span>
+          </p>
+
+          {% if path == 'admin' %}
+            <a class="float-right" href="{% url 'gp_admin:add_grad_supervision' username=data.username %}?next={{ request.get_full_path }}">Add Student</a>
+          {% endif %}
+        </div>
+
+        <hr />
+
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            {% for pg in data.profile.programs.all %}
+              <div class="h7">{{ pg.code }}</div>
+            {% empty %}
+              <div class="h7">No Programs</div>
+            {% endfor %}
+          </div>
+          <div>
+            {% for role in data.profile.roles.all %}
+              {% include 'core/subpages/_role.html' with data=role.name %}
+            {% empty %}
+              <div class="h7">No Roles</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="col-md-9">
+
+    <nav class="mb-4">
+      <div class="nav nav-tabs">
+        <a class="nav-item nav-link {% if tab == 'students' %} active {% endif %}" href="{{ tab_urls.students }}">
+          <span class="mobile-hide-xs"><i class="fa fa-id-card-o" aria-hidden="true"></i></span>
+          Students ({{ data.graduate_supervision_set.count }})
+        </a>
+
+        {% if data.is_grad_advisor %}
+          <a class="nav-item nav-link {% if tab == 'professors' %} active {% endif %}" href="{{ tab_urls.professors }}">
+            <span class="mobile-hide-xs"><i class="fa fa-user-circle-o" aria-hidden="true"></i></span>
+            Professors ({{ data.colleages.count }})
+          </a>
+        {% endif %}
+      </div>
+    </nav>
+
+    {% if tab == 'students' %}
+      {% include 'gp_admin/subpages/_grad_supervision_students.html' with data=prof %}
+    {% elif tab == 'professors' %}
+      {% include 'gp_admin/subpages/_grad_supervision_professors.html' with data=prof %}
+    {% else %}
+      <p class="my-4">No information is available at the moment.</p>
+    {% endif %}
+
+  </div>
+
+</div>
