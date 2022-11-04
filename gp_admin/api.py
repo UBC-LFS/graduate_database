@@ -15,11 +15,15 @@ def get_students():
     ''' Get all students '''
     return Student.objects.all()
 
-def get_student(arg):
+def get_student_by_student_number(student_number):
     try:
-        return Student.objects.get(student_number=arg)
+        return Student.objects.get(student_number=student_number)
     except Student.DoesNotExist:
         raise Http404
+
+def get_students_by_name(name):
+    studs = Student.objects.filter( Q(first_name__icontains=name) | Q(last_name__icontains=name) )
+    return studs if studs.exists() else None
 
 
 # Professor

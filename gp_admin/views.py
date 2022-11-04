@@ -13,6 +13,8 @@ from django.http import HttpResponseRedirect, Http404, JsonResponse
 from django.db.models import Q
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from django.urls import resolve
+from urllib.parse import urlparse
 import json
 import hashlib
 
@@ -341,7 +343,6 @@ class Get_Grad_Supervision(View):
 
         tab = request.GET.get('t')
 
-
         first_name_q = request.GET.get('first_name')
         last_name_q = request.GET.get('last_name')
 
@@ -391,17 +392,22 @@ class Add_Grad_Supervision(View):
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
-        prof = api.get_professor(kwargs.get('username'), 'username')
+        
+        parse_result = urlparse(request.get_full_path())
+        if 'next=' not in parse_result.query:
+            raise Http404
+        
         return render(request, 'gp_admin/data_tables/add_grad_supervision.html', {
-            'prof': prof,
+            'prof': api.get_professor(kwargs.get('username'), 'username'),
             'form': self.form,
             'prof_roles': Professor_Role.objects.all(),
-            'next': request.GET.get('next')
+            'next': parse_result.query.split('next=')[1]
         })
 
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
         prof = api.get_professor(kwargs.get('username'), 'username')
+        
         form = self.form(request.POST)
         if form.is_valid():
             res = form.save()
@@ -410,8 +416,32 @@ class Add_Grad_Supervision(View):
             else:
                 messages.error(request, 'An error occurred while saving data.')
         else:
-            messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
+            messages.error(request, 'An error occurred. Form is invalid. {0}'.format( api.get_error_messages(form.errors.get_json_data()) ))
         return HttpResponseRedirect( reverse('gp_admin:add_grad_supervision', args=[kwargs.get('username')]) + '?next=' + request.POST.get('next') )
+
+
+@login_required(login_url=settings.LOGIN_URL)
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@require_http_methods(['GET'])
+@admin_access_only
+def search_students(request):
+    ''' Search students '''
+    name = request.GET.get('name')
+    
+    if bool(name):
+        studs = api.get_students_by_name(name)
+        print(studs)
+        data = []
+        for stud in studs:
+            data.append({
+                'id': stud.id,
+                'first_name': stud.first_name,
+                'last_name': stud.last_name,
+                'student_number': stud.student_number
+            })
+        return JsonResponse({ 'data': data, 'status': 'success' }, safe=False)
+    return JsonResponse({ 'data': [], 'status': 'error' }, safe=False)
+
 
 
 @login_required(login_url=settings.LOGIN_URL)

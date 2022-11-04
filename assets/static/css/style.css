@@ -171,7 +171,7 @@ main {
   margin-top: 0 !important;
 }
 
-.board table td:first-child,
+.board table.in-form td:first-child,
 .board form table td:first-child label {
   margin: 0;
   font-weight: bold;
@@ -483,6 +483,36 @@ input[type=radio] {
 
 .nav-item {
   color: #6c757d;
+}
+
+#display-students .search-result {
+  padding: 0 7px;
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  max-width: 300px;
+  max-height: 300px;
+  overflow: auto;
+  z-index: 10;
+}
+
+#display-students ul.students > li {
+  cursor: pointer;
+  padding: 7px;
+  border-bottom: 1px solid #eee;
+}
+
+#display-students ul.students > li:hover {
+  font-weight: 600;
+}
+
+#selected-student {
+  background-color: #fff;
+  display: inline-block;
+  padding: 3px 7px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
 

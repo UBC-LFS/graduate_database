@@ -20,29 +20,44 @@
     </div>
 
     <div class="col-md-8">
-
       <div class="board">
-        <h3>Graduate Supervision Form</h3>
+        <h3>Add Student Form</h3>
 
         {% include 'core/subpages/_form_note.html' %}
 
         <form class="mb-5" action="{% url 'gp_admin:add_grad_supervision' username=prof.username %}" method="post">
           {% csrf_token %}
 
-          {% for field in form.visible_fields  %}
-            <div class="field-wrapper">
-              <label for="{{ field.id_for_label }}">
-                {{ field.label }}:
-                {% if field.name == 'student' or field.name == 'professor_role' %}
+          <table class="in-form table table-borderless fs-1">
+            <tr>
+              <td class="col-md-3">
+                Student:
+                <small class="text-danger"><i class="fa fa-asterisk" aria-hidden="true"></i></small>
+              </td>
+              <td class="col-md-9">
+                <div id="selected-student" style="display:none"></div>
+                <input id="enter-student" class="form-control" type="text" placeholder="Enter Student Name" data-url="{% url 'gp_admin:search_students' %}"  />
+                <input id="input-student" class="d-none" type="text" name="student" value="" />
+                <div id="display-students"></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="col-md-3">
+                <label for="id_professor_role">
+                  Professor Role:
                   <small class="text-danger"><i class="fa fa-asterisk" aria-hidden="true"></i></small>
-                {% endif %}
-              </label>
-              {% if field.help_text %}
-                <div class="help">{{ field.help_text|safe }}</div>
-              {% endif %}
-              {{ field }}
-            </div>
-          {% endfor %}
+                </label>
+              </td>
+              <td class="col-md-9">
+                <select id="id_professor_role" name="professor_role">
+                  <option value="">Select</option>
+                  {% for role in prof_roles %}
+                    <option value="{{ role.id }}">{{ role.name }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+            </tr>
+          </table>
 
           <input type="hidden" name="professor" value="{{ prof.id }}" />
           <input type="hidden" name="next" value="{{ next }}" />
@@ -55,13 +70,13 @@
 
         <h5 class="mt-5 mb-3">Students ({{ prof.graduate_supervision_set.count }})</h5>
 
-        <table class="table bg-white border">
+        <table class="table bg-white border text-center fs-sm">
           <thead>
             <tr>
               <th>GSID</th>
               <th>Professor Role</th>
               <th>Student Name</th>
-              <th>Studnet Number</th>
+              <th>Student Number</th>
               <th>Email</th>
               <th>Actions</th>
             </tr>
@@ -129,7 +144,7 @@
               </tr>
             {% empty %}
               <tr>
-                <td colspan="6">No students found</td>
+                <td colspan="6">No students found.</td>
               </tr>
             {% endfor %}
           </tbody>
@@ -142,4 +157,10 @@
 
 </div>
 
+{% endblock %}
+
+
+{% block js %}
+  {% load static %}
+  <script type="text/javascript" src="{% static 'js/add_grad_supervision.js' %}"></script>
 {% endblock %}
