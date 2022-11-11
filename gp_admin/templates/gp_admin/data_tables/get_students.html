@@ -25,6 +25,10 @@
 
   {% include 'core/subpages/_searched_message.html' with items=students total_items=total_students %}
 
+  <div class="d-inline-block ml-5">
+    Today's SIS Students: {{ stats.today_created_students|length }} created and {{ stats.today_updated_students|length }} updated
+  </div>
+
   <table
     class="table table-striped table-hover table-bordered table-responsive-md text-center fs-sm"
     data-toggle="table"
@@ -38,7 +42,7 @@
         <th data-sortable="true">Last <br /> Name</th>
         <th>Student <br /> Number</th>
         <th>Email</th>
-        <th>Additional <br /> Info</th>
+        <th>More <br /> Info</th>
         <th>Note</th>
         <th data-sortable="true">Supervisors</th>
         <th data-sortable="true">Created on</th>
@@ -54,7 +58,13 @@
           <td>{{ stud.last_name }}</td>
           <td>{{ stud.student_number }}</td>
           <td>{{ stud.email }}</td>
-          <td>{% include 'gp_admin/subpages/_modal_additional_info.html' with data=stud %}</td>
+          <td>
+            {% include 'gp_admin/subpages/_modal_more_info.html' with data=stud %}
+            {% if stud.is_changed %}
+              <br />
+              <span class="badge badge-{% if stud.is_changed == 'SIS NEW' %}danger{% else %}success{% endif %}">{{ stud.is_changed }}</span>
+            {% endif %}
+          </td>
           <td>
             {% if stud.note %}
               {% include 'gp_admin/subpages/_modal_note.html' with data=stud %}
@@ -126,11 +136,12 @@
           </td>
           <td>
             <a class="btn btn-xs btn-link fs-sm" href="{% url 'gp_admin:edit_student' student_number=stud.student_number %}?next={{ request.get_full_path }}&t=basic_info">Edit</a>
+            <a class="btn btn-xs btn-link fs-sm" href="{% url 'gp_admin:assign_student' student_number=stud.student_number %}?next={{ request.get_full_path }}">Assign</a>
           </td>
         </tr>
       {% empty %}
         <tr>
-          <td colspan="16">No graduate students found</td>
+          <td colspan="16">No graduate students found.</td>
         </tr>
       {% endfor %}
     </tbody>

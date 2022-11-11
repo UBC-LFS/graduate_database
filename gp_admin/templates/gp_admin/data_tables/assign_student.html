@@ -1,0 +1,78 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+{% include 'gp_admin/subpages/_menu.html' %}
+
+<div class="container max-width-container">
+
+  <div class="row">
+    <div class="col-md-4">
+      {% include 'core/subpages/_left_aside.html' with data=stud type=info.type path=info.path %}
+
+      <div class="left-aside-btn-groups">
+        <a class="btn btn-outline-primary" href="{{ next }}">Back to Students</a>
+      </div>
+    </div>
+
+    <div class="col-md-8">
+
+      <div class="board col-11 mx-auto">
+
+        
+
+        <h4 id="list-of-profs" class="text-primary text-center mb-3">List of Professors</h4>
+
+				<input id="prof-search-input" class="float-right" data-student="{{ stud.id }}" type="text" placeholder="Search by Name" />
+
+				<form id="prof-list-form-{{ stud.id }}" action="" method="post">
+					{% csrf_token %}
+
+					<input class="btn btn-primary btn-sm btn-submit mb-2" type="button" value="Save changes" data-student="{{ stud.id }}" data-url="#" />
+
+					<table id="prof-list-{{ stud.id }}" class="table text-center fs-1 mb-4">
+						<thead>
+							<tr>
+								<th>Select</th>
+								<th>Professor Name</th>
+								<th>Professor Role</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for prof in profs %}
+								<tr>
+									<td>
+										<input class="prof-input" type="checkbox" name="professor" value="{{ prof.id }}" data-professor="{{ prof.id }}" data-student="{{ stud.id }}" />
+									</td>
+									<td class="text-left">{{ prof.get_full_name }}</td>
+									<td>
+                    <select name="professor_role">
+                      <option value="">Select</option>
+                      {% for role in prof_roles %}
+                        <option value="{{ role.id }}">{{ role.name }}</option>
+                      {% endfor %}
+                    </select>
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+
+					<input type="hidden" name="student" value="{{ stud.id }}" />
+					<input class="btn btn-primary btn-sm btn-submit block-center" type="button" value="Save changes" data-student="{{ stud.id }}" data-url="#" />
+				</form>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}
+
+
+{% comment %}
+{% block js %}
+	{% load static %}
+  <script type="text/javascript" src="{% static 'js/assign_student.js' %}"></script>
+{% endblock %}
+{% endcomment %}

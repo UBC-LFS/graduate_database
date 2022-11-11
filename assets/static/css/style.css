@@ -305,6 +305,23 @@ main {
   font-size: 1rem;
 }
 
+.modal-item > .item-header {
+  margin-bottom: 10px;
+}
+
+.modal-item > .item-header:not(:first-child) {
+  margin-top: 30px;
+}
+
+.modal-item > .item-header::after {
+  content: '';
+  height: 2px;
+  background-color: #007bff;
+  display: block;
+  width: 85%;
+  margin-top: 5px;
+}
+
 .modal-table > thead > tr {
   background-color: #fff !important;
 }

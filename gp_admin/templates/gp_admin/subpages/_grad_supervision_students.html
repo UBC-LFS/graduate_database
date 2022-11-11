@@ -30,7 +30,7 @@
         <td>{{ gs.student.student_number }}</td>
         <td>{{ gs.student.email }}</td>
         <td>{{ gs.student.status.name }}</td>
-        <td>{% include 'gp_admin/subpages/_modal_additional_info.html' with data=gs.student %}</td>
+        <td>{% include 'gp_admin/subpages/_modal_more_info.html' with data=gs.student %}</td>
       </tr>
     {% empty %}
       <tr>

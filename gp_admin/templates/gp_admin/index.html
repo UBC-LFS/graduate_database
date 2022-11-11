@@ -22,7 +22,7 @@
 
       <div class="bg-prompt">
         <div class="prompt p-4 text-center">
-          <h4>Welcome</h4>
+          <h4 class="mb-3">Welcome</h4>
           <p class="col-8 mx-auto">
             If you would like to view a list of students or professors, please click
             <a href="{% url 'gp_admin:get_students' %}">Students</a> or
@@ -36,23 +36,51 @@
         <table class="table fs-1">
           <tbody>
             <tr>
-              <td class="font-weight-bold">Number of Students</td>
-              <td>{{ num_students}}</td>
+              <td class="col-md-6 font-weight-bold">Number of Students</td>
+              <td class="col-md-6">{{ num_students }}</td>
             </tr>
             <tr>
-              <td class="font-weight-bold">Number of Professors</td>
-              <td>{{ num_professors}}</td>
+              <td class="col-md-6 font-weight-bold">Number of Professors</td>
+              <td class="col-md-6">{{ num_professors }}</td>
             </tr>
             <tr>
-              <td class="font-weight-bold">Number of Users</td>
-              <td>{{ num_users}}</td>
+              <td class="col-md-6 font-weight-bold">Number of Users</td>
+              <td class="col-md-6">{{ num_users }}</td>
             </tr>
           </tbody>
         </table>
 
         <h5 class="text-info mt-5 mb-3">
-          Quick View - Student Updates
+          Quick View for SIS Students
         </h5>
+
+        <table class="table fs-1">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Created</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Today ({{ stats.today }})</td>
+              <td>{% include 'gp_admin/subpages/_modal_display_students.html' with data=stats.today_created_students date='Today' type='created' %}</td>
+              <td>{% include 'gp_admin/subpages/_modal_display_students.html' with data=stats.today_updated_students date='Today' type='updated' %}</td>
+            </tr>
+            <tr>
+              <td>Yesterday ({{ stats.yesterday }})</td>
+              <td>{% include 'gp_admin/subpages/_modal_display_students.html' with data=stats.yesterday_created_students date='Yesterday' type='created' %}</td>
+              <td>{% include 'gp_admin/subpages/_modal_display_students.html' with data=stats.yesterday_updated_students date='Yesterday' type='updated' %}</td>
+            </tr>
+            <tr>
+              <td>{{ stats.week_ago }} ~ {{ stats.today }}</td>
+              <td>{% include 'gp_admin/subpages/_modal_display_students.html' with data=stats.week_ago_created_students date='week_ago' type='created' %}</td>
+              <td>{% include 'gp_admin/subpages/_modal_display_students.html' with data=stats.week_ago_updated_students date='week_ago' type='updated' %}</td>
+            </tr>
+          </tbody>
+        </table>
+
       </div>
 
     </div>

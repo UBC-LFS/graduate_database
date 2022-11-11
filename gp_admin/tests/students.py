@@ -287,7 +287,7 @@ class StudentTest(TestCase):
         self.assertEqual(messages[0], 'Success! Student (firstname lastname, Student #: 90000888) created.')
         self.assertEqual(res.status_code, 200)
 
-        stud = api.get_student(data['student_number'])
+        stud = api.get_student_by_sn(data['student_number'])
         self.assertEqual(stud.first_name, data['first_name'])
         self.assertEqual(stud.last_name, data['last_name'])
         self.assertEqual(stud.student_number, data['student_number'])
@@ -374,7 +374,7 @@ class StudentTest(TestCase):
         self.assertEqual(messages3[0], 'Success! Student (firstname1 lastname1, Student #: 90000881) created.')
         self.assertEqual(res3.status_code, 200)
         
-        stud = api.get_student(data3['student_number'])
+        stud = api.get_student_by_sn(data3['student_number'])
         self.assertEqual(stud.first_name, data3['first_name'])
         self.assertEqual(stud.last_name, data3['last_name'])
         self.assertEqual(stud.student_number, data3['student_number'])
@@ -484,7 +484,7 @@ class StudentTest(TestCase):
         self.assertEqual(messages2[0], 'Success! Student (firstname lastname, Student #: 90000888) created.')
         self.assertEqual(res2.status_code, 200)
         
-        stud = api.get_student(data1['student_number'])
+        stud = api.get_student_by_sn(data1['student_number'])
         self.assertEqual(stud.first_name, data1['first_name'])
         self.assertEqual(stud.last_name, data1['last_name'])
         self.assertEqual(stud.student_number, data1['student_number'])
@@ -590,7 +590,7 @@ class StudentTest(TestCase):
         self.assertEqual(res2.status_code, 200)
         self.assertEqual(messages2[0], 'Success! Student (firstname lastname, Student #: 90000888) created.')
 
-        stud = api.get_student(data1['student_number'])
+        stud = api.get_student_by_sn(data1['student_number'])
         self.assertEqual(stud.first_name, data1['first_name'])
         self.assertEqual(stud.last_name, data1['last_name'])
         self.assertEqual(stud.student_number, data1['student_number'])
@@ -716,7 +716,7 @@ class StudentTest(TestCase):
         self.assertEqual(messages4[0], 'Success! Student (firstname lastname, Student #: 90000888) created.')
         self.assertEqual(res4.status_code, 200)
 
-        stud = api.get_student(data4['student_number'])
+        stud = api.get_student_by_sn(data4['student_number'])
         self.assertEqual(stud.first_name, data4['first_name'])
         self.assertEqual(stud.last_name, data4['last_name'])
         self.assertEqual(stud.student_number, data4['student_number'])
@@ -853,7 +853,7 @@ class StudentTest(TestCase):
         self.assertEqual(messages4[0], 'Success! Student (firstname lastname, Student #: 90000888) created.')
         self.assertEqual(res4.status_code, 200)
 
-        stud = api.get_student(data1['student_number'])
+        stud = api.get_student_by_sn(data1['student_number'])
         self.assertEqual(stud.first_name, data1['first_name'])
         self.assertEqual(stud.last_name, data1['last_name'])
         self.assertEqual(stud.student_number, data1['student_number'])
@@ -988,7 +988,7 @@ class StudentTest(TestCase):
         self.assertEqual(messages4[0], 'Success! Student (firstname lastname, Student #: 90000888) created.')
         self.assertEqual(res4.status_code, 200)
 
-        stud = api.get_student(data1['student_number'])
+        stud = api.get_student_by_sn(data1['student_number'])
         self.assertEqual(stud.first_name, data1['first_name'])
         self.assertEqual(stud.last_name, data1['last_name'])
         self.assertEqual(stud.student_number, data1['student_number'])
@@ -1390,7 +1390,7 @@ class StudentTest(TestCase):
         self.assertEqual(messages[0], 'Success! Student (firstname lastname, Student #: 90000888) updated.')
         self.assertEqual(res.status_code, 200)
 
-        stud = api.get_student(data['student_number'])
+        stud = api.get_student_by_sn(data['student_number'])
         self.assertEqual(stud.id, 1)
         self.assertEqual(stud.first_name, data['first_name'])
         self.assertEqual(stud.last_name, data['last_name'])
@@ -1455,7 +1455,7 @@ class StudentTest(TestCase):
         self.assertEqual(messages[0], 'Success! Student (John Doe, Student #: 90000001) updated.')
         self.assertEqual(res.status_code, 200)
         
-        stud = api.get_student(STUDENTS[0])
+        stud = api.get_student_by_sn(STUDENTS[0])
         self.assertEqual(stud.id, 1)
         self.assertEqual(stud.first_name, 'John')
         self.assertEqual(stud.last_name, 'Doe')
@@ -1518,7 +1518,7 @@ class StudentTest(TestCase):
         self.assertEqual(messages[0], 'Success! Student (John Doe, Student #: 90000001) updated.')
         self.assertEqual(res.status_code, 200)
         
-        stud = api.get_student(STUDENTS[0])
+        stud = api.get_student_by_sn(STUDENTS[0])
         self.assertEqual(stud.id, 1)
         self.assertEqual(stud.first_name, 'John')
         self.assertEqual(stud.last_name, 'Doe')

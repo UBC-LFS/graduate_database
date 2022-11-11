@@ -20,8 +20,10 @@ from gp_admin import api
 
 from gp_admin.models import Student, Sent_Reminder
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-PATH = os.path.join(BASE_DIR, 'playground', 'data')
+#BASE_DIR = Path(__file__).resolve().parent.parent.parent
+#PATH = os.path.join(BASE_DIR, 'playground', 'data')
+PATH = settings.GRAD_DB_SIS_STUDENTS_DIR
+
 
 HEADERS = [
     'STUD_NO', 'GIVEN_NAME', 'PREFERRED_NAME', 'MIDDLE_NAME', 'SURNAME', 'EMAIL_ADDRESS', 'GENDER', 
@@ -114,11 +116,11 @@ def get_sis_students():
             ext = os.path.splitext(f)[-1].lower()
             if ext == '.xls':
                 stud_nos, items = read_old_excel(f, stud_nos, items)
-                print('===== File:', f, len(items))
+                print('===== File 1:', f, len(items))
             
             elif ext in ['.xlsx', '.xlsm', '.xltx', '.xltm']:
                 stud_nos, items = read_new_excel(f, stud_nos, items)
-                print('===== File:', f, len(items))
+                print('===== File 2:', f, len(items))
                
     print(len(stud_nos), len(items))
 
@@ -137,14 +139,18 @@ def get_sis_students():
             student_filtered = Student.objects.filter(student_number=item['stud_no'])
 
             if student_filtered.exists() and hashcode != student_filtered.first().hashcode:
-                student = student_filtered.first()
-                student.first_name = item['given_name']
-                student.last_name = item['surname']
-                student.student_number = item['stud_no']
-                student.email = item['email_address']
-                student.json = item
-                student.hashcode = hashcode
-                update_students.append(student)
+                stud = student_filtered.first()
+                
+                stud.first_name = item['given_name']
+                stud.last_name = item['surname']
+                stud.student_number = item['stud_no']
+                stud.email = item['email_address']
+                stud.updated_on = datetime.today()
+                stud.json = item
+                stud.hashcode = hashcode
+                stud.sis_updated_on = datetime.today()
+
+                update_students.append(stud)
         else:
             create_students.append( Student(
                 first_name = item['given_name'],
@@ -152,7 +158,9 @@ def get_sis_students():
                 student_number = item['stud_no'],
                 email = item['email_address'],
                 json = item, 
-                hashcode = hashcode
+                hashcode = hashcode,
+                sis_created_on = datetime.today(),
+                sis_updated_on = datetime.today()
             ) )
 
     # Bulk delete
@@ -168,7 +176,16 @@ def get_sis_students():
     # Bulk update
     print('update_students', len(update_students))
     if len(update_students) > 0:
-        updated = Student.objects.bulk_update(update_students, ['json', 'hashcode'])
+        updated = Student.objects.bulk_update(update_students, [
+            'first_name', 
+            'last_name', 
+            'student_number', 
+            'email', 
+            'updated_on',
+            'json', 
+            'hashcode', 
+            'sis_updated_on'
+        ])
         print('===== updated', updated)
 
     # Bulk create
@@ -176,23 +193,6 @@ def get_sis_students():
     if len(create_students) > 0:
         created = Student.objects.bulk_create(create_students)
         print('===== created', created)
-
-
-    # Testing
-    # json_item = json.dumps(items[0])
-    # Student.objects.create(
-    #     student_number = stud_nos[0], 
-    #     hashcode = hashlib.sha256(json_item.encode('utf-8')).hexdigest(), 
-    #     json = items[0]
-    # )
-
-    # print(json.dumps(items[0]))
-    # print(json.dumps(items[0]).encode("utf-8"))
-    # print(hashlib.sha256(json.dumps(items[0])).hexdigest())
-    # json_a = json.dumps(student_a).encode("utf-8")
-    #json_b = json.dumps(student_b).encode("utf-8")
-    #hashed_a = hashlib.sha256(json_a).hexdigest()
-
 
 
 def send_reminders():

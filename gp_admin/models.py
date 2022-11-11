@@ -198,11 +198,13 @@ class Student(models.Model):
     degree_3 = models.CharField(max_length=50, null=True, blank=True)
     gpa_3 = models.CharField(max_length=20, null=True, blank=True)
 
-    json = models.JSONField(null=True, blank=True)
-    hashcode = models.CharField(max_length=254, null=True, blank=True)
-
     created_on = models.DateField(auto_now_add=True)
     updated_on = models.DateField(auto_now=True)
+
+    json = models.JSONField(null=True, blank=True)
+    hashcode = models.CharField(max_length=254, null=True, blank=True)
+    sis_created_on = models.DateField(null=True, blank=True)
+    sis_updated_on = models.DateField(null=True, blank=True)
 
     class Meta:
         ordering = ['last_name', 'first_name']

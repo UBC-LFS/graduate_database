@@ -9,8 +9,16 @@
     <div class="col-md-2">
       <h2 class="text-center-middle text-center">Professors</h2>
     </div>
-    <div class="col-md-10">
+    <div class="col-md-7">
       {% include 'gp_admin/subpages/_search_fields.html' with path='professors' %}
+    </div>
+    <div class="col-md-3 bg-white">
+      <div class="bg-prompt height-100">
+        <div class="prompt height-100 text-center pt-3">
+          <p>Please click to create a new professor.</p>
+          <a class="btn btn-outline-primary btn-sm mt-3" href="{% url 'gp_admin:create_user' %}?next={{ request.get_full_path }}&t=basic_info">Create User</a>
+        </div>
+      </div>
     </div>
   </div>
 

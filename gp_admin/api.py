@@ -2,8 +2,9 @@ from django.conf import settings
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
-from django.db.models import Q
+from django.db.models import Q, F
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from datetime import timedelta, date
 import json
 import hashlib
 from .models import *
@@ -15,15 +16,36 @@ def get_students():
     ''' Get all students '''
     return Student.objects.all()
 
-def get_student_by_student_number(student_number):
+
+def get_student_by_sn(student_number):
     try:
         return Student.objects.get(student_number=student_number)
     except Student.DoesNotExist:
         raise Http404
 
+
 def get_students_by_name(name):
     studs = Student.objects.filter( Q(first_name__icontains=name) | Q(last_name__icontains=name) )
     return studs if studs.exists() else None
+
+
+def get_sis_students_by_day(when):
+    day = date.today()
+
+    if when == 'yesterday':
+        day -= timedelta(days=1)
+
+    elif when == 'week_ago':
+        week_ago = day - timedelta(days=7)
+        created = Student.objects.filter(sis_created_on__range=[week_ago, day])
+        updated = Student.objects.filter(sis_updated_on__range=[week_ago, day], sis_updated_on__gt=F('sis_created_on')) 
+        
+        return created, updated, week_ago
+
+    created = Student.objects.filter(sis_created_on=day)
+    updated = Student.objects.filter(sis_updated_on=day, sis_updated_on__gt=F('sis_created_on'))
+
+    return created, updated, day
 
 
 # Professor

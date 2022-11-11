@@ -11,7 +11,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.http import HttpResponseRedirect, Http404, JsonResponse
 from django.db.models import Q
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from dateutil.relativedelta import relativedelta
 from django.urls import resolve
 from urllib.parse import urlparse
@@ -31,13 +31,28 @@ from scheduler import tasks
 @require_http_methods(['GET'])
 @admin_access_only
 def index(request):
-    # tasks.get_sis_students()
-    print( request.session.get('loggedin_user') )
+    #tasks.get_sis_students()
+
+    today_created_students, today_updated_students, today = api.get_sis_students_by_day('today')
+    yesterday_created_students, yesterday_updated_students, yesterday = api.get_sis_students_by_day('yesterday')
+
+    week_ago_created_students, week_ago_updated_students, week_ago = api.get_sis_students_by_day('week_ago')
 
     return render(request, 'gp_admin/index.html', {
         'num_students': len(api.get_students()),
         'num_professors': len(api.get_professors()),
-        'num_users': len(api.get_users())
+        'num_users': len(api.get_users()),
+        'stats': {
+            'today': today,
+            'today_created_students': today_created_students,
+            'today_updated_students': today_updated_students,
+            'yesterday': yesterday,
+            'yesterday_created_students': yesterday_created_students,
+            'yesterday_updated_students': yesterday_updated_students,
+            'week_ago': week_ago,
+            'week_ago_created_students': week_ago_created_students,
+            'week_ago_updated_students': week_ago_updated_students
+        }
     })
 
 
@@ -74,9 +89,23 @@ class Get_Students(View):
         except EmptyPage:
             students = paginator.page(paginator.num_pages)
 
+        for stud in students:
+            is_changed = None
+            if stud.sis_created_on == date.today():
+                is_changed = 'SIS NEW'
+            elif stud.sis_updated_on == date.today():
+                is_changed = 'SIS UPDATED'
+            stud.is_changed = is_changed
+
+        today_created_students, today_updated_students, today = api.get_sis_students_by_day('today')
+
         return render(request, 'gp_admin/data_tables/get_students.html', {
             'students': students,
-            'total_students': len(student_list)
+            'total_students': len(student_list),
+            'stats': {
+                'today_created_students': today_created_students,
+                'today_updated_students': today_updated_students
+            }
         })
 
 @method_decorator([never_cache, login_required, admin_access_only], name='dispatch')
@@ -131,9 +160,9 @@ class Create_Student(View):
                 request.session['previous_school_info_form'] = data
             else:
                 raise Http404
-            
+
             messages.success(request, 'Success! {0}rmation Form saved.'.format( api.split_capitalize(tab) ))
-        
+
         else:
             basic_info = request.session.get('basic_info_form', None)
             additional_info = request.session.get('additional_info_form', None)
@@ -166,14 +195,14 @@ class Create_Student(View):
                         del request.session['additional_info_form']
                     if 'previous_school_info_form' in request.session:
                         del request.session['previous_school_info_form']
-                        
+
                     messages.success(request, 'Success! Student ({0}, Student #: {1}) created.'.format(res.get_full_name(), res.student_number))
                     return HttpResponseRedirect(request.POST.get('next'))
                 else:
                     messages.error(request, 'An error occurred while creating data.')
             else:
                 messages.error(request, 'An error occurred. Form is invalid. {0}'.format(api.get_error_messages(form.errors.get_json_data())))
-        
+
         return HttpResponseRedirect(request.POST.get('current_page'))
 
 
@@ -202,7 +231,7 @@ class Edit_Student(View):
         next = request.GET.get('next')
         tab = request.GET.get('t')
 
-        stud = api.get_student(kwargs.get('student_number'))
+        stud = api.get_student_by_sn(kwargs.get('student_number'))
 
         form = None
         if tab == 'basic_info':
@@ -237,8 +266,8 @@ class Edit_Student(View):
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
         tab = request.POST.get('tab')
-        stud = api.get_student(request.POST.get('student'))
-        
+        stud = api.get_student_by_sn(request.POST.get('student'))
+
         form = None
         if tab == 'basic_info':
             form = Basic_Info_Form(request.POST, instance=stud)
@@ -261,9 +290,40 @@ class Edit_Student(View):
                 messages.error(request, 'An error occurred while updating data.')
         else:
             messages.error(request, 'An error occurred. Form is invalid. {0}'.format(api.get_error_messages(form.errors.get_json_data())))
-    
+
         return HttpResponseRedirect(request.POST.get('current_page'))
 
+
+@method_decorator([never_cache, login_required, admin_access_only], name='dispatch')
+class Assign_Student(View):
+
+    @method_decorator(require_GET)
+    def get(self, request, *args, **kwargs):
+        next = request.GET.get('next')
+        stud = api.get_student_by_sn(kwargs.get('student_number'))
+
+        gs = stud.graduate_supervision_set.all()
+        for g in gs:
+            print(g.professor)
+
+        return render(request, 'gp_admin/data_tables/assign_student.html', {
+            'stud': stud,
+            'profs': api.get_professors(),
+            'prof_roles': Professor_Role.objects.all(),
+            'info': {
+                'btn_label': 'Update',
+                'type': 'edit',
+                'path': 'students'
+            },
+            'next': next
+        })
+
+    @method_decorator(require_POST)
+    def post(self, request, *args, **kwargs):
+        pass
+
+
+# Professor
 
 @method_decorator([never_cache, login_required, admin_access_only], name='dispatch')
 class Get_Professors(View):
@@ -392,11 +452,11 @@ class Add_Grad_Supervision(View):
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
-        
+
         parse_result = urlparse(request.get_full_path())
         if 'next=' not in parse_result.query:
             raise Http404
-        
+
         return render(request, 'gp_admin/data_tables/add_grad_supervision.html', {
             'prof': api.get_professor(kwargs.get('username'), 'username'),
             'form': self.form,
@@ -407,7 +467,7 @@ class Add_Grad_Supervision(View):
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
         prof = api.get_professor(kwargs.get('username'), 'username')
-        
+
         form = self.form(request.POST)
         if form.is_valid():
             res = form.save()
@@ -427,7 +487,7 @@ class Add_Grad_Supervision(View):
 def search_students(request):
     ''' Search students '''
     name = request.GET.get('name')
-    
+
     if bool(name):
         studs = api.get_students_by_name(name)
         print(studs)
@@ -557,7 +617,7 @@ class Create_User(View):
     def get(self, request, *args, **kwargs):
         next = request.GET.get('next')
         tab = request.GET.get('t')
-        
+
         if tab not in ['basic_info', 'role_details']:
             raise Http404
 
@@ -584,7 +644,7 @@ class Create_User(View):
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
         tab = request.POST.get('tab')
-        
+
         if 'save' in request.POST:
 
             name = ''
@@ -596,13 +656,13 @@ class Create_User(View):
                 name = api.split_capitalize(tab)
             else:
                 raise Http404
-            
+
             messages.success(request, 'Success! {0} Form saved.'.format(name))
 
         else:
             user_profile_session = request.session.get('user_profile_form', None)
             role_details_session = request.session.get('role_details_form', None)
-            
+
             user_form = None
             profile_form = None
             prof_form = None
@@ -610,17 +670,17 @@ class Create_User(View):
             if tab == 'basic_info':
                 user_form = self.user_form(request.POST)
                 profile_form = self.profile_form(request.POST)
-            
-                if role_details_session: 
+
+                if role_details_session:
                     prof_form = self.prof_form(role_details_session)
 
             elif tab == 'role_details':
                 prof_form = self.prof_form(request.POST)
-            
-                if user_profile_session: 
+
+                if user_profile_session:
                     user_form = self.user_form(user_profile_session)
                     profile_form = self.profile_form(user_profile_session)
-            
+
             else:
                 raise Http404
 
@@ -745,12 +805,12 @@ class Edit_User(View):
 
         elif tab == 'role_details':
             prof_form = self.prof_form(request.POST, instance=user.profile)
-        
+
         else:
             raise Http404
 
         errors = []
-        
+
         if user_form and not user_form.is_valid():
             errors.append( api.get_error_messages(user_form.errors.get_json_data()) )
 
@@ -761,12 +821,12 @@ class Edit_User(View):
             errors.append( api.get_error_messages(prof_form.errors.get_json_data()) )
 
         if len(errors) == 0:
-            if user_form: 
+            if user_form:
                 user = user_form.save()
 
             if profile_form:
                 profile_form.save()
-            
+
             if prof_form:
                 prof_form.save()
 

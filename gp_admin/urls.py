@@ -13,6 +13,7 @@ urlpatterns = [
     path('students/search/', views.search_students, name='search_students'),
     path('student/create/', views.Create_Student.as_view(), name='create_student'),
     path('student/cancel/', views.cancel_student, name='cancel_student'),
+    path('student/<str:student_number>/assign/', views.Assign_Student.as_view(), name='assign_student'),
 
     path('professors/', views.Get_Professors.as_view(), name='get_professors'),
     path('professors/<str:username>/edit/', views.Edit_Professor.as_view(), name='edit_professor'),
@@ -31,7 +32,6 @@ urlpatterns = [
     path('users/all/', views.Get_Users.as_view(), name='get_users'),
     path('users/<str:username>/edit/', views.Edit_User.as_view(), name='edit_user'),
     path('user/create/', views.Create_User.as_view(), name='create_user'),
-    #path('api/user/save/', views.save_user, name='save_user'),
     path('user/cancel/', views.cancel_user, name='cancel_user'),
 
     path('users/roles/', views.Get_Roles.as_view(), name='get_roles'),
@@ -68,7 +68,4 @@ urlpatterns = [
     path('preparation/reminders/', views.Get_Reminders.as_view(), name='get_reminders'),
     path('preparation/reminders/<str:slug>/edit/', views.Edit_Reminder.as_view(), name='edit_reminder'),
     path('api/preparation/comprehensive-exams/reminder/delete/', views.delete_reminder, name='delete_reminder')
-
-    # path('professor/add/', views.Add_Professor.as_view(), name='add_professor'),
-    # path('students/sis/', views.get_sis_students, name='get_sis_students'),  
 ]

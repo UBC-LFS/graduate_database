@@ -27,7 +27,9 @@
 
           <ul class="list-left-20">
             <li>
-              Please fill the <span class="font-weight-bold">Comprehensive Exam Date</span> field in the <span class="font-weight-bold">Additional Information Form</span> to send reminder emails to students automatically.
+              Please fill the <span class="font-weight-bold">Comprehensive Exam Date</span>
+              field in the <a href="{% url 'gp_admin:create_student' %}?next={{ next }}&t=additional_info">Additional Information Form</a>
+              to send reminder emails to students automatically.
             </li>
           </ul>
         </div>

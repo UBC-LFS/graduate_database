@@ -1,0 +1,249 @@
+<button class="btn btn-xs btn-link fs-sm" type="button" data-toggle="modal" data-target="#general-info-modal-{{ data.id }}">
+  View
+</button>
+
+<div class="modal fade" id="general-info-modal-{{ data.id }}" tabindex="-1" role="dialog" aria-labelledby="general-info-modal-label-{{ data.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-info" id="general-info-modal-label-{{ data.id }}">More Information</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body text-left">
+
+        <div class="row">
+          <div class="col-6 modal-item">
+
+            <h5 class="item-header">Basic Information</h5>
+            <table class="table table-borderless">
+              <tr>
+                <td>First Name</td>
+                <td>{{ data.first_name }}</td>
+              </tr>
+              <tr>
+                <td>Last Name</td>
+                <td>{{ data.last_name }}</td>
+              </tr>
+              <tr>
+                <td>Student Number</td>
+                <td>{{ data.student_number }}</td>
+              </tr>
+              <tr>
+                <td>Email</td>
+                <td>{{ data.email }}</td>
+              </tr>
+              <tr>
+                <td>Date of Birth</td>
+                <td>{{ data.date_of_birth }}</td>
+              </tr>
+              <tr>
+                <td>Phone</td>
+                <td>{{ data.phone }}</td>
+              </tr>
+              <tr>
+                <td>SIN</td>
+                <td>{{ data.sin }}</td>
+              </tr>
+              <tr>
+                <td>LOA Months</td>
+                <td>{{ data.loa_months }}</td>
+              </tr>
+              <tr>
+                <td>LOA Details</td>
+                <td>{{ data.loa_details }}</td>
+              </tr>
+              <tr>
+                <td>Policy 85</td>
+                <td>{{ data.policy_85 }}</td>
+              </tr>
+            </table>
+
+            <h5 class="item-header">Additional Information</h5>
+
+            <table class="table table-borderless">
+              <tr>
+                <td>Status</td>
+                <td>{{ data.status }}</td>
+              </tr>
+              <tr>
+                <td>Start Date</td>
+                <td>{{ data.start_date }}</td>
+              </tr>
+              <tr>
+                <td>Completion Date</td>
+                <td>{{ data.completion_date }}</td>
+              </tr>
+              <tr>
+                <td>Graduation Date</td>
+                <td>{{ data.graduation_date }}</td>
+              </tr>
+              <tr>
+                <td>Comprehensive Exam Date</td>
+                <td>{{ data.comprehensive_exam_date }}</td>
+              </tr>
+              <tr>
+                <td>Thesis Title</td>
+                <td>{{ data.thesis_title }}</td>
+              </tr>
+              <tr>
+                <td>Funding Sources</td>
+                <td>{{ data.funding_sources }}</td>
+              </tr>
+              <tr>
+                <td>Total Funding Awarded</td>
+                <td>{{ data.total_funding_awarded }}</td>
+              </tr>
+              <tr>
+                <td>TAships</td>
+                <td>{{ data.taships }}</td>
+              </tr>
+              <tr>
+                <td>Current Role</td>
+                <td>{{ data.current_role }}</td>
+              </tr>
+            </table>
+
+            <h5 class="item-header">Previous School Information</h5>
+
+            <table class="table table-borderless">
+              <tr>
+                <td>Previous Institution 1</td>
+                <td>{{ data.previous_institution_1 }}</td>
+              </tr>
+              <tr>
+                <td>Degree 1</td>
+                <td>{{ data.degree_1 }}</td>
+              </tr>
+              <tr>
+                <td>GPA 1</td>
+                <td>{{ data.gpa_1 }}</td>
+              </tr>
+              <tr>
+                <td>Previous Institution 2</td>
+                <td>{{ data.previous_institution_2 }}</td>
+              </tr>
+              <tr>
+                <td>Degree 2</td>
+                <td>{{ data.degree_2 }}</td>
+              </tr>
+              <tr>
+                <td>GPA 2</td>
+                <td>{{ data.gpa_2 }}</td>
+              </tr>
+              <tr>
+                <td>Previous Institution 3</td>
+                <td>{{ data.previous_institution_3 }}</td>
+              </tr>
+              <tr>
+                <td>Degree 3</td>
+                <td>{{ data.degree_3 }}</td>
+              </tr>
+              <tr>
+                <td>GPA 3</td>
+                <td>{{ data.gpa_3 }}</td>
+              </tr>
+            </table>
+
+          </div>
+          <div class="col-6 modal-item">
+            <h5 class="item-header">SIS Details</h5>
+
+            <table class="table table-borderless">
+              <tr>
+                <td>Given Name</td>
+                <td>{{ data.json.given_name }}</td>
+              </tr>
+              <tr>
+                <td>Surname</td>
+                <td>{{ data.json.surname }}</td>
+              </tr>
+              <tr>
+                <td>Middle Name</td>
+                <td>{{ data.json.middle_name }}</td>
+              </tr>
+              <tr>
+                <td>Preferred Name</td>
+                <td>{{ data.json.preferred_name }}</td>
+              </tr>
+              <tr>
+                <td>Stud No</td>
+                <td>{{ data.json.stud_no }}</td>
+              </tr>
+              <tr>
+                <td>Email Address</td>
+                <td>{{ data.json.email_address }}</td>
+              </tr>
+              <tr>
+                <td>Gender</td>
+                <td>{{ data.json.gender }}</td>
+              </tr>
+              <tr>
+                <td>DEGR PGM CD</td>
+                <td>{{ data.json.degr_pgm_cd }}</td>
+              </tr>
+              <tr>
+                <td>SPEC1 PRIM SUBJ CD</td>
+                <td>{{ data.json.spec1_prim_subj_cd }}</td>
+              </tr>
+              <tr>
+                <td>Address 1</td>
+                <td>{{ data.json.addr1 }}</td>
+              </tr>
+              <tr>
+                <td>Address 2</td>
+                <td>{{ data.json.addr2 }}</td>
+              </tr>
+              <tr>
+                <td>City</td>
+                <td>{{ data.json.city }}</td>
+              </tr>
+              <tr>
+                <td>Province State</td>
+                <td>{{ data.json.province_state }}</td>
+              </tr>
+              <tr>
+                <td>Country CD</td>
+                <td>{{ data.json.country_cd }}</td>
+              </tr>
+              <tr>
+                <td>Country</td>
+                <td>{{ data.json.country }}</td>
+              </tr>
+              <tr>
+                <td>Postal CD</td>
+                <td>{{ data.json.postal_cd }}</td>
+              </tr>
+              <tr>
+                <td>Country of Citizenship</td>
+                <td>{{ data.json.country_of_citizenship }}</td>
+              </tr>
+              <tr>
+                <td>Citizenship</td>
+                <td>{{ data.json.citizenship }}</td>
+              </tr>
+              <tr>
+                <td>Visa Type CD</td>
+                <td>{{ data.json.visa_type_cd }}</td>
+              </tr>
+              <tr>
+                <td>DOM/INTL</td>
+                <td>{{ data.json.dom_intl }}</td>
+              </tr>
+            </table>
+
+            <div class="mt-4">
+              <h6 class="fs-sm">Created on:</h6>
+              <span class="fs-sm">{{ data.sis_created_on }}</span>
+            </div>
+            <div>
+              <h6 class="fs-sm">Updated on:</h6>
+              <span class="fs-sm">{{ data.sis_updated_on }}</span>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
