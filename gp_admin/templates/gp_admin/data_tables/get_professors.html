@@ -124,10 +124,14 @@
                     </div>
                     <div class="modal-body text-left">
 
-                      <h6 class="mb-4">
+                      <h6 class="d-inline-block mb-4">
                         Professor Full Name:
                         <a class="d-inline" href="{% url 'gp_admin:get_grad_supervision' %}?first_name={{ prof.first_name }}&last_name={{ prof.last_name }}">{{ prof.get_full_name }}</a>
                       </h6>
+
+                      <div class="float-right">
+                        <a href="{% url 'gp_admin:get_grad_supervision' %}?page=1&first_name={{ prof.first_name }}&last_name={{ prof.last_name }}&t=students">View more</a>
+                      </div>
 
                       <table class="modal-table table">
                         <thead>

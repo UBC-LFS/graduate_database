@@ -164,14 +164,14 @@ def get_sis_students():
             ) )
 
     # Bulk delete
-    old_set = set(old_stduent_nos)
-    delete_student_nos = list(old_set - new_set)
-    print('delete_students', len(delete_student_nos))
-    if len(delete_student_nos) > 0:
-        for student_no in delete_student_nos:
-            print(student_no)
-            deleted = Student.objects.filter(student_number=student_no).delete()
-            print(deleted)
+    # old_set = set(old_stduent_nos)
+    # delete_student_nos = list(old_set - new_set)
+    # print('delete_students', len(delete_student_nos))
+    # if len(delete_student_nos) > 0:
+    #     for student_no in delete_student_nos:
+    #         print(student_no)
+    #         deleted = Student.objects.filter(student_number=student_no).delete()
+    #         print(deleted)
 
     # Bulk update
     print('update_students', len(update_students))

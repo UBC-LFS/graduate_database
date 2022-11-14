@@ -12,54 +12,78 @@
       <div class="left-aside-btn-groups">
         <a class="btn btn-outline-primary" href="{{ next }}">Back to Students</a>
       </div>
+
+      <div class="col-10 mx-auto">
+        <div class="bd-callout bd-callout-warning">
+          <h4>
+            <i class="fa fa-bell-o" aria-hidden="true"></i> Note
+          </h4>
+
+          <ul class="list-left-20">
+            <li>
+              Administratorss can assign this student to multiple professors in the table.
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
 
-    <div class="col-md-8">
+  <div class="col-md-8">
 
-      <div class="board col-11 mx-auto">
+    <div class="board col-11 mx-auto">
 
-        
+      <h3 class="text-primary mb-3">Assign Student</h3>
 
-        <h4 id="list-of-profs" class="text-primary text-center mb-3">List of Professors</h4>
+      <form action="" method="post">
+        {% csrf_token %}
 
-				<input id="prof-search-input" class="float-right" data-student="{{ stud.id }}" type="text" placeholder="Search by Name" />
-
-				<form id="prof-list-form-{{ stud.id }}" action="" method="post">
-					{% csrf_token %}
-
-					<input class="btn btn-primary btn-sm btn-submit mb-2" type="button" value="Save changes" data-student="{{ stud.id }}" data-url="#" />
-
-					<table id="prof-list-{{ stud.id }}" class="table text-center fs-1 mb-4">
-						<thead>
-							<tr>
-								<th>Select</th>
-								<th>Professor Name</th>
-								<th>Professor Role</th>
-							</tr>
-						</thead>
-						<tbody>
-							{% for prof in profs %}
-								<tr>
-									<td>
-										<input class="prof-input" type="checkbox" name="professor" value="{{ prof.id }}" data-professor="{{ prof.id }}" data-student="{{ stud.id }}" />
-									</td>
-									<td class="text-left">{{ prof.get_full_name }}</td>
-									<td>
-                    <select name="professor_role">
+        <table
+          class="table text-center fs-1 mb-4 bg-white"
+          data-toggle="table"
+          data-sortable="true"
+          data-classes=""
+          data-pagination="true"
+          data-search="true"
+          data-page-size="25"
+          data-page-list="[25, 50, 100, all]"
+        >
+          <thead>
+            <tr>
+              <th>Select</th>
+              <th data-sortable="true">Professor Name</th>
+              <th>Professor Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for prof in profs %}
+              <tr>
+                <td>
+                  <input type="checkbox" name="professor_{{ prof.id }}" value="{{ prof.id }}" {% if prof.is_checked %}checked{% endif %} />
+                </td>
+                <td>{{ prof.get_full_name }}</td>
+                <td>
+                  <select name="professor_role_{{ prof.id }}">
+                    {% if not prof.is_checked %}
                       <option value="">Select</option>
-                      {% for role in prof_roles %}
-                        <option value="{{ role.id }}">{{ role.name }}</option>
-                      {% endfor %}
-                    </select>
-									</td>
-								</tr>
-							{% endfor %}
-						</tbody>
-					</table>
+                    {% endif %}
 
-					<input type="hidden" name="student" value="{{ stud.id }}" />
-					<input class="btn btn-primary btn-sm btn-submit block-center" type="button" value="Save changes" data-student="{{ stud.id }}" data-url="#" />
-				</form>
+                    {% for role in prof_roles %}
+                      <option value="{{ role.id }}" {% for gs in stud.graduate_supervision_set.all %}{% if gs.professor.id == prof.id and gs.professor_role.id == role.id %}selected{% endif %}{% endfor %}>{{ role.name }}</option>
+                    {% endfor %}
+                  </select>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <input type="hidden" name="current_page" value="{{ request.get_full_path }}" />
+        <input type="hidden" name="student" value="{{ stud.id }}" />
+
+        <div class="text-center mt-2-5rem">
+          <input class="btn btn-primary" type="submit" value="Save changes" />
+        </div>
+      </form>
 
       </div>
     </div>
@@ -68,11 +92,3 @@
 </div>
 
 {% endblock %}
-
-
-{% comment %}
-{% block js %}
-	{% load static %}
-  <script type="text/javascript" src="{% static 'js/assign_student.js' %}"></script>
-{% endblock %}
-{% endcomment %}

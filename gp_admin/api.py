@@ -17,9 +17,16 @@ def get_students():
     return Student.objects.all()
 
 
-def get_student_by_sn(student_number):
+def get_student_by_id(id):
     try:
-        return Student.objects.get(student_number=student_number)
+        return Student.objects.get(id=id)
+    except Student.DoesNotExist:
+        raise Http404
+
+
+def get_student_by_sn(sn):
+    try:
+        return Student.objects.get(student_number=sn)
     except Student.DoesNotExist:
         raise Http404
 
@@ -57,17 +64,36 @@ def get_professors(program=None):
     return User.objects.filter(profile__roles__in=[get_role('graduate-advisor', 'slug'), get_role('supervisor', 'slug')]).order_by('last_name', 'first_name')
 
 
-def get_professor(arg, type='id'):
-    ''' Get a professor '''
-    if type == 'username':
-        return get_object_or_404(User, username=arg)
-    return get_object_or_404(User, id=arg)
+def get_professor_by_id(id):
+    ''' Get a professor by id '''
+    try:
+        return User.objects.get(id=id)
+    except User.DoesNotExist:
+        raise Http404
+    
+
+def get_professor_by_username(username):
+    ''' Get a professor by username'''
+    try:
+        return User.objects.get(username=username)
+    except User.DoesNotExist:
+        raise Http404
 
 
 # Graduate Supervision
 
-def get_grad_supervision(arg, type='id'):
-    return get_object_or_404(Graduate_Supervision, id=arg)
+def get_grad_supervision_by_id(id):
+    try:
+        return Graduate_Supervision.objects.get(id=id)
+    except Graduate_Supervision.DoesNotExist:
+        raise Http404
+
+
+def get_grad_supervision_by_stud_id_and_prof_id(stud_id, prof_id):
+    try:
+        return Graduate_Supervision.objects.get(student__id=stud_id, professor__id=prof_id)
+    except Graduate_Supervision.DoesNotExist:
+        raise Http404
 
 
 def get_reminders():
@@ -237,12 +263,12 @@ def get_program(arg, type='id'):
     return get_object_or_404(Program, id=arg)
 
 
-
 def get_title(arg, type='id'):
     ''' Get a title by id '''
     if type == 'slug':
         return get_object_or_404(Title, slug=arg)
     return get_object_or_404(Title, id=arg)
+
 
 def get_position(arg, type='id'):
     ''' Get a position by id '''
@@ -250,11 +276,21 @@ def get_position(arg, type='id'):
         return get_object_or_404(Position, slug=arg)
     return get_object_or_404(Position, id=arg)
 
-def get_professor_role(arg, type='id'):
+
+def get_professor_role_by_id(id):
     ''' Get a professor role by id '''
-    if type == 'slug':
-        return get_object_or_404(Professor_Role, slug=arg)
-    return get_object_or_404(Professor_Role, id=arg)
+    try:
+        return Professor_Role.objects.get(id=id)
+    except User.DoesNotExist:
+        raise Http404
+
+
+def get_professor_role_by_slug(slug):
+    ''' Get a professor role by slug '''
+    try:
+        return Professor_Role.objects.get(slug=slug)
+    except User.DoesNotExist:
+        raise Http404
 
 
 def get_filtered_items(request, all_list, path):

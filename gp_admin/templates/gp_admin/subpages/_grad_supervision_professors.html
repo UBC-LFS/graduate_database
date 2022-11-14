@@ -13,8 +13,8 @@
   <thead>
     <tr>
       <th>UID</th>
-      <th>First Name</th>
-      <th>Last Name</th>
+      <th data-sortable="true">First Name</th>
+      <th data-sortable="true">Last Name</th>
       <th>Title</th>
       <th>Position</th>
       <th>Program <br /> Code</th>
@@ -26,8 +26,8 @@
     {% for coll in data.colleages %}
       <tr>
         <td>{{ coll.id }}</td>
-        <td data-sortable="true">{{ coll.first_name }}</td>
-        <td data-sortable="true">{{ coll.last_name }}</td>
+        <td>{{ coll.first_name }}</td>
+        <td>{{ coll.last_name }}</td>
         <td>{{ coll.profile.title.name }}</td>
         <td>{{ coll.profile.position.name }}</td>
         <td>

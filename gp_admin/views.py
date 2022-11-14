@@ -302,13 +302,16 @@ class Assign_Student(View):
         next = request.GET.get('next')
         stud = api.get_student_by_sn(kwargs.get('student_number'))
 
-        gs = stud.graduate_supervision_set.all()
-        for g in gs:
-            print(g.professor)
+        profs = api.get_professors()
+        for prof in profs:
+            prof.is_checked = False 
+            for gs in stud.graduate_supervision_set.all():
+                if gs.professor.id == prof.id:
+                    prof.is_checked = True
 
         return render(request, 'gp_admin/data_tables/assign_student.html', {
             'stud': stud,
-            'profs': api.get_professors(),
+            'profs': profs,
             'prof_roles': Professor_Role.objects.all(),
             'info': {
                 'btn_label': 'Update',
@@ -320,7 +323,100 @@ class Assign_Student(View):
 
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
-        pass
+        stud_id = request.POST.get('student', None)
+        #profs = request.POST.getlist('professor', None)
+        #professor_roles = request.POST.getlist('professor_role', None)
+
+        if not stud_id:
+            messages.error(request, 'An error occurred while saving changes.')
+            return HttpResponseRedirect(request.POST.get('current_page'))
+
+        stud = api.get_student_by_id(stud_id)
+
+        post = dict(request.POST)
+        print(post)
+        profs = []
+        prof_roles = []
+        items = {}
+        for key in post:
+            sp = key.split('_')
+            if 'professor' in key and len(sp) == 2:
+                profs.append(sp[1])
+
+                search = 'professor_role_' + sp[1]
+                if search in post:
+                    prof_roles.append(post[search][0])
+                    items[sp[1]] = post[search][0]
+        
+        print(profs)
+        print(prof_roles)
+        print(items)
+
+        existing_profs = []
+        existing_items = {}
+        for gs in stud.graduate_supervision_set.all():
+            prof_id = str(gs.professor.id)
+            prof_role_id = str(gs.professor_role.id)
+            existing_profs.append(prof_id)
+            existing_items[prof_id] = prof_role_id
+
+        profs_set = set(profs)
+        
+        print(existing_profs, existing_items, profs_set)
+
+        # Create
+        create_profs = list(profs_set - set(existing_profs))
+        create_grad_supervision = []
+        if len(create_profs):
+            for prof_id in create_profs:
+                prof_role_id = items[prof_id]
+
+                if len(prof_role_id) == 0:
+                    messages.error(request, 'An error occurred while saving changes. Please select a Professor Role.')
+                    return HttpResponseRedirect(request.POST.get('current_page'))
+
+                create_grad_supervision.append(Graduate_Supervision(
+                    student = stud,
+                    professor = api.get_professor_by_id(prof_id),
+                    professor_role = api.get_professor_role_by_id(prof_role_id)
+                ))
+
+        if len(create_grad_supervision) > 0:
+            created = Graduate_Supervision.objects.bulk_create(create_grad_supervision)
+            print('===== created', created)
+            
+            #if created:
+            #    messages.success(request, 'Success! Graduate Supervision ({0}, Student #: {1}) created.'.format(stud.get_full_name(), stud.student_number))
+
+
+        # Update
+        update_profs = set(existing_profs).intersection(profs_set)
+        print(update_profs)
+        update_grad_supervision = []
+        if len(update_profs) > 0:
+            for prof_id in update_profs:
+                if existing_items[prof_id] != items[prof_id]:
+                    gs = api.get_grad_supervision_by_stud_id_and_prof_id(stud.id, prof_id)
+                    gs.professor_role = api.get_professor_role_by_id(items[prof_id])
+                    gs.updated_on = date.today()
+                    update_grad_supervision.append(gs)
+
+        if len(update_grad_supervision) > 0:    
+            updated = Graduate_Supervision.objects.bulk_update(update_grad_supervision, [
+                'professor_role',
+                'updated_on'
+            ])
+            print('===== updated', updated)
+
+        # Delete
+        delete_profs = list(set(existing_profs) - profs_set)
+        if len(delete_profs) > 0:
+            for prof_id in delete_profs:
+                deleted = Graduate_Supervision.objects.filter(professor__id=prof_id).delete()
+                print('===== deleted', deleted)
+        
+        messages.success(request, 'Success! Graduate Supervision ({0}, Student #: {1}) saved.'.format(stud.get_full_name(), stud.student_number))
+        return HttpResponseRedirect(request.POST.get('current_page'))
 
 
 # Professor
@@ -369,7 +465,7 @@ class Edit_Professor(View):
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
-        prof = api.get_professor(kwargs.get('username'), 'username')
+        prof = api.get_professor_by_username(kwargs.get('username'))
         return render(request, 'gp_admin/data_tables/edit_professor.html', {
             'prof': prof,
             'form': self.prof_form(data=None, instance=prof.profile),
@@ -383,7 +479,7 @@ class Edit_Professor(View):
 
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
-        prof = api.get_professor(kwargs.get('username'), 'username')
+        prof = api.get_professor_by_username(kwargs.get('username'))
         form = self.prof_form(request.POST, instance=prof.profile)
         if form.is_valid():
             form.save()
@@ -429,7 +525,8 @@ class Get_Grad_Supervision(View):
                 programs = [program for program in prof.profile.programs.all()]
                 prof.colleages = User.objects.filter( Q(profile__programs__in=programs) & Q(profile__roles__in=[api.get_role('graduate-advisor', 'slug'), api.get_role('supervisor', 'slug')]) ).exclude(id=prof.id).order_by('last_name', 'first_name')
 
-        tab_url = request.path + '?page=' + page
+        print(request.path, page)
+        tab_url = request.path + '?page=' + str(page)
         if bool(first_name_q):
             tab_url += '&first_name=' + first_name_q
         if bool(last_name_q):
@@ -458,7 +555,7 @@ class Add_Grad_Supervision(View):
             raise Http404
 
         return render(request, 'gp_admin/data_tables/add_grad_supervision.html', {
-            'prof': api.get_professor(kwargs.get('username'), 'username'),
+            'prof': api.get_professor_by_username(kwargs.get('username')),
             'form': self.form,
             'prof_roles': Professor_Role.objects.all(),
             'next': parse_result.query.split('next=')[1]
@@ -466,7 +563,7 @@ class Add_Grad_Supervision(View):
 
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
-        prof = api.get_professor(kwargs.get('username'), 'username')
+        prof = api.get_professor_by_username(kwargs.get('username'))
 
         form = self.form(request.POST)
         if form.is_valid():
@@ -1248,7 +1345,7 @@ class Get_Professor_Roles(View):
 def edit_professor_role(request, slug):
     ''' Edit a professor role '''
 
-    professor_role = api.get_professor_role(slug, 'slug')
+    professor_role = api.get_professor_role_by_slug(slug)
     form = Professor_Role_Form(request.POST, instance=professor_role)
     if form.is_valid():
         res = form.save()
@@ -1268,7 +1365,7 @@ def edit_professor_role(request, slug):
 def delete_professor_role(request):
     ''' Delete a professor role '''
 
-    professor_role = api.get_professor_role(request.POST.get('professor_role'))
+    professor_role = api.get_professor_role_by_id(request.POST.get('professor_role'))
     if professor_role.delete():
         messages.success(request, 'Success! Professor Role ({0}) deleted'.format(professor_role.name))
     else:
