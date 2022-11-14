@@ -113,7 +113,7 @@ class Login(View):
                     
                     return HttpResponseRedirect(redirect_to)
         
-        messages.error(request, 'An error occurred. Please check your username and password, then try again.')
+        messages.error(request, 'An error occurred. Please check your username or password, then try again.')
         return redirect('accounts:login')
 
 

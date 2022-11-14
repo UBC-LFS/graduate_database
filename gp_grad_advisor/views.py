@@ -16,8 +16,6 @@ from core.auth import grad_advisor_access_only
 @require_http_methods(['GET'])
 @grad_advisor_access_only
 def index(request):
-    print( request.session.get('loggedin_user') )
-
     return render(request, 'gp_grad_advisor/index.html', {
         'info': {
             'href': reverse('gp_grad_advisor:get_grad_supervision') + '?t=students'

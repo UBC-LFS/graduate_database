@@ -26,7 +26,7 @@ PATH = settings.GRAD_DB_SIS_STUDENTS_DIR
 
 
 HEADERS = [
-    'STUD_NO', 'GIVEN_NAME', 'PREFERRED_NAME', 'MIDDLE_NAME', 'SURNAME', 'EMAIL_ADDRESS', 'GENDER', 
+    'STUD_NO', 'GIVEN_NAME', 'PREFERRED_NAME', 'MIDDLE_NAME', 'SURNAME', 'EMAIL_ADDRESS', 'GENDER',
     'DEGR_PGM_CD', 'SPEC1_PRIM_SUBJ_CD',
     'ADDR1', 'ADDR2', 'CITY', 'PROVINCE_STATE', 'COUNTRY_CD', 'COUNTRY', 'POSTAL_CD',
     'COUNTRY_OF_CITIZENSHIP', 'CITIZENSHIP', 'VISA_TYPE_CD', 'DOM_INTL'
@@ -57,35 +57,35 @@ def get_item(row):
         'visa_type_cd': row[18].value if row[18].value else None,
         'dom_intl': row[19].value if row[19].value else None
     }
-    
+
     return stud_no, item
 
 
 def check_column_headers(row):
     if len(row) != len(HEADERS):
         return False
-    
+
     for col in row:
         if col.value not in HEADERS:
             return False
     return True
-        
+
 
 def read_old_excel(f, stud_nos, items):
     FILE_DIR = os.path.join(PATH, f)
     book = xlrd.open_workbook(FILE_DIR)
     sheet = book.sheet_by_index(0)
-    
+
     for i in range(sheet.nrows):
         if i == 0:
             check_column_headers(sheet.row(0))
-            
+
         else:
             stud_no, item = get_item(sheet.row(i))
             if stud_no not in stud_nos:
                 stud_nos.append(stud_no)
                 items.append(item)
-    
+
     return stud_nos, items
 
 
@@ -93,7 +93,7 @@ def read_new_excel(f, stud_nos, items):
     FILE_DIR = os.path.join(PATH, f)
     book = load_workbook(FILE_DIR)
     sheet = book.active
-    
+
     i = 0
     for row in book.active.rows:
         if i == 0:
@@ -103,9 +103,9 @@ def read_new_excel(f, stud_nos, items):
             if stud_no not in stud_nos:
                 stud_nos.append(stud_no)
                 items.append(item)
-        
+
         i += 1
-    
+
     return stud_nos, items
 
 def get_sis_students():
@@ -116,17 +116,17 @@ def get_sis_students():
             ext = os.path.splitext(f)[-1].lower()
             if ext == '.xls':
                 stud_nos, items = read_old_excel(f, stud_nos, items)
-                print('===== File 1:', f, len(items))
-            
+                #print('===== File 1:', f, len(items))
+
             elif ext in ['.xlsx', '.xlsm', '.xltx', '.xltm']:
                 stud_nos, items = read_new_excel(f, stud_nos, items)
-                print('===== File 2:', f, len(items))
-               
-    print(len(stud_nos), len(items))
+                #print('===== File 2:', f, len(items))
+
+    #print(len(stud_nos), len(items))
 
     old_stduents = Student.objects.all()
     old_stduent_nos = [ s.student_number for s in old_stduents ]
-    
+
     create_students = []
     update_students = []
     new_set = set()
@@ -134,13 +134,13 @@ def get_sis_students():
     for item in items:
         new_set.add(item['stud_no'])
         hashcode = hashlib.sha256( json.dumps(item).encode('utf-8') ).hexdigest()
-        
+
         if item['stud_no'] in old_stduent_nos:
             student_filtered = Student.objects.filter(student_number=item['stud_no'])
 
             if student_filtered.exists() and hashcode != student_filtered.first().hashcode:
                 stud = student_filtered.first()
-                
+
                 stud.first_name = item['given_name']
                 stud.last_name = item['surname']
                 stud.student_number = item['stud_no']
@@ -157,7 +157,7 @@ def get_sis_students():
                 last_name = item['surname'],
                 student_number = item['stud_no'],
                 email = item['email_address'],
-                json = item, 
+                json = item,
                 hashcode = hashcode,
                 sis_created_on = datetime.today(),
                 sis_updated_on = datetime.today()
@@ -174,25 +174,25 @@ def get_sis_students():
     #         print(deleted)
 
     # Bulk update
-    print('update_students', len(update_students))
+    #print('update_students', len(update_students))
     if len(update_students) > 0:
         updated = Student.objects.bulk_update(update_students, [
-            'first_name', 
-            'last_name', 
-            'student_number', 
-            'email', 
+            'first_name',
+            'last_name',
+            'student_number',
+            'email',
             'updated_on',
-            'json', 
-            'hashcode', 
+            'json',
+            'hashcode',
             'sis_updated_on'
         ])
-        print('===== updated', updated)
+        #print('===== updated', updated)
 
     # Bulk create
-    print('create_students', len(create_students))
+    #print('create_students', len(create_students))
     if len(create_students) > 0:
         created = Student.objects.bulk_create(create_students)
-        print('===== created', created)
+        #print('===== created', created)
 
 
 def send_reminders():
@@ -202,7 +202,7 @@ def send_reminders():
     sender = settings.EMAIL_FROM
     for stud in students:
         receiver = '{0} {1} <{2}>'.format(stud.first_name, stud.last_name, stud.email)
-        
+
         for rem in reminders:
             new_date = stud.start_date + relativedelta(months=rem.months)
             if new_date == today:
@@ -225,17 +225,17 @@ def send_reminders():
                     message = message,
                     type = rem.type
                 )
-                print('Success!', stud.id, stud.start_date, new_date, new_date == today)
+                #print('Success!', stud.id, stud.start_date, new_date, new_date == today)
 
 
 def run():
     print('Scheduling tasks running...')
-    # scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
-    
+    scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
+
     # Get SIS students
-    # scheduler.add_job(get_sis_students, 'cron', day_of_week='mon-sun', hour=7, minute='0')
+    scheduler.add_job(get_sis_students, 'cron', day_of_week='mon-sun', hour=7, minute='0')
 
     # Send Reminders
-    # scheduler.add_job(send_reminders, 'cron', day_of_week='mon-sun', hour=15, minute='0')
-    
-    # scheduler.start()
+    scheduler.add_job(send_reminders, 'cron', day_of_week='mon-sun', hour=15, minute='0')
+
+    scheduler.start()

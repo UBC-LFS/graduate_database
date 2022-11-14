@@ -324,8 +324,6 @@ class Assign_Student(View):
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
         stud_id = request.POST.get('student', None)
-        #profs = request.POST.getlist('professor', None)
-        #professor_roles = request.POST.getlist('professor_role', None)
 
         if not stud_id:
             messages.error(request, 'An error occurred while saving changes.')
@@ -334,7 +332,7 @@ class Assign_Student(View):
         stud = api.get_student_by_id(stud_id)
 
         post = dict(request.POST)
-        print(post)
+        
         profs = []
         prof_roles = []
         items = {}
@@ -348,10 +346,6 @@ class Assign_Student(View):
                     prof_roles.append(post[search][0])
                     items[sp[1]] = post[search][0]
         
-        print(profs)
-        print(prof_roles)
-        print(items)
-
         existing_profs = []
         existing_items = {}
         for gs in stud.graduate_supervision_set.all():
@@ -361,8 +355,6 @@ class Assign_Student(View):
             existing_items[prof_id] = prof_role_id
 
         profs_set = set(profs)
-        
-        print(existing_profs, existing_items, profs_set)
 
         # Create
         create_profs = list(profs_set - set(existing_profs))
@@ -382,16 +374,11 @@ class Assign_Student(View):
                 ))
 
         if len(create_grad_supervision) > 0:
-            created = Graduate_Supervision.objects.bulk_create(create_grad_supervision)
-            print('===== created', created)
-            
-            #if created:
-            #    messages.success(request, 'Success! Graduate Supervision ({0}, Student #: {1}) created.'.format(stud.get_full_name(), stud.student_number))
-
+            Graduate_Supervision.objects.bulk_create(create_grad_supervision)
 
         # Update
         update_profs = set(existing_profs).intersection(profs_set)
-        print(update_profs)
+        
         update_grad_supervision = []
         if len(update_profs) > 0:
             for prof_id in update_profs:
@@ -402,18 +389,17 @@ class Assign_Student(View):
                     update_grad_supervision.append(gs)
 
         if len(update_grad_supervision) > 0:    
-            updated = Graduate_Supervision.objects.bulk_update(update_grad_supervision, [
+            Graduate_Supervision.objects.bulk_update(update_grad_supervision, [
                 'professor_role',
                 'updated_on'
             ])
-            print('===== updated', updated)
+        
 
         # Delete
         delete_profs = list(set(existing_profs) - profs_set)
         if len(delete_profs) > 0:
             for prof_id in delete_profs:
-                deleted = Graduate_Supervision.objects.filter(professor__id=prof_id).delete()
-                print('===== deleted', deleted)
+                Graduate_Supervision.objects.filter(professor__id=prof_id).delete()
         
         messages.success(request, 'Success! Graduate Supervision ({0}, Student #: {1}) saved.'.format(stud.get_full_name(), stud.student_number))
         return HttpResponseRedirect(request.POST.get('current_page'))
@@ -525,7 +511,6 @@ class Get_Grad_Supervision(View):
                 programs = [program for program in prof.profile.programs.all()]
                 prof.colleages = User.objects.filter( Q(profile__programs__in=programs) & Q(profile__roles__in=[api.get_role('graduate-advisor', 'slug'), api.get_role('supervisor', 'slug')]) ).exclude(id=prof.id).order_by('last_name', 'first_name')
 
-        print(request.path, page)
         tab_url = request.path + '?page=' + str(page)
         if bool(first_name_q):
             tab_url += '&first_name=' + first_name_q
@@ -587,7 +572,6 @@ def search_students(request):
 
     if bool(name):
         studs = api.get_students_by_name(name)
-        print(studs)
         data = []
         for stud in studs:
             data.append({

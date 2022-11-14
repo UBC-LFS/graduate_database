@@ -15,6 +15,4 @@ from core.auth import guest_access_only
 @require_http_methods(['GET'])
 @guest_access_only
 def index(request):
-    print( request.session.get('loggedin_user') )
-    
     return render(request, 'gp_guest/index.html')
