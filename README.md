@@ -2,6 +2,7 @@
 
 ### Enviornment variables
 
+```
 GRAD_DB_SECRET_KEY = 
 GRAD_DB_ENGINE = django.db.backends.postgresql
 GRAD_DB_NAME = 
@@ -19,3 +20,4 @@ GRAD_DB_LDAP_MEMBER_DN =
 GRAD_DB_LDAP_AUTH_DN = 
 GRAD_DB_LDAP_AUTH_PASSWORD = 
 GRAD_DB_LDAP_SEARCH_FILTER = 
+```
