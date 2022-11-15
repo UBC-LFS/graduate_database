@@ -311,25 +311,26 @@ class Student_Additional_Form(forms.ModelForm):
 class User_Form(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'username', 'is_superuser', 'is_active']
+        fields = ['first_name', 'last_name', 'username', 'email', 'is_superuser', 'is_active']
         labels = {
             'first_name': 'First Name',
             'last_name': 'Last Name',
-            'email': 'Email',
             'username': 'CWL',
+            'email': 'Email',
             'is_superuser': 'Superuser Status'
         }
         widgets = {
             'first_name': forms.TextInput(attrs={ 'required': True, 'class': 'form-control-sm' }),
             'last_name': forms.TextInput(attrs={ 'required': True, 'class': 'form-control-sm' }),
-            'email': forms.EmailInput(attrs={ 'required': True, 'class': 'form-control-sm' }),
-            'username': forms.TextInput(attrs={ 'required': True, 'class': 'form-control-sm' })
+            'username': forms.TextInput(attrs={ 'required': True, 'class': 'form-control-sm' }),
+            'email': forms.EmailInput(attrs={ 'required': False, 'class': 'form-control-sm' })
+            
         }
         help_texts = {
             'first_name': 'Maximum length is 150 characters.',
             'last_name': 'Maximum length is 150 characters.',
-            'email': 'Maximum length is 254 characters.',
             'username': 'This is a unique field. Maximum length is 150 characters.',
+            'email': 'Maximum length is 254 characters.',
             'is_superuser': "This field is necessary for a Superadmin role."
         }
 
@@ -343,10 +344,10 @@ class User_Form(forms.ModelForm):
         if not data: raise ValidationError('This field is required.')
         return data
 
-    def clean_email(self):
+    '''def clean_email(self):
         data = self.cleaned_data['email']    
         if not data: raise ValidationError('This field is required.')
-        return data
+        return data'''
 
 
 class Profile_Form(forms.ModelForm):
