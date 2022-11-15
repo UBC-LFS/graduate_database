@@ -379,7 +379,7 @@ class Profile_Form(forms.ModelForm):
         return data
 
 
-class Professor_Form(forms.ModelForm):
+class Role_Details_Form(forms.ModelForm):
     programs = forms.ModelMultipleChoiceField(
         required = False,
         queryset = Program.objects.all(),

@@ -451,7 +451,7 @@ class Edit_Professor(View):
         prof = api.get_professor_by_username(kwargs.get('username'))
         return render(request, 'gp_admin/data_tables/edit_professor.html', {
             'prof': prof,
-            'form': Professor_Form(data=None, instance=prof.profile),
+            'form': Role_Details_Form(data=None, instance=prof.profile),
             'info': {
                 'btn_label': 'Update',
                 'type': 'edit',
@@ -463,7 +463,7 @@ class Edit_Professor(View):
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
         prof = api.get_professor_by_username(kwargs.get('username'))
-        form = Professor_Form(request.POST, instance=prof.profile)
+        form = Role_Details_Form(request.POST, instance=prof.profile)
         if form.is_valid():
             form.save()
             messages.success(request, 'Success! Professor ({0}, CWL: {1}) updated'.format(prof.get_full_name(), prof.username))
@@ -667,13 +667,6 @@ class Get_Users(View):
         user_list = api.get_users()
         users = api.get_filtered_items(request, user_list, 'users')
 
-        # Delete a form session if it exists
-        # TODO
-        # if 'user_profile_form' in request.session:
-        #     del request.session['user_profile_form']
-        # if 'prof_form' in request.session:
-        #     del request.session['prof_form']
-
         return render(request, 'gp_admin/users/get_users.html', {
             'users': users,
             'total_users': len(user_list)
@@ -699,7 +692,7 @@ class Create_User(View):
             'users': api.get_users(),
             'user_form': User_Form(initial=request.session.get('user_profile_form', None)),
             'profile_form': Profile_Form(initial=request.session.get('user_profile_form', None)),
-            'prof_form': Professor_Form(initial=request.session.get('prof_form', None)),
+            'role_details_form': Role_Details_Form(initial=request.session.get('role_details_form', None)),
             'info': {
                 'btn_label': 'Create',
                 'href': reverse('gp_admin:create_user'),
@@ -739,17 +732,17 @@ class Create_User(View):
 
             user_form = None
             profile_form = None
-            prof_form = None
+            role_details_form = None
 
             if tab == 'basic_info':
                 user_form = User_Form(request.POST)
                 profile_form = Profile_Form(request.POST)
 
                 if role_details_session:
-                    prof_form = Professor_Form(role_details_session)
+                    role_details_form = Role_Details_Form(role_details_session)
 
             elif tab == 'role_details':
-                prof_form = Professor_Form(request.POST)
+                role_details_form = Role_Details_Form(request.POST)
 
                 if user_profile_session:
                     user_form = User_Form(user_profile_session)
@@ -765,8 +758,8 @@ class Create_User(View):
             if profile_form and not profile_form.is_valid():
                 errors.append( api.get_error_messages(profile_form.errors.get_json_data()) )
 
-            if prof_form and not prof_form.is_valid():
-                errors.append( api.get_error_messages(prof_form.errors.get_json_data()) )
+            if role_details_form and not role_details_form.is_valid():
+                errors.append( api.get_error_messages(role_details_form.errors.get_json_data()) )
 
             if len(errors) == 0:
                 user = user_form.save()
@@ -787,8 +780,8 @@ class Create_User(View):
 
                     update_fields.extend( ['preferred_name', 'phone', 'office'] )
 
-                if prof_form:
-                    prof_data = prof_form.cleaned_data
+                if role_details_form:
+                    prof_data = role_details_form.cleaned_data
 
                     profile.title = prof_data.get('title', None)
                     profile.position = prof_data.get('position', None)
@@ -822,19 +815,16 @@ class Create_User(View):
 def cancel_user(request):
 
     # Delete a form session if it exists
-    if 'save_user_profile_form' in request.session:
-        del request.session['save_user_profile_form']
-    if 'save_prof_form' in request.session:
-        del request.session['save_prof_form']
+    if 'user_profile_form' in request.session:
+        del request.session['user_profile_form']
+    if 'role_details_form' in request.session:
+        del request.session['role_details_form']
 
     return HttpResponseRedirect( request.GET.get('next') )
 
 
 @method_decorator([never_cache, login_required, admin_access_only], name='dispatch')
 class Edit_User(View):
-    user_form = User_Form
-    profile_form = Profile_Form
-    prof_form = Professor_Form
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
@@ -848,7 +838,7 @@ class Edit_User(View):
             'user': user,
             'user_form': User_Form(instance=user),
             'profile_form': Profile_Form(instance=profile),
-            'prof_form': Professor_Form(instance=profile),
+            'role_details_form': Role_Details_Form(instance=profile),
             'info': {
                 'btn_label': 'Update',
                 'href': reverse('gp_admin:edit_user', args=[ kwargs['username'] ]),
@@ -871,14 +861,14 @@ class Edit_User(View):
 
         user_form = None
         profile_form = None
-        prof_form = None
+        role_details_form = None
 
         if tab == 'basic_info':
             user_form = User_Form(request.POST, instance=user)
             profile_form = Profile_Form(request.POST, instance=user.profile)
 
         elif tab == 'role_details':
-            prof_form = Professor_Form(request.POST, instance=user.profile)
+            role_details_form = Role_Details_Form(request.POST, instance=user.profile)
 
         else:
             raise Http404
@@ -891,8 +881,8 @@ class Edit_User(View):
         if profile_form and not profile_form.is_valid():
             errors.append( api.get_error_messages(profile_form.errors.get_json_data()) )
 
-        if prof_form and not prof_form.is_valid():
-            errors.append( api.get_error_messages(prof_form.errors.get_json_data()) )
+        if role_details_form and not role_details_form.is_valid():
+            errors.append( api.get_error_messages(role_details_form.errors.get_json_data()) )
 
         if len(errors) == 0:
             if user_form:
@@ -901,8 +891,8 @@ class Edit_User(View):
             if profile_form:
                 profile_form.save()
 
-            if prof_form:
-                prof_form.save()
+            if role_details_form:
+                role_details_form.save()
 
             messages.success(request, 'Success! User ({0} {1}, CWL: {2}) updated.'.format(user.first_name, user.last_name, user.username))
             return HttpResponseRedirect(request.POST.get('next'))

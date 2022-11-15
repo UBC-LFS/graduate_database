@@ -108,7 +108,7 @@
           {% elif tab == 'role_details' %}
 
             <table class="table table-borderless fs-1">
-              {% for field in prof_form.visible_fields  %}
+              {% for field in role_details_form.visible_fields  %}
                 <tr>
                   <td class="col-md-4">
                     <label for="{{ field.id_for_label }}">
