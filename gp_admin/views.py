@@ -7,7 +7,6 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control, never_cache
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
 from django.utils.decorators import method_decorator
-from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.http import HttpResponseRedirect, Http404, JsonResponse
 from django.db.models import Q
@@ -446,15 +445,13 @@ class Get_Professors(View):
 
 @method_decorator([never_cache, login_required, admin_access_only], name='dispatch')
 class Edit_Professor(View):
-    prof_form = Professor_Form
-
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
         prof = api.get_professor_by_username(kwargs.get('username'))
         return render(request, 'gp_admin/data_tables/edit_professor.html', {
             'prof': prof,
-            'form': self.prof_form(data=None, instance=prof.profile),
+            'form': Professor_Form(data=None, instance=prof.profile),
             'info': {
                 'btn_label': 'Update',
                 'type': 'edit',
@@ -466,7 +463,7 @@ class Edit_Professor(View):
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
         prof = api.get_professor_by_username(kwargs.get('username'))
-        form = self.prof_form(request.POST, instance=prof.profile)
+        form = Professor_Form(request.POST, instance=prof.profile)
         if form.is_valid():
             form.save()
             messages.success(request, 'Success! Professor ({0}, CWL: {1}) updated'.format(prof.get_full_name(), prof.username))
@@ -530,7 +527,6 @@ class Get_Grad_Supervision(View):
 
 @method_decorator([never_cache, login_required, admin_access_only], name='dispatch')
 class Add_Grad_Supervision(View):
-    form = Grad_Supervision_Form
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
@@ -541,7 +537,7 @@ class Add_Grad_Supervision(View):
 
         return render(request, 'gp_admin/data_tables/add_grad_supervision.html', {
             'prof': api.get_professor_by_username(kwargs.get('username')),
-            'form': self.form,
+            'form': Grad_Supervision_Form(),
             'prof_roles': Professor_Role.objects.all(),
             'next': parse_result.query.split('next=')[1]
         })
@@ -550,7 +546,7 @@ class Add_Grad_Supervision(View):
     def post(self, request, *args, **kwargs):
         prof = api.get_professor_by_username(kwargs.get('username'))
 
-        form = self.form(request.POST)
+        form = Grad_Supervision_Form(request.POST)
         if form.is_valid():
             res = form.save()
             if res:
@@ -690,9 +686,6 @@ class Get_Users(View):
 
 @method_decorator([never_cache, login_required, admin_access_only], name='dispatch')
 class Create_User(View):
-    user_form = User_Form
-    profile_form = Profile_Form
-    prof_form = Professor_Form
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
@@ -704,9 +697,9 @@ class Create_User(View):
 
         return render(request, 'gp_admin/users/create_user.html', {
             'users': api.get_users(),
-            'user_form': self.user_form(initial=request.session.get('user_profile_form', None)),
-            'profile_form': self.profile_form(initial=request.session.get('user_profile_form', None)),
-            'prof_form': self.prof_form(initial=request.session.get('prof_form', None)),
+            'user_form': User_Form(initial=request.session.get('user_profile_form', None)),
+            'profile_form': Profile_Form(initial=request.session.get('user_profile_form', None)),
+            'prof_form': Professor_Form(initial=request.session.get('prof_form', None)),
             'info': {
                 'btn_label': 'Create',
                 'href': reverse('gp_admin:create_user'),
@@ -749,18 +742,18 @@ class Create_User(View):
             prof_form = None
 
             if tab == 'basic_info':
-                user_form = self.user_form(request.POST)
-                profile_form = self.profile_form(request.POST)
+                user_form = User_Form(request.POST)
+                profile_form = Profile_Form(request.POST)
 
                 if role_details_session:
-                    prof_form = self.prof_form(role_details_session)
+                    prof_form = Professor_Form(role_details_session)
 
             elif tab == 'role_details':
-                prof_form = self.prof_form(request.POST)
+                prof_form = Professor_Form(request.POST)
 
                 if user_profile_session:
-                    user_form = self.user_form(user_profile_session)
-                    profile_form = self.profile_form(user_profile_session)
+                    user_form = User_Form(user_profile_session)
+                    profile_form = Profile_Form(user_profile_session)
 
             else:
                 raise Http404
@@ -848,14 +841,14 @@ class Edit_User(View):
         next = request.GET.get('next')
         tab = request.GET.get('t')
 
-        user = api.get_user(kwargs.get('username'), 'username')
+        user = api.get_user_by_username(kwargs.get('username'))
         profile = api.has_profile_created(user)
 
         return render(request, 'gp_admin/users/create_user.html', {
             'user': user,
-            'user_form': self.user_form(instance=user),
-            'profile_form': self.profile_form(instance=profile),
-            'prof_form': self.prof_form(instance=profile),
+            'user_form': User_Form(instance=user),
+            'profile_form': Profile_Form(instance=profile),
+            'prof_form': Professor_Form(instance=profile),
             'info': {
                 'btn_label': 'Update',
                 'href': reverse('gp_admin:edit_user', args=[ kwargs['username'] ]),
@@ -874,18 +867,18 @@ class Edit_User(View):
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
         tab = request.POST.get('tab')
-        user = api.get_user(request.POST.get('user'))
+        user = api.get_user_by_id(request.POST.get('user'))
 
         user_form = None
         profile_form = None
         prof_form = None
 
         if tab == 'basic_info':
-            user_form = self.user_form(request.POST, instance=user)
-            profile_form = self.profile_form(request.POST, instance=user.profile)
+            user_form = User_Form(request.POST, instance=user)
+            profile_form = Profile_Form(request.POST, instance=user.profile)
 
         elif tab == 'role_details':
-            prof_form = self.prof_form(request.POST, instance=user.profile)
+            prof_form = Professor_Form(request.POST, instance=user.profile)
 
         else:
             raise Http404
@@ -925,18 +918,17 @@ class Edit_User(View):
 
 @method_decorator([never_cache, login_required, superadmin_access_only], name='dispatch')
 class Get_Roles(View):
-    form_class = Role_Form
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
         return render(request, 'gp_admin/users/get_roles.html', {
             'roles': Role.objects.all().order_by('id'),
-            'form': self.form_class()
+            'form': Role_Form()
         })
 
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
+        form = Role_Form(request.POST)
         if form.is_valid():
             res = form.save()
             if res:
@@ -989,18 +981,17 @@ def delete_role(request):
 
 @method_decorator([never_cache, login_required, admin_access_only], name='dispatch')
 class Get_Statuses(View):
-    form_class = Status_Form
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
         return render(request, 'gp_admin/preparation/get_statuses.html', {
             'statuses': Status.objects.all().order_by('id'),
-            'form': self.form_class()
+            'form': Status_Form()
         })
 
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
+        form = Status_Form(request.POST)
         if form.is_valid():
             res = form.save()
             if res:
@@ -1019,7 +1010,7 @@ class Get_Statuses(View):
 def edit_status(request, slug):
     ''' Edit a status '''
 
-    status = api.get_status(slug, 'slug')
+    status = api.get_status_by_slug(slug)
     form = Status_Form(request.POST, instance=status)
     if form.is_valid():
         res = form.save()
@@ -1039,7 +1030,7 @@ def edit_status(request, slug):
 def delete_status(request):
     ''' Delete a status '''
 
-    status = api.get_status(request.POST.get('status'))
+    status = api.get_status_by_id(request.POST.get('status'))
     if status.delete():
         messages.success(request, 'Success! Status ({0}) deleted'.format(status.name))
     else:
@@ -1049,18 +1040,17 @@ def delete_status(request):
 
 @method_decorator([never_cache, login_required, admin_access_only], name='dispatch')
 class Get_Degrees(View):
-    form_class = Degree_Form
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
         return render(request, 'gp_admin/preparation/get_degrees.html', {
             'degrees': Degree.objects.all().order_by('id'),
-            'form': self.form_class()
+            'form': Degree_Form()
         })
 
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
+        form = Degree_Form(request.POST)
         if form.is_valid():
             res = form.save()
             if res:
@@ -1080,7 +1070,7 @@ class Get_Degrees(View):
 def edit_degree(request, slug):
     ''' Edit a degree '''
 
-    degree = api.get_degree(slug, 'slug')
+    degree = api.get_degree_by_slug(slug)
     form = Degree_Form(request.POST, instance=degree)
     if form.is_valid():
         res = form.save()
@@ -1101,7 +1091,7 @@ def edit_degree(request, slug):
 def delete_degree(request):
     ''' Delete a degree '''
 
-    degree = api.get_degree(request.POST.get('degree'))
+    degree = api.get_degree_by_id(request.POST.get('degree'))
     if degree.delete():
         messages.success(request, 'Success! Degree ({0}) deleted'.format(degree.name))
     else:
@@ -1112,18 +1102,17 @@ def delete_degree(request):
 
 @method_decorator([never_cache, login_required, admin_access_only], name='dispatch')
 class Get_Programs(View):
-    form_class = Program_Form
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
         return render(request, 'gp_admin/preparation/get_programs.html', {
             'programs': Program.objects.all().order_by('id'),
-            'form': self.form_class()
+            'form': Program_Form()
         })
 
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
+        form = Program_Form(request.POST)
         if form.is_valid():
             res = form.save()
             if res:
@@ -1143,7 +1132,7 @@ class Get_Programs(View):
 def edit_program(request, slug):
     ''' Edit a program '''
 
-    program = api.get_program(slug, 'slug')
+    program = api.get_program_by_slug(slug)
     form = Program_Form(request.POST, instance=program)
     if form.is_valid():
         res = form.save()
@@ -1164,7 +1153,7 @@ def edit_program(request, slug):
 def delete_program(request):
     ''' Delete a program '''
 
-    program = api.get_program(request.POST.get('program'))
+    program = api.get_program_by_id(request.POST.get('program'))
     if program.delete():
         messages.success(request, 'Success! Program ({0}) deleted'.format(program.name))
     else:
@@ -1175,18 +1164,17 @@ def delete_program(request):
 
 @method_decorator([never_cache, login_required, admin_access_only], name='dispatch')
 class Get_Titles(View):
-    form_class = Title_Form
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
         return render(request, 'gp_admin/preparation/get_titles.html', {
             'titles': Title.objects.all().order_by('id'),
-            'form': self.form_class()
+            'form': Title_Form()
         })
 
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
+        form = Title_Form(request.POST)
         if form.is_valid():
             res = form.save()
             if res:
@@ -1205,7 +1193,7 @@ class Get_Titles(View):
 def edit_title(request, slug):
     ''' Edit a title '''
 
-    title = api.get_title(slug, 'slug')
+    title = api.get_title_by_slug(slug)
     form = Title_Form(request.POST, instance=title)
     if form.is_valid():
         res = form.save()
@@ -1226,7 +1214,7 @@ def edit_title(request, slug):
 def delete_title(request):
     ''' Delete a title '''
 
-    title = api.get_title(request.POST.get('title'))
+    title = api.get_title_by_id(request.POST.get('title'))
     if title.delete():
         messages.success(request, 'Success! Title ({0}) deleted'.format(title.name))
     else:
@@ -1237,18 +1225,17 @@ def delete_title(request):
 
 @method_decorator([never_cache, login_required, admin_access_only], name='dispatch')
 class Get_Positions(View):
-    form_class = Position_Form
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
         return render(request, 'gp_admin/preparation/get_positions.html', {
             'positions': Position.objects.all().order_by('id'),
-            'form': self.form_class()
+            'form': Position_Form()
         })
 
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
+        form = Position_Form(request.POST)
         if form.is_valid():
             res = form.save()
             if res:
@@ -1267,7 +1254,7 @@ class Get_Positions(View):
 def edit_position(request, slug):
     ''' Edit a position '''
 
-    position = api.get_position(slug, 'slug')
+    position = api.get_position_by_slug(slug)
     form = Position_Form(request.POST, instance=position)
     if form.is_valid():
         res = form.save()
@@ -1288,7 +1275,7 @@ def edit_position(request, slug):
 def delete_position(request):
     ''' Delete a position '''
 
-    position = api.get_position(request.POST.get('position'))
+    position = api.get_position_by_id(request.POST.get('position'))
     if position.delete():
         messages.success(request, 'Success! Position ({0}) deleted'.format(position.name))
     else:
@@ -1299,18 +1286,17 @@ def delete_position(request):
 
 @method_decorator([never_cache, login_required, admin_access_only], name='dispatch')
 class Get_Professor_Roles(View):
-    form_class = Professor_Role_Form
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
         return render(request, 'gp_admin/preparation/get_professor_roles.html', {
             'professor_roles': Professor_Role.objects.all().order_by('id'),
-            'form': self.form_class()
+            'form': Professor_Role_Form()
         })
 
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
-        form = self.form_class(request.POST)
+        form = Professor_Role_Form(request.POST)
         if form.is_valid():
             res = form.save()
             if res:
@@ -1359,18 +1345,17 @@ def delete_professor_role(request):
 
 @method_decorator([never_cache, login_required, admin_access_only], name='dispatch')
 class Get_Reminders(View):
-    reminder_form = Reminder_Form
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
         return render(request, 'gp_admin/data_tables/get_reminders.html', {
             'reminders': Reminder.objects.all().order_by('id'),
-            'form': self.reminder_form()
+            'form': Reminder_Form()
         })
 
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
-        form = self.reminder_form(request.POST)
+        form = Reminder_Form(request.POST)
         if form.is_valid():
             res = form.save()
             if res:
@@ -1384,19 +1369,18 @@ class Get_Reminders(View):
 
 @method_decorator([never_cache, login_required, admin_access_only], name='dispatch')
 class Edit_Reminder(View):
-    reminder_form = Reminder_Form
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
-        reminder = api.get_reminder(kwargs['slug'], 'slug')
+        reminder = api.get_reminder_by_slug(kwargs['slug'])
         return render(request, 'gp_admin/data_tables/edit_reminder.html', {
-            'form': self.reminder_form(data=None, instance=reminder)
+            'form': Reminder_Form(data=None, instance=reminder)
         })
 
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
-        reminder = api.get_reminder(kwargs['slug'], 'slug')
-        form = self.reminder_form(request.POST, instance=reminder)
+        reminder = api.get_reminder_by_slug(kwargs['slug'])
+        form = Reminder_Form(request.POST, instance=reminder)
         if form.is_valid():
             res = form.save()
             if res:
@@ -1415,7 +1399,7 @@ class Edit_Reminder(View):
 def delete_reminder(request):
     ''' Delete a reminder '''
 
-    reminder = api.get_reminder(request.POST.get('reminder'))
+    reminder = api.get_reminder_by_id(request.POST.get('reminder'))
     if reminder.delete():
         messages.success(request, 'Success! Reminder (Type: {0}) deleted'.format(reminder.type))
     else:

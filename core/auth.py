@@ -51,7 +51,7 @@ def guest_access_only(view_func):
     return wrap
 
 
-def logged_in_user(view_func):
+def loggedin_user(view_func):
     ''' Logged in users can access '''
     def wrap(request, *args, **kwargs):
         if request.user.is_authenticated and request.user.is_active:

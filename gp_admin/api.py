@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.http import Http404
-from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.db.models import Q, F
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -121,10 +120,18 @@ def get_users():
     return User.objects.all().order_by('last_name', 'first_name')
 
 
-def get_user(arg, type='id'):
-    if type == 'username':
-        return get_object_or_404(User, username=arg)
-    return get_object_or_404(User, id=arg)
+def get_user_by_id(id):
+    try:
+        return User.objects.get(id=id)
+    except User.DoesNotExist:
+        raise Http404
+
+
+def get_user_by_username(username):
+    try:
+        return User.objects.get(username=username)
+    except User.DoesNotExist:
+        raise Http404
 
 
 def create_user(username, first_name, last_name):
@@ -239,47 +246,100 @@ def get_role_by_slug(slug):
 
 # Reminder
 
-def get_reminder(arg, type='id'):
-    if type == 'slug':
-        return get_object_or_404(Reminder, slug=arg)
-    return get_object_or_404(Reminder, id=arg)
+def get_reminder_by_id(id):
+    try:
+        return Reminder.objects.get(id=id)
+    except Reminder.DoesNotExist:
+        raise Http404
+
+
+def get_reminder_by_slug(slug):
+    try:
+        return Reminder.objects.get(slug=slug)
+    except Reminder.DoesNotExist:
+        raise Http404
 
 
 # Preparation
 
-def get_status(arg, type='id'):
+def get_status_by_id(id):
     ''' Get a status by id '''
-    if type == 'slug':
-        return get_object_or_404(Status, slug=arg)
-    return get_object_or_404(Status, id=arg)
+    try:
+        return Status.objects.get(id=id)
+    except Status.DoesNotExist:
+        raise Http404
 
 
-def get_degree(arg, type='id'):
+def get_status_by_slug(slug):
+    ''' Get a status by slug '''
+    try:
+        return Status.objects.get(slug=slug)
+    except Status.DoesNotExist:
+        raise Http404
+
+
+def get_degree_by_id(id):
     ''' Get a degree by id '''
-    if type == 'slug':
-        return get_object_or_404(Degree, slug=arg)
-    return get_object_or_404(egree, id=arg)
+    try:
+        return Degree.objects.get(id=id)
+    except Degree.DoesNotExist:
+        raise Http404
 
 
-def get_program(arg, type='id'):
+def get_degree_by_slug(slug):
+    ''' Get a degree by slug '''
+    try:
+        return Degree.objects.get(slug=slug)
+    except Degree.DoesNotExist:
+        raise Http404
+
+
+def get_program_by_id(id):
     ''' Get a program by id '''
-    if type == 'slug':
-        return get_object_or_404(Program, slug=arg)
-    return get_object_or_404(Program, id=arg)
+    try:
+        return Program.objects.get(id=id)
+    except Program.DoesNotExist:
+        raise Http404
 
 
-def get_title(arg, type='id'):
+def get_program_by_slug(slug):
+    ''' Get a program by slug '''
+    try:
+        return Program.objects.get(slug=slug)
+    except Program.DoesNotExist:
+        raise Http404
+
+
+def get_title_by_id(id):
     ''' Get a title by id '''
-    if type == 'slug':
-        return get_object_or_404(Title, slug=arg)
-    return get_object_or_404(Title, id=arg)
+    try:
+        return Title.objects.get(id=id)
+    except Title.DoesNotExist:
+        raise Http404
 
 
-def get_position(arg, type='id'):
+def get_title_by_slug(slug):
+    ''' Get a title by slug '''
+    try:
+        return Title.objects.get(slug=slug)
+    except Title.DoesNotExist:
+        raise Http404
+
+
+def get_position_by_id(id=id):
     ''' Get a position by id '''
-    if type == 'slug':
-        return get_object_or_404(Position, slug=arg)
-    return get_object_or_404(Position, id=arg)
+    try:
+        return Position.objects.get(id=id)
+    except Position.DoesNotExist:
+        raise Http404
+
+
+def get_position_by_slug(slug):
+    ''' Get a position by slug '''
+    try:
+        return Position.objects.get(slug=slug)
+    except Position.DoesNotExist:
+        raise Http404
 
 
 def get_professor_role_by_id(id):

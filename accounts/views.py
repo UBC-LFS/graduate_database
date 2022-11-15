@@ -18,20 +18,20 @@ import json
 
 from .forms import LocalLoginForm
 from gp_admin import api
-from core.auth import logged_in_user
+from core.auth import loggedin_user
 
 def ldap_auth(username, password):
     server = Server(settings.GRAD_DB_LDAP_URI)
-    
+
     try:
         auth_conn = Connection(
-            server, 
-            user = "uid={},{}".format(username, settings.GRAD_DB_LDAP_MEMBER_DN), 
-            password = password, 
-            authentication = 'SIMPLE', 
-            check_names = True, 
-            client_strategy = 'SYNC', 
-            auto_bind = True, 
+            server,
+            user = "uid={},{}".format(username, settings.GRAD_DB_LDAP_MEMBER_DN),
+            password = password,
+            authentication = 'SIMPLE',
+            check_names = True,
+            client_strategy = 'SYNC',
+            auto_bind = True,
             raise_exceptions = False
         )
 
@@ -40,30 +40,30 @@ def ldap_auth(username, password):
             return False
 
         conn = Connection(
-            server, 
+            server,
             user = settings.GRAD_DB_LDAP_AUTH_DN,
             password = settings.GRAD_DB_LDAP_AUTH_PASSWORD,
-            authentication = 'SIMPLE', 
-            check_names = True, 
-            client_strategy = 'SYNC', 
-            auto_bind = True, 
+            authentication = 'SIMPLE',
+            check_names = True,
+            client_strategy = 'SYNC',
+            auto_bind = True,
             raise_exceptions = False
         )
 
         conn.bind()
 
         conn.search(
-            search_base = "uid={0},{1}".format(username, settings.GRAD_DB_LDAP_MEMBER_DN), 
-            search_filter = settings.GRAD_DB_LDAP_SEARCH_FILTER, 
-            search_scope = SUBTREE, 
+            search_base = "uid={0},{1}".format(username, settings.GRAD_DB_LDAP_MEMBER_DN),
+            search_filter = settings.GRAD_DB_LDAP_SEARCH_FILTER,
+            search_scope = SUBTREE,
             attributes = ALL_ATTRIBUTES
         )
-        
+
         entries = json.loads(conn.response_to_json())['entries']
-        
+
         if len(entries) == 0:
             return False
-        
+
         data = entries[0]['attributes']
 
         sn = data['sn'][0]
@@ -94,16 +94,16 @@ class Login(View):
             ldap_info = ldap_auth(username, password)
             if ldap_info:
                 user = None
-                temp_user = User.objects.filter(username=username)
+                u = User.objects.filter(username=username)
 
-                if temp_user.exists():
-                    user = temp_user.first()
+                if u.exists():
+                    user = u.first()
                 else:
                     user = api.create_user(username, ldap_info['first_name'], ldap_info['last_name'])
-                
+
                 AuthLogin(request, user)
                 roles = api.get_roles(user)
-                
+
                 if len(roles) == 0:
                     messages.error(request, 'An error occurred. Users must have at least one role.')
                 else:
@@ -113,9 +113,9 @@ class Login(View):
                         'roles': roles
                     }
                     redirect_to = api.redirect_to_index_page(roles)
-                    
+
                     return HttpResponseRedirect(redirect_to)
-        
+
         messages.error(request, 'An error occurred. Please check your username or password, then try again.')
         return redirect('accounts:login')
 
@@ -123,7 +123,7 @@ class Login(View):
 @login_required(login_url=settings.LOGIN_URL)
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @require_http_methods(['GET'])
-@logged_in_user
+@loggedin_user
 def logout(request):
     request.session.flush()
     AuthLogout(request)

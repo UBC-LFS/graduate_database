@@ -19,7 +19,7 @@ class StudentTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         #print('\Student testing has started ==>')
-        cls.user = api.get_user(USERS[0], 'username')
+        cls.user = api.get_user_by_username(USERS[0])
 
     def login(self, username=None, password=None):
         if username and password:

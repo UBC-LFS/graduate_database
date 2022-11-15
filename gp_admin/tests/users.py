@@ -42,7 +42,7 @@ class UserTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         #print('\User testing has started ==>')
-        cls.user = api.get_user(USERS[0], 'username')
+        cls.user = api.get_user_by_username(USERS[0])
 
     def login(self, username=None, password=None):
         if username and password:
@@ -268,7 +268,7 @@ class UserTest(TestCase):
         self.assertEqual(res.status_code, 302)
         self.assertRedirects(res, res.url)
 
-        user = api.get_user(user_profile_form['username'], 'username')
+        user = api.get_user_by_username(user_profile_form['username'])
         self.assertEqual(user.first_name, user_profile_form['first_name'])
         self.assertEqual(user.last_name, user_profile_form['last_name'])
         self.assertEqual(user.email, user_profile_form['email'])
@@ -335,7 +335,7 @@ class UserTest(TestCase):
         self.assertEqual(messages2[0], 'Success! User (firstname lastname, CWL: username) created.')
         self.assertEqual(res2.status_code, 200)
 
-        user = api.get_user(user_profile_form['username'], 'username')
+        user = api.get_user_by_username(user_profile_form['username'])
         self.assertEqual(user.first_name, user_profile_form['first_name'])
         self.assertEqual(user.last_name, user_profile_form['last_name'])
         self.assertEqual(user.email, user_profile_form['email'])
@@ -426,7 +426,7 @@ class UserTest(TestCase):
         self.assertEqual(messages[0], 'Success! User (firstname2 lastname2, CWL: username2) created.')
         self.assertEqual(res.status_code, 200)
 
-        user = api.get_user(data['username'], 'username')
+        user = api.get_user_by_username(data['username'])
         self.assertEqual(user.first_name, data['first_name'])
         self.assertEqual(user.last_name, data['last_name'])
         self.assertEqual(user.email, data['email'])
@@ -511,7 +511,7 @@ class UserTest(TestCase):
         self.assertEqual(messages[0], 'Success! User (firstname lastname, CWL: username) created.')
         self.assertEqual(res.status_code, 200)
 
-        user = api.get_user(user_profile_form['username'], 'username')
+        user = api.get_user_by_username(user_profile_form['username'])
         self.assertEqual(user.first_name, user_profile_form['first_name'])
         self.assertEqual(user.last_name, user_profile_form['last_name'])
         self.assertEqual(user.email, user_profile_form['email'])
@@ -580,7 +580,7 @@ class UserTest(TestCase):
         self.assertEqual(messages2[0], 'Success! User (firstname lastname, CWL: username) created.')
         self.assertEqual(res2.status_code, 200)
 
-        user = api.get_user(user_profile_form['username'], 'username')
+        user = api.get_user_by_username(user_profile_form['username'])
         self.assertEqual(user.first_name, user_profile_form['first_name'])
         self.assertEqual(user.last_name, user_profile_form['last_name'])
         self.assertEqual(user.email, user_profile_form['email'])
@@ -648,7 +648,7 @@ class UserTest(TestCase):
         self.assertEqual(messages2[0], 'Success! User (firstname lastname, CWL: username) created.')
         self.assertEqual(res2.status_code, 200)
 
-        user = api.get_user(user_profile_form['username'], 'username')
+        user = api.get_user_by_username(user_profile_form['username'])
         self.assertEqual(user.first_name, user_profile_form['first_name'])
         self.assertEqual(user.last_name, user_profile_form['last_name'])
         self.assertEqual(user.email, user_profile_form['email'])
@@ -728,7 +728,7 @@ class UserTest(TestCase):
         TAB = 'basic_info'
         CURRENT_PAGE = '/admin/user/edit/?next=/admin/users/all/?page=1&t={0}'.format(TAB)
         
-        u = api.get_user(USERS[0], 'username')
+        u = api.get_user_by_username(USERS[0])
 
         user_profile_form = {
             'first_name': u.first_name,
@@ -753,7 +753,7 @@ class UserTest(TestCase):
         self.assertEqual(res.status_code, 200)
 
 
-        user = api.get_user(u.username, 'username')
+        user = api.get_user_by_username(u.username)
 
         self.assertEqual(user.first_name, u.first_name)
         self.assertEqual(user.last_name, u.last_name)
@@ -784,7 +784,7 @@ class UserTest(TestCase):
         TAB = 'role_details'
         CURRENT_PAGE = '/admin/user/edit/?next=/admin/users/all/?page=1&t={0}'.format(TAB)
 
-        u = api.get_user(USERS[0], 'username')
+        u = api.get_user_by_username(USERS[0])
 
         prof_form = {
             'title': u.profile.title.id,
@@ -801,7 +801,7 @@ class UserTest(TestCase):
         self.assertEqual(messages[0], 'Success! User ({0} {1}, CWL: {2}) updated.'.format(u.first_name, u.last_name, u.username))
         self.assertEqual(res.status_code, 200)
 
-        user = api.get_user(u.username, 'username')
+        user = api.get_user_by_username(u.username)
 
         self.assertEqual(user.first_name, u.first_name)
         self.assertEqual(user.last_name, u.last_name)
@@ -832,7 +832,7 @@ class UserTest(TestCase):
         TAB = 'basic_info'
         CURRENT_PAGE = '/admin/user/edit/?next=/admin/users/all/?page=1&t={0}'.format(TAB)
 
-        u = api.get_user(USERS[0], 'username')
+        u = api.get_user_by_username(USERS[0])
 
         user_profile_form = {
             'first_name': 'newfirstname',
@@ -856,7 +856,7 @@ class UserTest(TestCase):
         self.assertEqual(messages[0], 'Success! User (newfirstname newlastname, CWL: new.username) updated.')
         self.assertEqual(res.status_code, 200)
 
-        user = api.get_user(user_profile_form['username'], 'username')
+        user = api.get_user_by_username(user_profile_form['username'])
 
         self.assertEqual(user.first_name, user_profile_form['first_name'])
         self.assertEqual(user.last_name, user_profile_form['last_name'])
@@ -887,7 +887,7 @@ class UserTest(TestCase):
         TAB1 = 'basic_info'
         CURRENT_PAGE1 = '/admin/user/edit/?next=/admin/users/all/?page=1&t={0}'.format(TAB1)
 
-        u = api.get_user(USERS[0], 'username')
+        u = api.get_user_by_username(USERS[0])
 
         TAB = 'role_details'
         CURRENT_PAGE = '/admin/user/edit/?next=/admin/users/all/?page=1&t={0}'.format(TAB)
@@ -907,7 +907,7 @@ class UserTest(TestCase):
         self.assertEqual(messages[0], 'Success! User (Prof User1, CWL: user1.prof) updated.')
         self.assertEqual(res.status_code, 200)
 
-        user = api.get_user(u.username, 'username')
+        user = api.get_user_by_username(u.username)
 
         self.assertEqual(user.first_name, u.first_name)
         self.assertEqual(user.last_name, u.last_name)
@@ -938,7 +938,7 @@ class UserTest(TestCase):
         TAB = 'basic_info'
         CURRENT_PAGE = '/admin/user/edit/?next=/admin/users/all/?page=1&t={0}'.format(TAB)
         
-        u = api.get_user(USERS[0], 'username')
+        u = api.get_user_by_username(USERS[0])
 
         user_profile_form = {
             'first_name': u.first_name,
@@ -996,7 +996,7 @@ class UserTest(TestCase):
         self.assertEqual(res.url, NEXT)
         self.assertRedirects(res, res.url)
 
-        user = api.get_user(data['username'], 'username')
+        user = api.get_user_by_username(data['username'])
 
         self.assertEqual(user.first_name, data['first_name'])
         self.assertEqual(user.last_name, data['last_name'])
@@ -1027,7 +1027,7 @@ class UserTest(TestCase):
         TAB = 'role_details'
         CURRENT_PAGE = '/admin/user/edit/?next=/admin/users/all/?page=1&t={0}'.format(TAB)
         
-        u = api.get_user(USERS[0], 'username')
+        u = api.get_user_by_username(USERS[0])
 
         prof_form = {
             'title': '2',
@@ -1046,7 +1046,7 @@ class UserTest(TestCase):
         self.assertEqual(res.url, NEXT)
         self.assertRedirects(res, res.url)
 
-        user = api.get_user(u.username, 'username')
+        user = api.get_user_by_username(u.username)
 
         self.assertEqual(user.first_name, u.first_name)
         self.assertEqual(user.last_name, u.last_name)
@@ -1077,7 +1077,7 @@ class UserTest(TestCase):
         TAB = 'basic_info'
         CURRENT_PAGE = '/admin/user/edit/?next=/admin/users/all/?page=1&t={0}'.format(TAB)
         
-        u = api.get_user(USERS[0], 'username')
+        u = api.get_user_by_username(USERS[0])
 
         prof_form = {
             'title': '2',
@@ -1117,7 +1117,7 @@ class UserTest(TestCase):
         self.assertEqual(res.url, NEXT)
         self.assertRedirects(res, res.url)
 
-        user = api.get_user(u.username, 'username')
+        user = api.get_user_by_username(u.username)
 
         self.assertEqual(user.first_name, u.first_name)
         self.assertEqual(user.last_name, u.last_name)
@@ -1149,7 +1149,7 @@ class UserTest(TestCase):
         TAB = 'role_details'
         CURRENT_PAGE = '/admin/user/edit/?next=/admin/users/all/?page=1&t={0}'.format(TAB)
         
-        u = api.get_user(USERS[0], 'username')
+        u = api.get_user_by_username(USERS[0])
 
         user_profile_form = {
             'first_name': u.first_name,
@@ -1200,7 +1200,7 @@ class UserTest(TestCase):
         self.assertEqual(res.url, NEXT)
         self.assertRedirects(res, res.url)
 
-        user = api.get_user(user_profile_form['username'], 'username')
+        user = api.get_user_by_username(user_profile_form['username'])
 
         self.assertEqual(user.first_name, u.first_name)
         self.assertEqual(user.last_name, u.last_name)
@@ -1231,7 +1231,7 @@ class UserTest(TestCase):
         TAB = 'basic_info'
         CURRENT_PAGE = '/admin/user/edit/?next=/admin/users/all/?page=1&t={0}'.format(TAB)
         
-        u = api.get_user(USERS[1], 'username')
+        u = api.get_user_by_username(USERS[1])
 
         user_profile_form = {
             'first_name': u.first_name,
@@ -1265,7 +1265,7 @@ class UserTest(TestCase):
         TAB = 'basic_info'
         CURRENT_PAGE = '/admin/user/edit/?next=/admin/users/all/?page=1&t={0}'.format(TAB)
         
-        u = api.get_user(USERS[1], 'username')
+        u = api.get_user_by_username(USERS[1])
 
         user_profile_form = {
             'first_name': u.first_name,
