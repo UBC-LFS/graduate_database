@@ -21,7 +21,7 @@ def admin_access_only(view_func):
 
 
 def grad_advisor_access_only(view_func):
-    ''' Only admins can access '''
+    ''' Only grad advisors can access '''
     def wrap(request, *args, **kwargs):
         print(request.session['loggedin_user']['roles'])
         if request.user.is_authenticated and request.user.is_active and 'graduate-advisor' in request.session['loggedin_user']['roles']:
@@ -32,7 +32,7 @@ def grad_advisor_access_only(view_func):
 
 
 def supervisor_access_only(view_func):
-    ''' Only admins can access '''
+    ''' Only supervisors can access '''
     def wrap(request, *args, **kwargs):
         if request.user.is_authenticated and request.user.is_active and 'supervisor' in request.session['loggedin_user']['roles']:
             return view_func(request, *args, **kwargs)
@@ -42,9 +42,19 @@ def supervisor_access_only(view_func):
 
 
 def guest_access_only(view_func):
-    ''' Only admins can access '''
+    ''' Only guests can access '''
     def wrap(request, *args, **kwargs):
         if request.user.is_authenticated and request.user.is_active and 'guest' in request.session['loggedin_user']['roles']:
+            return view_func(request, *args, **kwargs)
+        else:
+            raise PermissionDenied
+    return wrap
+
+
+def logged_in_user(view_func):
+    ''' Logged in users can access '''
+    def wrap(request, *args, **kwargs):
+        if request.user.is_authenticated and request.user.is_active:
             return view_func(request, *args, **kwargs)
         else:
             raise PermissionDenied

@@ -61,7 +61,7 @@ def get_professors(program=None):
     ''' Get all professors '''
     if program is not None:
         pass
-    return User.objects.filter(profile__roles__in=[get_role('graduate-advisor', 'slug'), get_role('supervisor', 'slug')]).order_by('last_name', 'first_name')
+    return User.objects.filter(profile__roles__in=[get_role_by_slug('graduate-advisor'), get_role_by_slug('supervisor')]).order_by('last_name', 'first_name')
 
 
 def get_professor_by_id(id):
@@ -111,7 +111,7 @@ def get_grad_supervision_view(username):
     if prof.profile.roles.filter(slug='graduate-advisor').exists():
         prof.is_grad_advisor = True
         programs = [program for program in prof.profile.programs.all()]
-        prof.colleages = User.objects.filter( Q(profile__programs__in=programs) & Q(profile__roles__in=[get_role('graduate-advisor', 'slug'), get_role('supervisor', 'slug')]) ).exclude(id=prof.id).order_by('last_name', 'first_name')
+        prof.colleages = User.objects.filter( Q(profile__programs__in=programs) & Q(profile__roles__in=[get_role_by_slug('graduate-advisor'), get_role_by_slug('supervisor')]) ).exclude(id=prof.id).order_by('last_name', 'first_name')
 
     return prof
 
@@ -137,7 +137,7 @@ def create_user(username, first_name, last_name):
     )
 
     profile = create_profile(user)
-    profile.roles.add( get_role('Guest', 'name') )
+    profile.roles.add( get_role_by_slug('guest') )
 
     return user
 
@@ -191,13 +191,18 @@ def get_roles(user):
     return roles
 
 
-def get_role(arg, type='id'):
-    ''' Get a role by id '''
-    if type == 'slug':
-        return get_object_or_404(Role, slug=arg)
-    elif type == 'name':
-        return get_object_or_404(Role, name=arg)
-    return get_object_or_404(Role, id=arg)
+def get_role_by_id(id):
+    try:
+        return Role.objects.get(id=id)
+    except Role.DoesNotExist:
+        raise Http404
+
+
+def get_role_by_slug(slug):
+    try:
+        return Role.objects.get(slug=slug)
+    except Role.DoesNotExist:
+        raise Http404
 
 
 # def update_profile_roles(profile, old_roles, data):

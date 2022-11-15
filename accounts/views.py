@@ -6,8 +6,11 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.views.decorators.http import require_http_methods, require_GET, require_POST
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login as AuthLogin
+from django.contrib.auth import authenticate, login as AuthLogin, logout as AuthLogout
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_control, never_cache
+from django.views.decorators.http import require_http_methods
 
 from ldap3 import ALL_ATTRIBUTES, SUBTREE, Server, Connection
 from ldap3.core.exceptions import LDAPBindError
@@ -15,7 +18,7 @@ import json
 
 from .forms import LocalLoginForm
 from gp_admin import api
-
+from core.auth import logged_in_user
 
 def ldap_auth(username, password):
     server = Server(settings.GRAD_DB_LDAP_URI)
@@ -116,6 +119,16 @@ class Login(View):
         messages.error(request, 'An error occurred. Please check your username or password, then try again.')
         return redirect('accounts:login')
 
+
+@login_required(login_url=settings.LOGIN_URL)
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+@require_http_methods(['GET'])
+@logged_in_user
+def logout(request):
+    request.session.flush()
+    AuthLogout(request)
+    messages.success(request, 'You have been successfully logged out.')
+    return redirect('accounts:login')
 
 
 class LocalLogin(View):

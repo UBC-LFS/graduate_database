@@ -304,7 +304,7 @@ class Assign_Student(View):
 
         profs = api.get_professors()
         for prof in profs:
-            prof.is_checked = False 
+            prof.is_checked = False
             for gs in stud.graduate_supervision_set.all():
                 if gs.professor.id == prof.id:
                     prof.is_checked = True
@@ -332,7 +332,7 @@ class Assign_Student(View):
         stud = api.get_student_by_id(stud_id)
 
         post = dict(request.POST)
-        
+
         profs = []
         prof_roles = []
         items = {}
@@ -345,7 +345,7 @@ class Assign_Student(View):
                 if search in post:
                     prof_roles.append(post[search][0])
                     items[sp[1]] = post[search][0]
-        
+
         existing_profs = []
         existing_items = {}
         for gs in stud.graduate_supervision_set.all():
@@ -378,7 +378,7 @@ class Assign_Student(View):
 
         # Update
         update_profs = set(existing_profs).intersection(profs_set)
-        
+
         update_grad_supervision = []
         if len(update_profs) > 0:
             for prof_id in update_profs:
@@ -388,19 +388,19 @@ class Assign_Student(View):
                     gs.updated_on = date.today()
                     update_grad_supervision.append(gs)
 
-        if len(update_grad_supervision) > 0:    
+        if len(update_grad_supervision) > 0:
             Graduate_Supervision.objects.bulk_update(update_grad_supervision, [
                 'professor_role',
                 'updated_on'
             ])
-        
+
 
         # Delete
         delete_profs = list(set(existing_profs) - profs_set)
         if len(delete_profs) > 0:
             for prof_id in delete_profs:
                 Graduate_Supervision.objects.filter(professor__id=prof_id).delete()
-        
+
         messages.success(request, 'Success! Graduate Supervision ({0}, Student #: {1}) saved.'.format(stud.get_full_name(), stud.student_number))
         return HttpResponseRedirect(request.POST.get('current_page'))
 
@@ -955,7 +955,7 @@ class Get_Roles(View):
 def edit_role(request, slug):
     ''' Edit a role '''
 
-    role = api.get_role(slug, 'slug')
+    role = api.get_role_by_slug(slug)
     form = Role_Form(request.POST, instance=role)
     if form.is_valid():
         res = form.save()
@@ -975,7 +975,7 @@ def edit_role(request, slug):
 def delete_role(request):
     ''' Delete a role '''
 
-    role = api.get_role(request.POST.get('role'))
+    role = api.get_role_by_id(request.POST.get('role'))
     if role.delete():
         messages.success(request, 'Success! Role ({0}) deleted'.format(role.name))
     else:
