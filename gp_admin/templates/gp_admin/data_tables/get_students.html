@@ -26,7 +26,7 @@
   {% include 'core/subpages/_searched_message.html' with items=students total_items=total_students %}
 
   <div class="d-inline-block ml-5">
-    Today's SIS Students: {{ stats.today_created_students|length }} created and {{ stats.today_updated_students|length }} updated
+    Today's SIS Students: <span class="text-danger font-weight-bold">{{ stats.today_created_students|length }}</span> created and <span class="text-success font-weight-bold">{{ stats.today_updated_students|length }}</span> updated
   </div>
 
   <table
