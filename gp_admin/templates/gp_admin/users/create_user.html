@@ -60,7 +60,8 @@
           {% endif %}
           Form
         </h3>
-        {% include 'core/subpages/_form_note.html' %}
+
+        {% include 'core/subpages/_form_note.html' with path='create_user' %}
 
         <form action="{{ info.href }}" method="post">
           {% csrf_token %}

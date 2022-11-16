@@ -67,7 +67,8 @@
           {% endif %}
           Form
         </h3>
-        {% include 'core/subpages/_form_note.html' %}
+
+        {% include 'core/subpages/_form_note.html' with path='create_student' %}
 
         <form action="" method="post">
           {% csrf_token %}

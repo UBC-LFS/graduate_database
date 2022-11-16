@@ -1,5 +1,9 @@
 <div class="bg-white border mb-3 p-3">
   <ul class="list-left-20 text-dark mb-0">
     <li>Any field name followed by a red asterisk symbol (<small class="text-danger"><i class="fa fa-asterisk" aria-hidden="true"></i></small>) is a required field.</li>
+
+    {% if path == 'create_user' or path == 'create_student' %}
+      <li>Please click on the <span class="font-weight-bold">Save</span> button and move to another form.</li>
+    {% endif %}
   </ul>
 </div>

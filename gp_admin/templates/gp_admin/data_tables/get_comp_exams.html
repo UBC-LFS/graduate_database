@@ -9,12 +9,17 @@
     <div class="col-md-2">
       <h2 class="text-center-middle text-center">Comprehensive <br /> Exams</h2>
     </div>
-    <div class="col-md-8">
+    <div class="col-md-7">
       {% include 'gp_admin/subpages/_search_fields.html' with path='comp_exams' %}
     </div>
-    <div class="col-md-2">
-      <div class="item-hv-center">
-        <a class="btn btn-primary" href="{% url 'gp_admin:get_reminders' %}">Setup Exam Reminders</a>
+    <div class="col-md-3 bg-white">
+      <div class="bg-prompt height-100">
+        <div class="prompt height-100 ">
+          <div class="height-100 d-flex flex-column justify-content-center align-items-center">
+            <p>Please click to set up exam reminders.</p>
+            <a class="btn btn-outline-primary btn-sm mt-3" href="{% url 'gp_admin:get_reminders' %}">Setup Exam Reminders</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
