@@ -14,7 +14,7 @@ $(document).ready(function() {
     });
 
     if ($filtered.length == 0) {
-      $('#prof-list-' + stud + ' tbody').append('<tr class="no-found-message text-sm"><td colspan="3">No professors found.</td></tr>');
+      $('#prof-list-' + stud + ' tbody').append('<tr class="no-found-message text-sm"><td colspan="3">No professors found</td></tr>');
     } else {
       $('#prof-list-' + stud + ' tbody tr.no-found-message').remove();
     }

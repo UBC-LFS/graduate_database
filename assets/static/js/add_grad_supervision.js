@@ -23,7 +23,7 @@ $(document).ready(function() {
               students += '</ul>';
               $("#display-students").html(students);
             } else {
-              $("#display-students").html('<div class="search-result"><p>No students found.</p></div>');
+              $("#display-students").html('<div class="search-result"><p>No students found</p></div>');
             }
           }
         }

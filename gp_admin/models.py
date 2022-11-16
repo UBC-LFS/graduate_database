@@ -250,18 +250,6 @@ class Reminder(models.Model):
         super(Reminder, self).save(*args, **kwargs)
 
 
-# class Comprehensive_Exam(models.Model):
-#     student = models.OneToOneField(Student, on_delete=models.CASCADE, primary_key=True)
-#     exam_date = models.DateField(null=True, blank=True)
-#     note = models.TextField(null=True, blank=True)
-
-#     created_on = models.DateField(auto_now_add=True)
-#     updated_on = models.DateField(auto_now=True)
-
-#     class Meta:
-#         ordering = ['student__last_name', 'student__first_name', 'exam_date']
-
-
 class Sent_Reminder(models.Model):
     ''' Send a reminder email to students '''
     student = models.ForeignKey(Student, on_delete=models.CASCADE)

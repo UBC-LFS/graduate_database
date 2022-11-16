@@ -1,7 +1,7 @@
 <div class="search-field p-3 fs-sm">
   <form method="GET">
-    <input type="text" name="first_name" value="{{ request.GET.first_name }}" placeholder="{% if path == 'grad_supervision' %}Professor{% endif %} First Name" /> and
-    <input type="text" name="last_name" value="{{ request.GET.last_name }}" placeholder="{% if path == 'grad_supervision' %}Professor{% endif %} Last Name" />
+    <input type="text" name="first_name" value="{{ request.GET.first_name }}" placeholder="{% if path == 'grad_supervision' %}Professor{% elif path == 'sent_reminders' %}Student{% endif %} First Name" /> and
+    <input type="text" name="last_name" value="{{ request.GET.last_name }}" placeholder="{% if path == 'grad_supervision' %}Professor{% elif path == 'sent_reminders' %}Student{% endif %} Last Name" />
 
     {% if path == 'students' %}
       and <input type="text" name="student_number" value="{{ request.GET.student_number }}" placeholder="Student Number" />
@@ -33,6 +33,9 @@
 
       {% elif path == 'comp_exams' %}
         <a class="btn btn-sm fs-xs btn-secondary" href="{% url 'gp_admin:get_comp_exams' %}">Clear</a>
+
+      {% elif path == 'sent_reminders' %}
+        <a class="btn btn-sm fs-xs btn-secondary" href="{% url 'gp_admin:get_sent_reminders' %}">Clear</a>
 
       {% elif path == 'users' %}
         <a class="btn btn-sm fs-xs btn-secondary" href="{% url 'gp_admin:get_users' %}">Clear</a>

@@ -24,7 +24,7 @@ urlpatterns = [
     path('api/graduate-supervision/<str:username>/delete/', views.delete_grad_supervision, name='delete_grad_supervision'),
     
     path('comprehensive-exams/', views.Get_Comp_Exams.as_view(), name='get_comp_exams'),
-    path('reminders/sent/', views.Sent_Reminders.as_view(), name='sent_reminders'),
+    path('reminders/sent/', views.Get_Sent_Reminders.as_view(), name='get_sent_reminders'),
 
 
     # Users

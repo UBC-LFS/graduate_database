@@ -580,7 +580,6 @@ def search_students(request):
     return JsonResponse({ 'data': [], 'status': 'error' }, safe=False)
 
 
-
 @login_required(login_url=settings.LOGIN_URL)
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @require_http_methods(['POST'])
@@ -652,30 +651,40 @@ class Get_Comp_Exams(View):
 
         return render(request, 'gp_admin/data_tables/get_comp_exams.html', {
             'students': students,
-            'total_students': len(students)
+            'total_students': len(student_list)
         })
-
-    @method_decorator(require_POST)
-    def post(self, request, *args, **kwargs):
-        pass
 
 
 @method_decorator([never_cache, login_required, admin_access_only], name='dispatch')
-class Sent_Reminders(View):
+class Get_Sent_Reminders(View):
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
-        # tasks.send_reminders()
-        sent_reminders = api.sent_reminders()
+        
+        sent_reminder_list = api.sent_reminders()
 
-        return render(request, 'gp_admin/data_tables/sent_reminders.html', {
+        first_name_q = request.GET.get('first_name')
+        last_name_q = request.GET.get('last_name')
+
+        if bool(first_name_q):
+            sent_reminder_list = sent_reminder_list.filter(student__first_name__icontains=first_name_q)
+        if bool(last_name_q):
+            sent_reminder_list = sent_reminder_list.filter(student__last_name__icontains=last_name_q)
+
+        page = request.GET.get('page', 1)
+        paginator = Paginator(sent_reminder_list, settings.PAGE_SIZE)
+
+        try:
+            sent_reminders = paginator.page(page)
+        except PageNotAnInteger:
+            sent_reminders = paginator.page(1)
+        except EmptyPage:
+            sent_reminders = paginator.page(paginator.num_pages)
+
+        return render(request, 'gp_admin/data_tables/get_sent_reminders.html', {
             'reminders': sent_reminders,
-            'total_reminders': len(sent_reminders)
+            'total_reminders': len(sent_reminder_list)
         })
-
-    @method_decorator(require_POST)
-    def post(self, request, *args, **kwargs):
-        pass
 
 
 # Users

@@ -10,7 +10,7 @@
       <h2 class="text-center-middle text-center">Sent Exam <br /> Reminders</h2>
     </div>
     <div class="col-md-10">
-      {% include 'gp_admin/subpages/_search_fields.html' with path='comp_exams' %}
+      {% include 'gp_admin/subpages/_search_fields.html' with path='sent_reminders' %}
     </div>
   </div>
 
@@ -24,7 +24,8 @@
   >
     <thead>
       <tr>
-        <th>RID</th>
+        <th>SRID</th>
+        <th>Student</th>
         <th>Sender</th>
         <th>Receiver</th>
         <th>Email</th>
@@ -36,6 +37,10 @@
       {% for reminder in reminders %}
         <tr>
           <td>{{ reminder.id }}</td>
+          <td>
+            {{ reminder.student.get_full_name }} <br />
+            {% include 'gp_admin/subpages/_modal_more_info.html' with data=reminder.student %}
+          </td>
           <td>{{ reminder.sender }}</td>
           <td>{{ reminder.receiver }}</td>
           <td>
@@ -82,6 +87,7 @@
     </tbody>
   </table>
 
+  {% include 'gp_admin/subpages/_table_paginator.html' with data=reminders %}
 </div>
 
 {% endblock %}
