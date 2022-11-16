@@ -586,7 +586,7 @@ def search_students(request):
 @require_http_methods(['POST'])
 @admin_access_only
 def edit_grad_supervision(request, username):
-    gs = api.get_grad_supervision(request.POST.get('graduate_supervision'))
+    gs = api.get_grad_supervision_by_id(request.POST.get('graduate_supervision'))
     form = Grad_Supervision_Form(request.POST, instance=gs)
     if form.is_valid():
         res = form.save()
@@ -604,7 +604,7 @@ def edit_grad_supervision(request, username):
 @require_http_methods(['POST'])
 @admin_access_only
 def delete_grad_supervision(request, username):
-    gs = api.get_grad_supervision(request.POST.get('graduate_supervision'))
+    gs = api.get_grad_supervision_by_id(request.POST.get('graduate_supervision'))
     if gs.delete():
         messages.success(request, 'Success! Graduate Supervision ({0} {1}) deleted.'.format(gs.student.first_name, gs.student.last_name))
     else:
