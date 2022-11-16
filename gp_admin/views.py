@@ -617,8 +617,29 @@ class Get_Comp_Exams(View):
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
+
+        student_list = api.get_students()
+
+        first_name_q = request.GET.get('first_name')
+        last_name_q = request.GET.get('last_name')
+
+        if bool(first_name_q):
+            student_list = student_list.filter(first_name__icontains=first_name_q)
+        if bool(last_name_q):
+            student_list = student_list.filter(last_name__icontains=last_name_q)
+
+        page = request.GET.get('page', 1)
+        paginator = Paginator(student_list, settings.PAGE_SIZE)
+
+        try:
+            students = paginator.page(page)
+        except PageNotAnInteger:
+            students = paginator.page(1)
+        except EmptyPage:
+            students = paginator.page(paginator.num_pages)
+
         today = datetime.today().date()
-        students = api.get_students()
+        
         reminders = api.get_reminders()
         for stud in students:
             expect_send_reminders = []
@@ -626,6 +647,7 @@ class Get_Comp_Exams(View):
                 if stud.start_date:
                     expect_send_reminders.append(stud.start_date + relativedelta(months=rem.months))
                     expect_send_reminders.reverse()
+        
             stud.expect_send_reminders = expect_send_reminders
 
         return render(request, 'gp_admin/data_tables/get_comp_exams.html', {

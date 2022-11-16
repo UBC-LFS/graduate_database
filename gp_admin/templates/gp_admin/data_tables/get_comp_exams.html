@@ -14,10 +14,10 @@
     </div>
     <div class="col-md-3 bg-white">
       <div class="bg-prompt height-100">
-        <div class="prompt height-100 ">
+        <div class="prompt height-100">
           <div class="height-100 d-flex flex-column justify-content-center align-items-center">
             <p>Please click to set up exam reminders.</p>
-            <a class="btn btn-outline-primary btn-sm mt-3" href="{% url 'gp_admin:get_reminders' %}">Setup Exam Reminders</a>
+            <a class="btn btn-outline-primary btn-sm mt-2" href="{% url 'gp_admin:get_reminders' %}">Setup Exam Reminders</a>
           </div>
         </div>
       </div>
@@ -39,9 +39,10 @@
         <th data-sortable="true">Last Name</th>
         <th>Student <br /> Number</th>
         <th>Email</th>
+        <th>More <br /> Info</th>
         <th data-sortable="true">Start Date</th>
         <th data-sortable="true">Comprehensive <br /> Exam Date</th>
-        <th>Expect to <br /> Send Reminders</th>
+        <th>Date to <br /> Send Reminders</th>
         <th>Sent Reminders</th>
       </tr>
     <tbody>
@@ -52,6 +53,7 @@
           <td>{{ stud.last_name }}</td>
           <td>{{ stud.student_number }}</td>
           <td>{{ stud.email }}</td>
+          <td>{% include 'gp_admin/subpages/_modal_more_info.html' with data=stud %}</td>
           <td>
             <span class="d-none">{{ stud.start_date|date:"Y m d z" }}</span>
             {{ stud.start_date }}

@@ -19,19 +19,6 @@
       <input type="hidden" name="t" value="{{ request.GET.t }}" placeholder="Email" />
     {% endif %}
 
-    {% if path == 'comp_exams' %}
-      <div>
-        <span class="mr-3">
-          Exam Date:
-          <input class="custom-input-mb-7" type="radio" name="exam_date" value="filled" {% if request.GET.exam_date == 'filled' %}checked{% endif %} />
-          <label for="filled">Filled</label>
-          or
-          <input class="custom-input-mb-7" type="radio" name="exam_date" value="empty" {% if request.GET.exam_date == 'empty' %}checked{% endif %} />
-          <label for="empty">Empty</label>
-        </span>
-      </div>
-    {% endif %}
-
     <div class="mt-2">
       <button class="btn btn-sm fs-xs btn-primary" type="submit">Search</button>
 
