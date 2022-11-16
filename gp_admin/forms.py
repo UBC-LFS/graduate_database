@@ -19,7 +19,7 @@ class Basic_Info_Form(forms.ModelForm):
     class Meta:
         model = Student
         fields = [
-            'first_name', 'last_name', 'student_number', 'email', 
+            'first_name', 'last_name', 'student_number', 'email',
             'date_of_birth', 'phone', 'sin', 'loa_months', 'loa_details', 'policy_85', 'note'
         ]
         labels = {
@@ -89,27 +89,27 @@ class Additional_Info_Form(forms.ModelForm):
             'current_role': 'Current Role'
         }
         widgets = {
-            'thesis_title': forms.TextInput(attrs={ 'class': 'form-control' }), 
-            'funding_sources': forms.TextInput(attrs={ 'class': 'form-control' }), 
-            'total_funding_awarded': forms.TextInput(attrs={ 'class': 'form-control' }), 
-            'taships': forms.TextInput(attrs={ 'class': 'form-control' }), 
+            'thesis_title': forms.TextInput(attrs={ 'class': 'form-control' }),
+            'funding_sources': forms.TextInput(attrs={ 'class': 'form-control' }),
+            'total_funding_awarded': forms.TextInput(attrs={ 'class': 'form-control' }),
+            'taships': forms.TextInput(attrs={ 'class': 'form-control' }),
             'current_role': forms.TextInput(attrs={ 'class': 'form-control' })
         }
         help_texts = {
-            'thesis_title': 'Maximum length is 150 characters.', 
-            'funding_sources': 'Maximum length is 150 characters.', 
-            'total_funding_awarded': 'Maximum length is 150 characters.', 
-            'taships': 'Maximum length is 150 characters.', 
+            'thesis_title': 'Maximum length is 150 characters.',
+            'funding_sources': 'Maximum length is 150 characters.',
+            'total_funding_awarded': 'Maximum length is 150 characters.',
+            'taships': 'Maximum length is 150 characters.',
             'current_role': 'Maximum length is 150 characters.'
         }
 
 
-class Previous_School_Info_Form(forms.ModelForm):    
+class Previous_School_Info_Form(forms.ModelForm):
     class Meta:
         model = Student
         fields = [
-            'previous_institution_1', 'degree_1', 'gpa_1', 
-            'previous_institution_2', 'degree_2', 'gpa_2', 
+            'previous_institution_1', 'degree_1', 'gpa_1',
+            'previous_institution_2', 'degree_2', 'gpa_2',
             'previous_institution_3', 'degree_3', 'gpa_3'
         ]
         labels = {
@@ -151,10 +151,10 @@ class Student_Form(forms.ModelForm):
             'status', 'start_date', 'completion_date', 'graduation_date', 'comprehensive_exam_date', 'thesis_title', 'funding_sources', 'total_funding_awarded', 'taships', 'current_role',
             'previous_institution_1', 'degree_1', 'gpa_1', 'previous_institution_2', 'degree_2', 'gpa_2', 'previous_institution_3', 'degree_3', 'gpa_3'
         ]
-    
+
     '''def clean_loa_months(self):
         data = self.cleaned_data['loa_months']
-        if data and int(data) < 0: 
+        if data and int(data) < 0:
             raise ValidationError('This field must be non-negative integers.')
         return data'''
 
@@ -189,14 +189,14 @@ class Student_Form(forms.ModelForm):
     class Meta:
         model = Student
         fields = [
-            'date_of_birth', 'phone', 'sin', 'loa_months', 'loa_details', 'policy_85', 
+            'date_of_birth', 'phone', 'sin', 'loa_months', 'loa_details', 'policy_85',
             'status', 'start_date', 'completion_date', 'graduation_date', 'comprehensive_exam_date',
             'previous_institution_1', 'degree_1', 'gpa_1', 'previous_institution_2', 'degree_2', 'gpa_2', 'previous_institution_3', 'degree_3', 'gpa_3',
-            'thesis_title', 'funding_sources', 'total_funding_awarded', 'taships', 'current_role', 'note' 
+            'thesis_title', 'funding_sources', 'total_funding_awarded', 'taships', 'current_role', 'note'
         ]
         widgets = {
             'phone': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'sin': forms.TextInput(attrs={ 'class': 'form-control' }), 
+            'sin': forms.TextInput(attrs={ 'class': 'form-control' }),
             'loa_months': forms.TextInput(attrs={ 'type':'number', 'class': 'form-control' }),
             'loa_details': forms.TextInput(attrs={ 'class': 'form-control' }),
             'previous_institution_1': forms.TextInput(attrs={ 'class': 'form-control' }),
@@ -208,10 +208,10 @@ class Student_Form(forms.ModelForm):
             'previous_institution_3': forms.TextInput(attrs={ 'class': 'form-control' }),
             'degree_3': forms.TextInput(attrs={ 'class': 'form-control' }),
             'gpa_3': forms.TextInput(attrs={ 'class': 'form-control' }),
-            'thesis_title': forms.TextInput(attrs={ 'class': 'form-control' }), 
-            'funding_sources': forms.TextInput(attrs={ 'class': 'form-control' }), 
-            'total_funding_awarded': forms.TextInput(attrs={ 'class': 'form-control' }), 
-            'taships': forms.TextInput(attrs={ 'class': 'form-control' }), 
+            'thesis_title': forms.TextInput(attrs={ 'class': 'form-control' }),
+            'funding_sources': forms.TextInput(attrs={ 'class': 'form-control' }),
+            'total_funding_awarded': forms.TextInput(attrs={ 'class': 'form-control' }),
+            'taships': forms.TextInput(attrs={ 'class': 'form-control' }),
             'current_role': forms.TextInput(attrs={ 'class': 'form-control' }),
             'note': SummernoteWidget()
         }
@@ -239,10 +239,10 @@ class Student_Form(forms.ModelForm):
             'previous_institution_3': 'Maximum length is 150 characters.',
             'degree_3': 'Maximum characters: 50',
             'gpa_3': 'Maximum length is 20 characters.',
-            'thesis_title': 'Maximum length is 150 characters.', 
-            'funding_sources': 'Maximum length is 150 characters.', 
-            'total_funding_awarded': 'Maximum length is 150 characters.', 
-            'taships': 'Maximum length is 150 characters.', 
+            'thesis_title': 'Maximum length is 150 characters.',
+            'funding_sources': 'Maximum length is 150 characters.',
+            'total_funding_awarded': 'Maximum length is 150 characters.',
+            'taships': 'Maximum length is 150 characters.',
             'current_role': 'Maximum length is 150 characters.'
         }
 '''
@@ -260,19 +260,19 @@ class Grad_Supervision_Form(forms.ModelForm):
 
     def clean_student(self):
         data = self.cleaned_data['student']
-        if not data: 
+        if not data:
             raise ValidationError('This field is required.')
         return data
-    
+
     def clean_professor(self):
         data = self.cleaned_data['professor']
-        if not data: 
+        if not data:
             raise ValidationError('This field is required.')
         return data
 
     def clean_professor_role(self):
         data = self.cleaned_data['professor_role']
-        if not data: 
+        if not data:
             raise ValidationError('This field is required.')
         return data
 
@@ -324,7 +324,7 @@ class User_Form(forms.ModelForm):
             'last_name': forms.TextInput(attrs={ 'required': True, 'class': 'form-control-sm' }),
             'username': forms.TextInput(attrs={ 'required': True, 'class': 'form-control-sm' }),
             'email': forms.EmailInput(attrs={ 'required': False, 'class': 'form-control-sm' })
-            
+
         }
         help_texts = {
             'first_name': 'Maximum length is 150 characters.',
@@ -335,17 +335,17 @@ class User_Form(forms.ModelForm):
         }
 
     def clean_last_name(self):
-        data = self.cleaned_data['last_name']    
+        data = self.cleaned_data['last_name']
         if not data: raise ValidationError('This field is required.')
         return data
 
     def clean_first_name(self):
-        data = self.cleaned_data['first_name']    
+        data = self.cleaned_data['first_name']
         if not data: raise ValidationError('This field is required.')
         return data
 
     '''def clean_email(self):
-        data = self.cleaned_data['email']    
+        data = self.cleaned_data['email']
         if not data: raise ValidationError('This field is required.')
         return data'''
 
@@ -365,7 +365,7 @@ class Profile_Form(forms.ModelForm):
         }
         widgets = {
             'preferred_name': forms.TextInput(attrs={ 'class': 'form-control-sm' }),
-            'phone': forms.TextInput(attrs={ 'class': 'form-control-sm' }), 
+            'phone': forms.TextInput(attrs={ 'class': 'form-control-sm' }),
             'office': forms.TextInput(attrs={ 'class': 'form-control-sm' })
         }
         help_texts = {
@@ -390,44 +390,6 @@ class Role_Details_Form(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['title', 'position', 'programs']
-
-
-# class Profile_Form(forms.ModelForm):
-#     roles = forms.ModelMultipleChoiceField(
-#         required = True,
-#         queryset = Role.objects.all(),
-#         widget = forms.CheckboxSelectMultiple(),
-#     )
-
-#     programs = forms.ModelMultipleChoiceField(
-#         required = True,
-#         queryset = Program.objects.all(),
-#         widget = forms.CheckboxSelectMultiple(),
-#     )
-
-#     class Meta:
-#         model = Profile
-#         fields = ['preferred_name', 'roles', 'title', 'position', 'programs', 'phone', 'fax', 'office']
-#         labels = {
-#             'preferred_name': 'Preferred Name'
-#         }
-#         widgets = {
-#             'preferred_name': forms.TextInput(attrs={ 'class': 'form-control' }),
-#             'phone': forms.TextInput(attrs={ 'class': 'form-control' }), 
-#             'fax': forms.TextInput(attrs={ 'class': 'form-control' }),
-#             'office': forms.TextInput(attrs={ 'class': 'form-control' })
-#         }
-#         help_texts = {
-#             'preferred_name': 'Maximum length is 150 characters.',
-#             'phone': 'Maximum length is 150 characters.',
-#             'fax': 'Maximum length is 150 characters.',
-#             'office': 'Maximum length is 150 characters.'
-#         }
-
-#     def clean_roles(self):
-#         data = self.cleaned_data['roles']
-#         if not data: raise ValidationError('This field is required.')
-#         return data
 
 
 class Role_Form(forms.ModelForm):

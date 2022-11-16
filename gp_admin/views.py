@@ -506,7 +506,7 @@ class Get_Grad_Supervision(View):
             if prof.profile.roles.filter(slug='graduate-advisor').exists():
                 prof.is_grad_advisor = True
                 programs = [program for program in prof.profile.programs.all()]
-                prof.colleages = User.objects.filter( Q(profile__programs__in=programs) & Q(profile__roles__in=[api.get_role('graduate-advisor', 'slug'), api.get_role('supervisor', 'slug')]) ).exclude(id=prof.id).order_by('last_name', 'first_name')
+                prof.colleages = User.objects.filter( Q(profile__programs__in=programs) & Q(profile__roles__in=[api.get_role_by_slug('graduate-advisor'), api.get_role_by_slug('supervisor')]) ).exclude(id=prof.id).order_by('last_name', 'first_name')
 
         tab_url = request.path + '?page=' + str(page)
         if bool(first_name_q):

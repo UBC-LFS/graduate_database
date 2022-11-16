@@ -103,7 +103,7 @@ def sent_reminders():
     return Sent_Reminder.objects.all()
 
 def get_grad_supervision_view(username):
-    prof = get_professor(username, 'username')
+    prof = get_professor_by_username(username)
 
     prof.is_grad_advisor = False
     prof.colleages = None
