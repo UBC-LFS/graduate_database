@@ -508,12 +508,12 @@ class Get_Grad_Supervision(View):
             tab_url += '&last_name=' + last_name_q
 
         return render(request, 'gp_admin/data_tables/get_grad_supervision.html', {
-            'professors': professors,
-            'total_professors': len(prof_list),
+            'supervisors': professors,
+            'total_supervisors': len(prof_list),
             'tab': tab,
             'tab_urls': {
                 'students': tab_url + '&t=students',
-                'professors': tab_url + '&t=professors'
+                'supervisors': tab_url + '&t=supervisors'
             }
         })
 

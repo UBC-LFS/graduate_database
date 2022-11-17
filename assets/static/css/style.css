@@ -93,7 +93,8 @@ main {
 }
 
 .bd-callout-warning h4,
-.bd-callout-warning h5 {
+.bd-callout-warning h5,
+.bd-callout-warning h6 {
     color: #f0ad4e;
 }
 

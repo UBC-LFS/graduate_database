@@ -10,27 +10,25 @@
 >
   <thead>
     <tr>
-      <th>GSID</th>
-      <th>Professor Role</th>
       <th data-sortable="true">First Name</th>
       <th data-sortable="true">Last Name</th>
       <th>Student <br /> Number</th>
       <th>Email</th>
       <th data-sortable="true">Status</th>
       <th>More <br /> Info</th>
+      <th>Professor Role</th>
     </tr>
   </thead>
   <tbody>
-    {% for gs in data.graduate_supervision_set.all %}
+    {% for gs in item.graduate_supervision_set.all %}
       <tr>
-        <td>{{ gs.id }}</td>
-        <td>{{ gs.professor_role }}</td>
         <td>{{ gs.student.first_name }}</td>
         <td>{{ gs.student.last_name }}</td>
         <td>{{ gs.student.student_number }}</td>
         <td>{{ gs.student.email }}</td>
         <td>{{ gs.student.status.name }}</td>
         <td>{% include 'gp_admin/subpages/_modal_more_info.html' with data=gs.student %}</td>
+        <td>{{ gs.professor_role }}</td>
       </tr>
     {% empty %}
       <tr>
