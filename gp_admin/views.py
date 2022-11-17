@@ -30,8 +30,6 @@ from scheduler import tasks
 @require_http_methods(['GET'])
 @admin_access_only
 def index(request):
-    #tasks.get_sis_students()
-
     today_created_students, today_updated_students, today = api.get_sis_students_by_day('today')
     yesterday_created_students, yesterday_updated_students, yesterday = api.get_sis_students_by_day('yesterday')
 
@@ -56,6 +54,7 @@ def index(request):
 
 
 # Student
+from urllib.parse import urlparse
 
 @method_decorator([never_cache, login_required, admin_access_only], name='dispatch')
 class Get_Students(View):
@@ -112,16 +111,14 @@ class Create_Student(View):
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
-        next = request.GET.get('next')
-        tab = request.GET.get('t')
+        next = api.get_next(request)
+        tab = request.GET.get('t', 'basic_info')
 
         form = None
         if tab == 'basic_info':
             form = Basic_Info_Form(initial=request.session.get('basic_info_form', None))
-
         elif tab == 'additional_info':
             form = Additional_Info_Form(initial=request.session.get('additional_info_form', None))
-
         elif tab == 'previous_school_info':
             form = Previous_School_Info_Form(initial=request.session.get('previous_school_info_form', None))
         else:
@@ -135,15 +132,14 @@ class Create_Student(View):
                 'type': 'create',
                 'path': 'students'
             },
-            'next': next,
+            'next': api.trim_tab(next),
             'tab': tab,
             'tab_urls': {
-                'basic_info': api.build_next_tab_url(request.path, next, 'basic_info'),
-                'additional_info': api.build_next_tab_url(request.path, next, 'additional_info'),
-                'previous_school_info': api.build_next_tab_url(request.path, next, 'previous_school_info')
+                'basic_info': api.build_new_tab_url(request.get_full_path(), 'basic_info'),
+                'additional_info': api.build_new_tab_url(request.get_full_path(), 'additional_info'),
+                'previous_school_info': api.build_new_tab_url(request.get_full_path(), 'previous_school_info')
             }
         })
-
 
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
@@ -227,21 +223,18 @@ class Edit_Student(View):
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
-        next = request.GET.get('next')
-        tab = request.GET.get('t')
-
+        next = api.get_next(request)
+        tab = request.GET.get('t', 'basic_info')
+        
         stud = api.get_student_by_sn(kwargs.get('student_number'))
 
         form = None
         if tab == 'basic_info':
             form = Basic_Info_Form(instance=stud)
-
         elif tab == 'additional_info':
             form = Additional_Info_Form(instance=stud)
-
         elif tab == 'previous_school_info':
             form = Previous_School_Info_Form(instance=stud)
-
         else:
             raise Http404
 
@@ -253,12 +246,12 @@ class Edit_Student(View):
                 'type': 'edit',
                 'path': 'students'
             },
-            'next': next,
+            'next': api.trim_tab(next),
             'tab': tab,
             'tab_urls': {
-                'basic_info': api.build_next_tab_url(request.path, next, 'basic_info'),
-                'additional_info': api.build_next_tab_url(request.path, next, 'additional_info'),
-                'previous_school_info': api.build_next_tab_url(request.path, next, 'previous_school_info')
+                'basic_info': api.build_new_tab_url(request.get_full_path(), 'basic_info'),
+                'additional_info': api.build_new_tab_url(request.get_full_path(), 'additional_info'),
+                'previous_school_info': api.build_new_tab_url(request.get_full_path(), 'previous_school_info')
             }
         })
 
@@ -298,7 +291,7 @@ class Assign_Student(View):
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
-        next = request.GET.get('next')
+        next = api.get_next(request)
         stud = api.get_student_by_sn(kwargs.get('student_number'))
 
         profs = api.get_professors()
@@ -428,7 +421,8 @@ class Get_Professors(View):
             prof_list = prof_list.filter(email__icontains=email_q)
 
         page = request.GET.get('page', 1)
-        paginator = Paginator(prof_list, settings.PAGE_SIZE)
+        #paginator = Paginator(prof_list, settings.PAGE_SIZE)
+        paginator = Paginator(prof_list, 2)
 
         try:
             professors = paginator.page(page)
@@ -457,7 +451,7 @@ class Edit_Professor(View):
                 'type': 'edit',
                 'path': 'professors'
             },
-            'next': request.GET.get('next')
+            'next': api.get_next(request)
         })
 
     @method_decorator(require_POST)
@@ -713,8 +707,8 @@ class Create_User(View):
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
-        next = request.GET.get('next')
-        tab = request.GET.get('t')
+        next = api.get_next(request)
+        tab = request.GET.get('t', 'basic_info')
 
         if tab not in ['basic_info', 'role_details']:
             raise Http404
@@ -730,14 +724,13 @@ class Create_User(View):
                 'type': 'create',
                 'path': 'users'
             },
-            'next': next,
+            'next': api.trim_tab(next),
             'tab': tab,
             'tab_urls': {
-                'basic_info': api.build_next_tab_url(request.path, next, 'basic_info'),
-                'role_details': api.build_next_tab_url(request.path, next, 'role_details')
+                'basic_info': api.build_new_tab_url(request.get_full_path(), 'basic_info'),
+                'role_details': api.build_new_tab_url(request.get_full_path(), 'role_details')
             }
         })
-
 
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):
@@ -859,8 +852,8 @@ class Edit_User(View):
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
-        next = request.GET.get('next')
-        tab = request.GET.get('t')
+        next = api.get_next(request)
+        tab = request.GET.get('t', 'basic_info')
 
         user = api.get_user_by_username(kwargs.get('username'))
         profile = api.has_profile_created(user)
@@ -876,14 +869,13 @@ class Edit_User(View):
                 'type': 'edit',
                 'path': None
             },
-            'next': next,
+            'next': api.trim_tab(next),
             'tab': tab,
             'tab_urls': {
-                'basic_info': api.build_next_tab_url(request.path, next, 'basic_info'),
-                'role_details': api.build_next_tab_url(request.path, next, 'role_details')
+                'basic_info': api.build_new_tab_url(request.get_full_path(), 'basic_info'),
+                'role_details': api.build_new_tab_url(request.get_full_path(), 'role_details')
             }
         })
-
 
     @method_decorator(require_POST)
     def post(self, request, *args, **kwargs):

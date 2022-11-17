@@ -109,7 +109,7 @@
           <input type="hidden" name="tab" value="{{ tab }}" />
 
           <div class="text-center mt-2-5rem">
-            <a class="btn btn-outline-secondary" href="{% url 'gp_admin:cancel_student' %}?next={{ next }}">Cancel</a>
+            <a class="btn btn-outline-secondary mr-2" href="{% url 'gp_admin:cancel_student' %}?next={{ next }}">Cancel</a>
 
             {% if info.type == 'create' %}
               <input class="btn btn-info" type="submit" name="save" value="Save" />

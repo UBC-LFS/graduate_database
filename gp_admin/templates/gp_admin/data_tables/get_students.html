@@ -18,7 +18,7 @@
         <div class="prompt height-100">
           <div class="height-100 d-flex flex-column justify-content-center align-items-center">
             <p>Please click to create a new student.</p>
-            <a class="btn btn-outline-primary btn-sm mt-2" href="{% url 'gp_admin:create_student' %}?next={{ request.get_full_path }}&t=basic_info">Create Student</a>
+            <a class="btn btn-outline-primary btn-sm mt-2" href="{% url 'gp_admin:create_student' %}?next={{ request.get_full_path }}">Create Student</a>
           </div>
         </div>
       </div>
@@ -137,7 +137,7 @@
             {{ stud.updated_on }}
           </td>
           <td>
-            <a class="btn btn-xs btn-link fs-sm" href="{% url 'gp_admin:edit_student' student_number=stud.student_number %}?next={{ request.get_full_path }}&t=basic_info">Edit</a>
+            <a class="btn btn-xs btn-link fs-sm" href="{% url 'gp_admin:edit_student' student_number=stud.student_number %}?next={{ request.get_full_path }}">Edit</a>
             <a class="btn btn-xs btn-link fs-sm" href="{% url 'gp_admin:assign_student' student_number=stud.student_number %}?next={{ request.get_full_path }}">Assign</a>
           </td>
         </tr>

@@ -233,9 +233,9 @@ def run():
     scheduler = BackgroundScheduler(timezone=settings.TIME_ZONE)
 
     # Get SIS students
-    scheduler.add_job(get_sis_students, 'cron', day_of_week='mon-sun', hour=7, minute='0')
+    scheduler.add_job(get_sis_students, 'cron', day_of_week='mon-sun', hour=7, minute=0)
 
     # Send Reminders
-    scheduler.add_job(send_reminders, 'cron', day_of_week='mon-sun', hour=15, minute='0')
+    scheduler.add_job(send_reminders, 'cron', day_of_week='mon-fri', hour=10, minute=0)
 
     scheduler.start()

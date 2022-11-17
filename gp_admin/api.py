@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from django.db.models import Q, F
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import timedelta, date
+from urllib.parse import urlparse
+
 import json
 import hashlib
 from .models import *
@@ -375,8 +377,8 @@ def get_filtered_items(request, all_list, path):
         all_list = all_list.filter(email__icontains=email_q)
 
     page = request.GET.get('page', 1)
-    paginator = Paginator(all_list, settings.PAGE_SIZE)
-    # paginator = Paginator(all_list, 2)
+    #paginator = Paginator(all_list, settings.PAGE_SIZE)
+    paginator = Paginator(all_list, 2)
 
     try:
         items = paginator.page(page)
@@ -417,14 +419,6 @@ def make_hash(data):
     return hashlib.sha256( json.dumps(data).encode('utf-8') ).hexdigest()
 
 
-def build_tab_url(path, tab):
-    return "{0}?t={1}".format(path, tab)
-
-
-def build_next_tab_url(path, next_path, tab):
-    return "{0}?next={1}&t={2}".format(path, next_path, tab)
-
-
 def get_error_messages(errors):
     messages = ''
     for key in errors.keys():
@@ -446,10 +440,47 @@ def queryset_to_dict(post):
     return data
 
 
+def build_tab_url(path, tab):
+    return "{0}?t={1}".format(path, tab)
 
-# ROLES = {
-#     'Superadmin': 1,
-#     'Admin': 2,
-#     'Supervisor': 3,
-#     'Guest': 4
-# }
+
+def build_new_tab_url(full_path, tab):
+    if '&t=' in full_path:
+        spl = full_path.split('&t=')
+        return "{0}&t={1}".format(spl[0], tab)
+    
+    return "{0}&t={1}".format(full_path, tab)
+
+
+def build_next_tab_url(path, next, tab):
+    return "{0}?next={1}&t={2}".format(path, next, tab)
+
+
+def build_new_next(request):
+    full_path = request.get_full_path()
+    next = urlparse(full_path)
+    query = ''
+    if len(next.query) > 0:
+        for q in next.query.split('&'):
+            arr = q.split('=')
+            if len(arr[1]) > 0:
+                if len(query) > 0:
+                    query += '&'
+                query += arr[0] + '=' + arr[1]
+
+    new_next = next.path
+    if len(query) > 0: new_next += '?' + query
+    return new_next
+
+
+def get_next(request):
+    full_path = request.get_full_path()
+    next = urlparse(full_path)
+    return next.query.split('&p=')[0][5:]
+
+
+def trim_tab(next):
+    if '&t=' in next:
+        spl = next.split('&t=')
+        return spl[0]
+    return next

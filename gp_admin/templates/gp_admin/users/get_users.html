@@ -18,7 +18,7 @@
         <div class="prompt height-100">
           <div class="height-100 d-flex flex-column justify-content-center align-items-center">
             <p>Please click to create a new user.</p>
-            <a class="btn btn-outline-primary btn-sm mt-2" href="{% url 'gp_admin:create_user' %}?next={{ request.get_full_path }}&t=basic_info">Create User</a>
+            <a class="btn btn-outline-primary btn-sm mt-2" href="{% url 'gp_admin:create_user' %}?next={{ request.get_full_path }}">Create User</a>
           </div>
         </div>
       </div>
@@ -87,7 +87,7 @@
           </td>
           <td>
             <div class="btn-toolbar">
-              <a class="btn btn-xs btn-link fs-sm mr-2" href="{% url 'gp_admin:edit_user' username=user.username %}?next={{ request.get_full_path }}&t=basic_info">Edit</a> <br />
+              <a class="btn btn-xs btn-link fs-sm mr-2" href="{% url 'gp_admin:edit_user' username=user.username %}?next={{ request.get_full_path }}">Edit</a> <br />
               <a class="btn btn-xs btn-danger fs-sm" href="#">Delete</a>
             </div>
           </td>

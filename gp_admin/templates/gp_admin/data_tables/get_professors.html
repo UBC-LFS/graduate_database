@@ -16,7 +16,7 @@
       <div class="bg-prompt height-100">
         <div class="prompt height-100 text-center pt-3">
           <p>Please click to create a new professor.</p>
-          <a class="btn btn-outline-primary btn-sm mt-3" href="{% url 'gp_admin:create_user' %}?next={{ request.get_full_path }}&t=basic_info">Create User</a>
+          <a class="btn btn-outline-primary btn-sm mt-3" href="{% url 'gp_admin:create_user' %}?next={{ request.get_full_path }}">Create User</a>
         </div>
       </div>
     </div>
@@ -52,8 +52,8 @@
       {% for prof in professors %}
         <tr>
           <td>{{ prof.id }}</td>
-          <td>{{ prof.last_name }}</td>
           <td>{{ prof.first_name }}</td>
+          <td>{{ prof.last_name }}</td>
           <td>{{ prof.username }}</td>
           <td>{{ prof.email }}</td>
           <td>{{ prof.profile.title.name }}</td>
