@@ -421,8 +421,7 @@ class Get_Professors(View):
             prof_list = prof_list.filter(email__icontains=email_q)
 
         page = request.GET.get('page', 1)
-        #paginator = Paginator(prof_list, settings.PAGE_SIZE)
-        paginator = Paginator(prof_list, 2)
+        paginator = Paginator(prof_list, settings.PAGE_SIZE)
 
         try:
             professors = paginator.page(page)
