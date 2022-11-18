@@ -1,0 +1,17 @@
+{% extends 'core/base.html' %}
+{% block content %}
+
+<div class="text-center">
+  <h4 class="mt-5 text-danger">
+    <i class="fa fa-lock" aria-hidden="true"></i>
+    Permission Denied
+  </h4>
+
+  <p class="mt-4 mb-5">
+    You do not have permission to access this page. Please refer to your system administrator.
+  </p>
+
+  {% include 'core/subpages/_go_back_home_urls.html' %}
+</div>
+
+{% endblock %}

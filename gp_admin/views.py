@@ -523,6 +523,7 @@ class Add_Program_Supervision(View):
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
+        
 
         parse_result = urlparse(request.get_full_path())
         if 'next=' not in parse_result.query:

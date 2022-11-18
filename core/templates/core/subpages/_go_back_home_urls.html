@@ -1,0 +1,15 @@
+{% if 'superadmin' in user_roles or 'admin' in user_roles %}
+  <a href="{% url 'gp_admin:index' %}">Back to Home</a>
+{% endif %}
+
+{% if 'program-advisor-director' in user_roles %}
+  <a href="{% url 'gp_program_advisor_director:index' %}">Back to Home</a>
+{% endif %}
+
+{% if 'supervisor' in user_roles %}
+  <a href="{% url 'gp_supervisor:index' %}">Back to Home</a>
+{% endif %}
+
+{% if 'guest' in user_roles %}
+  <a href="{% url 'gp_guest:index' %}">Back to Home</a>
+{% endif %}
