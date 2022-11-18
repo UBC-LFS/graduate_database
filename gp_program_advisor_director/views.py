@@ -8,13 +8,13 @@ from django.utils.decorators import method_decorator
 from django.urls import reverse
 
 from gp_admin import api
-from core.auth import grad_advisor_access_only
+from core.auth import program_advisor_director_access_only
 
 
 @login_required(login_url=settings.LOGIN_URL)
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @require_http_methods(['GET'])
-@grad_advisor_access_only
+@program_advisor_director_access_only
 def index(request):
     return render(request, 'gp_program_advisor_director/index.html', {
         'info': {
@@ -23,7 +23,7 @@ def index(request):
     })
 
 
-@method_decorator([never_cache, login_required, grad_advisor_access_only], name='dispatch')
+@method_decorator([never_cache, login_required, program_advisor_director_access_only], name='dispatch')
 class Get_Program_Supervision(View):
 
     @method_decorator(require_GET)

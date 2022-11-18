@@ -20,8 +20,8 @@ def admin_access_only(view_func):
     return wrap
 
 
-def grad_advisor_access_only(view_func):
-    ''' Only grad advisors can access '''
+def program_advisor_director_access_only(view_func):
+    ''' Only program advisor/directors can access '''
     def wrap(request, *args, **kwargs):
         print(request.session['loggedin_user']['roles'])
         if request.user.is_authenticated and request.user.is_active and 'program-advisor-director' in request.session['loggedin_user']['roles']:
