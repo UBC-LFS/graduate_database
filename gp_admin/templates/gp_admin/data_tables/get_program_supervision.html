@@ -9,18 +9,11 @@
     <div class="col-md-2">
       <h2 class="text-center-middle text-center">Program <br /> Supervision</h2>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-5">
       {% include 'gp_admin/subpages/_search_fields.html' with path='program_supervision' %}
     </div>
-    <div class="col-md-4 bg-white">
-      <div class="bd-callout bd-callout-warning height-100 m-0 px-3 py-2">
-        <h6 class="d-inline-block mr-2">
-           <i class="fa fa-bell-o" aria-hidden="true"></i> Note
-        </h6>
-        If a professor has a <span class="badge badge-success">PROGRAM ADVISOR / DIRECTOR</span> role,
-        a <span class="font-weight-bold">Supervisors</span> tab will show up next to a Students tab,
-        and s/he can view a list of students and supervisors belonging to the program.
-      </div>
+    <div class="col-md-5 bg-white">
+      {% include 'gp_admin/subpages/_supervision_note.html' with path='program_supervision' %}
     </div>
   </div>
 

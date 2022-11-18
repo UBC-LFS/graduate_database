@@ -5,23 +5,20 @@
     <div class="bg-prompt">
       <div class="prompt p-4 mb-4">
         <h5 class="text-dark-blue mb-3">
-          {% if data.profile.title %}
-            {{ data.profile.title }}
-          {% endif %}
           {{ data.get_full_name }}
         </h5>
         <p class="font-italic mb-2">{{ data.profile.position.name }}</p>
 
         <div>
           <small class="text-success"><i class="fa fa-check" aria-hidden="true"></i></small>
-          Number of students:
+          Number of My Students:
           <span class="text-chocolate font-weight-bold">{{ data.graduate_supervision_set.count }}</span>
         </div>
 
         {% if data.is_program_advisor_director %}
           <div>
             <small class="text-success"><i class="fa fa-check" aria-hidden="true"></i></small>
-            Number of supervisors:
+            Number of Supervisors in Program:
             <span class="text-chocolate font-weight-bold">{{ data.colleages.count }}</span>
           </div>
         {% endif %}
@@ -59,13 +56,13 @@
       <div class="nav nav-tabs">
         <a class="nav-item nav-link {% if tab == 'students' %} active {% endif %}" href="{{ tab_urls.students }}">
           <span class="mobile-hide-xs"><i class="fa fa-id-card-o" aria-hidden="true"></i></span>
-          Students ({{ data.graduate_supervision_set.count }})
+          My Students ({{ data.graduate_supervision_set.count }})
         </a>
 
         {% if data.is_program_advisor_director %}
           <a class="nav-item nav-link {% if tab == 'supervisors' %} active {% endif %}" href="{{ tab_urls.supervisors }}">
             <span class="mobile-hide-xs"><i class="fa fa-user-circle-o" aria-hidden="true"></i></span>
-            Supervisors ({{ data.colleages.count }})
+            Supervisors in Program ({{ data.colleages.count }})
           </a>
         {% endif %}
       </div>

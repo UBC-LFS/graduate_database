@@ -4,9 +4,15 @@
 {% include 'gp_program_advisor_director/subpages/_menu.html' with path='program-advisor-director' %}
 
 <div class="container max-width-container">
-  <div class="row bg-light-gray mb-4 p-4">
-    <h3>Program Supervision</h3>
+  <div class="row bg-light-gray mb-5">
+    <div class="col-md-7 py-3">
+      <h3 class="height-100 d-flex align-items-center">Program Supervision</h3>
+    </div>
+    <div class="col-md-5 bg-white">
+      {% include 'gp_admin/subpages/_supervision_note.html' with path='program_supervision' %}
+    </div>
   </div>
+
   {% include 'gp_admin/subpages/_program_supervision.html' with data=prof %}
 </div>
 
