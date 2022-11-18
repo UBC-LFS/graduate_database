@@ -4,7 +4,6 @@ from . import views
 app_name = 'gp_admin'
 
 urlpatterns = [
-    path('', views.index, name='index'),
 
     # Data Tables
 
@@ -67,5 +66,7 @@ urlpatterns = [
 
     path('preparation/reminders/', views.Get_Reminders.as_view(), name='get_reminders'),
     path('preparation/reminders/<str:slug>/edit/', views.Edit_Reminder.as_view(), name='edit_reminder'),
-    path('api/preparation/comprehensive-exams/reminder/delete/', views.delete_reminder, name='delete_reminder')
+    path('api/preparation/comprehensive-exams/reminder/delete/', views.delete_reminder, name='delete_reminder'),
+
+    path('', views.index, name='index')
 ]

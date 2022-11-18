@@ -18,7 +18,6 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path('', views.index, name='index'),
     path('accounts/', include('accounts.urls')),
     path('admin/', include('gp_admin.urls')),
     path('program-advisor-director/', include('gp_program_advisor_director.urls')),
@@ -26,5 +25,7 @@ urlpatterns = [
     path('guest/', include('gp_guest.urls')),
 
     path('summernote/', include('django_summernote.urls')),
+
+    path('', views.index, name='index'),
     #path('admin/', admin.site.urls)
 ]
