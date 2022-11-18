@@ -1,0 +1,62 @@
+{% if item.is_program_advisor_director %}
+
+  <table
+    class="table table-striped table-hover table-bordered table-responsive-md text-center fs-sm"
+    data-toggle="table"
+    data-sortable="true"
+    data-classes=""
+    data-pagination="true"
+    data-search="true"
+    data-page-size="25"
+    data-page-list="[25, 50, 100, all]"
+  >
+    <thead>
+      <tr>
+        <th data-sortable="true">First Name</th>
+        <th data-sortable="true">Last Name</th>
+        <th>Title</th>
+        <th>Position</th>
+        <th>Program <br /> Code</th>
+        <th>Contact <br /> Info</th>
+        <th>Graduate <br /> Supervision</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for coll in item.colleages %}
+        <tr>
+          <td>{{ coll.first_name }}</td>
+          <td>{{ coll.last_name }}</td>
+          <td>{{ coll.profile.title.name }}</td>
+          <td>{{ coll.profile.position.name }}</td>
+          <td>
+            {% for pg in coll.profile.programs.all %}
+              <div>{{ pg.code }}</div>
+            {% empty%}
+              None
+            {% endfor %}
+          </td>
+          <td>
+            {% include 'gp_admin/subpages/_modal_contact_info.html' with item=coll %}
+          </td>
+          <td>
+            <span class="d-none">{{ coll.graduate_supervision_set.count }}</span>
+            {% if coll.graduate_supervision_set.count > 0 %}
+
+              {% include 'gp_admin/subpages/_grad_supervision.html' with item=coll %}
+
+            {% else %}
+
+              {{ coll.graduate_supervision_set.count }}
+
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="7">No supervisors found</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endif %}

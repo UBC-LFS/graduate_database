@@ -37,7 +37,6 @@
     <table class="table table-bordered table-hover table-striped table-responsive-md fs-sm">
       <thead>
         <tr>
-          <th>PID</th>
           <th>Name</th>
           <th>Created on</th>
           <th>Updated on</th>
@@ -47,7 +46,6 @@
       <tbody>
         {% for professor_role in professor_roles %}
           <tr>
-            <td>{{ professor_role.id }}</td>
             <td>{{ professor_role.name }}</td>
             <td>{{ professor_role.created_on }}</td>
             <td>{{ professor_role.updated_on }}</td>

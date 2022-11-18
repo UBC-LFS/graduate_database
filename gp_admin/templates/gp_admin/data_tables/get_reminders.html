@@ -33,7 +33,6 @@
         <table class="table table-responsive-md border bg-white text-center">
           <thead>
             <tr>
-              <th>RID</th>
               <th>Title</th>
               <th>Message</th>
               <th>Type</th>
@@ -46,7 +45,6 @@
           <tbody>
             {% for reminder in reminders %}
               <tr>
-                <td>{{ reminder.id }}</td>
                 <td class="text-left">{{ reminder.title }}</td>
                 <td>
                   <button class="btn btn-xs btn-info" type="button" data-toggle="modal" data-target="#reminder-modal-{{ reminder.id }}">

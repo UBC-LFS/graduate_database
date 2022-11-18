@@ -39,7 +39,6 @@
   >
     <thead>
       <tr>
-        <th>SID</th>
         <th data-sortable="true">First <br /> Name</th>
         <th data-sortable="true">Last <br /> Name</th>
         <th>Student <br /> Number</th>
@@ -55,7 +54,6 @@
     <tbody>
       {% for stud in students %}
         <tr>
-          <td>{{ stud.id }}</td>
           <td>{{ stud.first_name }}</td>
           <td>{{ stud.last_name }}</td>
           <td>{{ stud.student_number }}</td>
@@ -96,7 +94,6 @@
                       <table class="modal-table table">
                         <thead>
                           <tr>
-                            <th>GSID</th>
                             <th>Professor</th>
                             <th>Professor Role</th>
                             <th>Created on</th>
@@ -106,7 +103,6 @@
                         <tbody>
                           {% for gs in stud.graduate_supervision_set.all %}
                           <tr>
-                            <td>{{ gs.id }}</td>
                             <td>{{ gs.professor.get_full_name }}</td>
                             <td>{{ gs.professor_role.name }}</td>
                             <td>{{ gs.created_on }}</td>

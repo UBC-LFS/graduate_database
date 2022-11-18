@@ -29,10 +29,10 @@
           <p class="my-1">{{ data.username }}</p>
 
           {% if path == 'students' %}
-            {% include 'core/subpages/_role.html' with data='Student' %}
+            {% include 'core/subpages/_role.html' with data='student' %}
           {% else %}
             {% for role in data.profile.roles.all %}
-              {% include 'core/subpages/_role.html' with data=role.name %}
+              {% include 'core/subpages/_role.html' with data=role.slug %}
             {% empty %}
               None
             {% endfor %}

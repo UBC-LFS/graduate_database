@@ -37,7 +37,6 @@
     <table class="table table-bordered table-hover table-striped table-responsive-md fs-sm">
       <thead>
         <tr>
-          <th>PID</th>
           <th>Name</th>
           <th>Created on</th>
           <th>Updated on</th>
@@ -47,7 +46,6 @@
       <tbody>
         {% for position in positions %}
           <tr>
-            <td>{{ position.id }}</td>
             <td>{{ position.name }}</td>
             <td>{{ position.created_on }}</td>
             <td>{{ position.updated_on }}</td>

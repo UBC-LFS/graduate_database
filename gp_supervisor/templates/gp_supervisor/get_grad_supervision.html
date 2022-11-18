@@ -1,13 +1,13 @@
 {% extends 'core/base.html' %}
 {% block content %}
 
-{% include 'gp_grad_advisor/subpages/_menu.html' with path='supervisor' %}
+{% include 'gp_program_advisor_director/subpages/_menu.html' with path='supervisor' %}
 
 <div class="container max-width-container">
-  <div class="row bg-light-gray mb-4 p-3">
-    <h2 class="">Graduate Supervision</h2>
+  <div class="row bg-light-gray mb-4 p-4">
+    <h3>Graduate Supervision</h3>
   </div>
-  {% include 'gp_admin/subpages/_grad_supervision.html' with data=prof %}
+  {% include 'gp_admin/subpages/_program_supervision.html' with data=prof %}
 </div>
 
 {% endblock %}

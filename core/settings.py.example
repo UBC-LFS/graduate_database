@@ -64,7 +64,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'accounts',
     'gp_admin',
-    'gp_grad_advisor',
+    'gp_program_advisor_director',
     'gp_supervisor',
     'gp_guest',
     'django_summernote',

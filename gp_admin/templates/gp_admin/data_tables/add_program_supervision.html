@@ -15,7 +15,7 @@
       {% endif %}
 
       <div class="left-aside-btn-groups">
-        <a class="btn btn-outline-primary" href="{{ next }}">Back to Graduate Supervision</a>
+        <a class="btn btn-outline-primary" href="{{ next }}">Back to Program Supervision</a>
       </div>
     </div>
 
@@ -25,7 +25,7 @@
 
         {% include 'core/subpages/_form_note.html' %}
 
-        <form class="mb-5" action="{% url 'gp_admin:add_grad_supervision' username=prof.username %}" method="post">
+        <form class="mb-5" action="{% url 'gp_admin:add_program_supervision' username=prof.username %}" method="post">
           {% csrf_token %}
 
           <table class="in-form table table-borderless fs-1">
@@ -73,22 +73,22 @@
         <table class="table bg-white border text-center fs-sm">
           <thead>
             <tr>
-              <th>GSID</th>
-              <th>Professor Role</th>
-              <th>Student Name</th>
+              <th>First Name</th>
+              <th>Last Name</th>
               <th>Student Number</th>
               <th>Email</th>
+              <th>Professor Role</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {% for gs in prof.graduate_supervision_set.all %}
               <tr>
-                <td>{{ gs.id }}</td>
-                <td>{{ gs.professor_role.name }}</td>
-                <td>{{ gs.student.get_full_name }}</td>
+                <td>{{ gs.student.first_name }}</td>
+                <td>{{ gs.student.last_name }}</td>
                 <td>{{ gs.student.student_number }}</td>
                 <td>{{ gs.student.email }}</td>
+                <td>{{ gs.professor_role.name }}</td>
                 <td>
                   <div class="btn-toolbar">
                     <button class="btn btn-xs btn-warning fs-sm mr-2" type="button" data-toggle="modal" data-target="#grad-supervision-modal-{{ gs.id }}">
@@ -104,7 +104,7 @@
                           </div>
                           <div class="modal-body text-left">
                             <div class="modal-item fs-1">
-                              <form action="{% url 'gp_admin:edit_grad_supervision' username=prof.username %}?next={{ next }}" method="post">
+                              <form action="{% url 'gp_admin:edit_program_supervision' username=prof.username %}?next={{ next }}" method="post">
                                 {% csrf_token %}
 
                                 <div class="field-wrapper">
@@ -132,7 +132,7 @@
                       </div>
                     </div>
 
-                    <form action="{% url 'gp_admin:delete_grad_supervision' username=prof.username %}?next={{ next }}" method="post" onsubmit="return confirm('Are you sure to delete this Graduate Supervision - {{ gs.student.first_name }} {{ gs.student.last_name }}?');">
+                    <form action="{% url 'gp_admin:delete_program_supervision' username=prof.username %}?next={{ next }}" method="post" onsubmit="return confirm('Are you sure to delete this Program Supervision - {{ gs.student.first_name }} {{ gs.student.last_name }}?');">
                       {% csrf_token %}
 
                       <input type="hidden" name="graduate_supervision" value="{{ gs.id }}" />
@@ -162,5 +162,5 @@
 
 {% block js %}
   {% load static %}
-  <script type="text/javascript" src="{% static 'js/add_grad_supervision.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/add_program_supervision.js' %}"></script>
 {% endblock %}

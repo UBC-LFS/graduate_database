@@ -24,7 +24,7 @@ def grad_advisor_access_only(view_func):
     ''' Only grad advisors can access '''
     def wrap(request, *args, **kwargs):
         print(request.session['loggedin_user']['roles'])
-        if request.user.is_authenticated and request.user.is_active and 'graduate-advisor' in request.session['loggedin_user']['roles']:
+        if request.user.is_authenticated and request.user.is_active and 'program-advisor-director' in request.session['loggedin_user']['roles']:
             return view_func(request, *args, **kwargs)
         else:
             raise PermissionDenied

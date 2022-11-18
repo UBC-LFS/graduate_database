@@ -18,13 +18,13 @@ from core.auth import grad_advisor_access_only
 def index(request):
     return render(request, 'gp_program_advisor_director/index.html', {
         'info': {
-            'href': reverse('gp_program_advisor_director:get_program_supervision') + '?t=students'
+            'href': reverse('gp_program_advisor_director:get_program_supervision')
         }
     })
 
 
 @method_decorator([never_cache, login_required, grad_advisor_access_only], name='dispatch')
-class GetGradSupervision(View):
+class Get_Program_Supervision(View):
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
@@ -34,9 +34,9 @@ class GetGradSupervision(View):
             'info': {
                 'href': reverse('gp_program_advisor_director:index')
             },
-            'tab': request.GET.get('t'),
+            'tab': request.GET.get('t', 'students'),
             'tab_urls': {
                 'students': api.build_tab_url(request.path, 'students'),
-                'professors': api.build_tab_url(request.path, 'professors')
+                'supervisors': api.build_tab_url(request.path, 'supervisors')
             }
         })

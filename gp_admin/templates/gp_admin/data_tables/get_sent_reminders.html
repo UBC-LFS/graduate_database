@@ -24,7 +24,6 @@
   >
     <thead>
       <tr>
-        <th>SRID</th>
         <th>Student</th>
         <th>Sender</th>
         <th>Receiver</th>
@@ -36,7 +35,6 @@
     <tbody>
       {% for reminder in reminders %}
         <tr>
-          <td>{{ reminder.id }}</td>
           <td>
             {{ reminder.student.get_full_name }} <br />
             {% include 'gp_admin/subpages/_modal_more_info.html' with data=reminder.student %}

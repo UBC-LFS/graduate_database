@@ -34,7 +34,6 @@
   >
     <thead>
       <tr>
-        <th>SID</th>
         <th data-sortable="true">First Name</th>
         <th data-sortable="true">Last Name</th>
         <th>Student <br /> Number</th>
@@ -48,7 +47,6 @@
     <tbody>
       {% for stud in students %}
         <tr>
-          <td>{{ stud.id }}</td>
           <td>{{ stud.first_name }}</td>
           <td>{{ stud.last_name }}</td>
           <td>{{ stud.student_number }}</td>

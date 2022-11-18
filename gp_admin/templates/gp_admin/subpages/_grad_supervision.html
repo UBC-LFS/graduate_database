@@ -1,84 +1,54 @@
-<div class="row mb-5">
+<button class="btn btn-xs btn-info" type="button" data-toggle="modal" data-target="#grad-supervision-modal-{{ item.id }}">
+  {{ item.graduate_supervision_set.count }}
+</button>
 
-  <div class="col-md-3">
+<div class="modal fade" id="grad-supervision-modal-{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="grad-supervision-modal-label-{{ item.id }}" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title text-info" id="grad-supervision-modal-label-{{ item.id }}">Graduate Supervision</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body text-left">
 
-    <div class="bg-prompt">
-      <div class="prompt p-4 mb-4">
-        <h5 class="text-dark-blue mb-3">
-          {% if data.profile.title %}
-            {{ data.profile.title }}
-          {% endif %}
-          {{ data.get_full_name }}
-        </h5>
-        <p class="font-italic mb-2">{{ data.profile.position.name }}</p>
+        <h6 class="d-inline-block mb-4">
+          Professor Full Name: <span class="text-dark-blue">{{ item.get_full_name }}</span>
+        </h6>
 
-        <div>
-          <small class="text-success"><i class="fa fa-check" aria-hidden="true"></i></small>
-          Number of students:
-          <span class="text-chocolate font-weight-bold">{{ data.graduate_supervision_set.count }}</span>
-        </div>
-
-        {% if data.is_grad_advisor %}
-          <div>
-            <small class="text-success"><i class="fa fa-check" aria-hidden="true"></i></small>
-            Number of supervisors:
-            <span class="text-chocolate font-weight-bold">{{ data.colleages.count }}</span>
+        {% if path == 'get_professors' %}
+          <div class="float-right">
+            <a href="{% url 'gp_admin:get_program_supervision' %}?page=1&first_name={{ item.first_name }}&last_name={{ item.last_name }}">View more</a>
           </div>
         {% endif %}
 
-        {% if path == 'admin' %}
-          <a class="d-block mt-2" href="{% url 'gp_admin:add_grad_supervision' username=data.username %}?next={{ request.get_full_path }}">Add Student</a>
-        {% endif %}
-
-        <hr />
-
-        <div class="d-flex justify-content-between align-items-center">
-          <div>
-            {% for pg in data.profile.programs.all %}
-              <div class="h7">{{ pg.code }}</div>
-            {% empty %}
-              <div class="h7">No Programs</div>
+        <table class="modal-table table text-center">
+          <thead>
+            <tr>
+              <th>First <br /> Name</th>
+              <th>Last <br /> Name</th>
+              <th>Student <br /> Number</th>
+              <th>Email</th>
+              <th>Professor <br /> Role</th>
+              <th>Created on</th>
+              <th>Updated on</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for gs in item.graduate_supervision_set.all %}
+            <tr>
+              <td>{{ gs.student.first_name }}</td>
+              <td>{{ gs.student.last_name }}</td>
+              <td>{{ gs.student.student_number }}</td>
+              <td>{{ gs.student.email }}</td>
+              <td>{{ gs.professor_role.name }}</td>
+              <td>{{ gs.created_on }}</td>
+              <td>{{ gs.updated_on }}</td>
+            </tr>
             {% endfor %}
-          </div>
-          <div>
-            {% for role in data.profile.roles.all %}
-              {% include 'core/subpages/_role.html' with data=role.name %}
-            {% empty %}
-              <div class="h7">No Roles</div>
-            {% endfor %}
-          </div>
-        </div>
+          </tbody>
+        </table>
+
       </div>
     </div>
-    
   </div>
-
-  <div class="col-md-9">
-
-    <nav class="mb-4">
-      <div class="nav nav-tabs">
-        <a class="nav-item nav-link {% if tab == 'students' %} active {% endif %}" href="{{ tab_urls.students }}">
-          <span class="mobile-hide-xs"><i class="fa fa-id-card-o" aria-hidden="true"></i></span>
-          Students ({{ data.graduate_supervision_set.count }})
-        </a>
-
-        {% if data.is_grad_advisor %}
-          <a class="nav-item nav-link {% if tab == 'supervisors' %} active {% endif %}" href="{{ tab_urls.supervisors }}">
-            <span class="mobile-hide-xs"><i class="fa fa-user-circle-o" aria-hidden="true"></i></span>
-            Supervisors ({{ data.colleages.count }})
-          </a>
-        {% endif %}
-      </div>
-    </nav>
-
-    {% if tab == 'students' %}
-      {% include 'gp_admin/subpages/_grad_supervision_students.html' with item=data %}
-    {% elif tab == 'supervisors' %}
-      {% include 'gp_admin/subpages/_grad_supervision_supervisors.html' with item=data %}
-    {% else %}
-      <p class="my-4">No information is available at the moment.</p>
-    {% endif %}
-
-  </div>
-
 </div>

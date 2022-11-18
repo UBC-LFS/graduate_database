@@ -1,13 +1,13 @@
-{% if data == 'Superadmin' %}
+{% if data == 'superadmin' %}
   <span class="badge badge-orange">{{ data.upper }}</span> <br />
 
-{% elif data == 'Admin' %}
+{% elif data == 'admin' %}
   <span class="badge badge-primary">{{ data.upper }}</span> <br />
 
-{% elif data == 'Graduate Advisor' %}
-  <span class="badge badge-success">GRADUATE {% if type == 'new-line' %} <br /> {% endif %} ADVISOR</span> <br />
+{% elif data == 'program-advisor-director' %}
+  <span class="badge badge-success">PROGRAM <br /> ADVISOR / DIRECTOR</span> <br />
 
-{% elif data == 'Supervisor' %}
+{% elif data == 'supervisor' %}
   <span class="badge badge-warning">{{ data.upper }}</span> <br />
 
 {% else %}

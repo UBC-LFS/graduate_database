@@ -5,5 +5,5 @@ app_name = 'gp_supervisor'
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('graduate-supervision/', views.GetGradSupervision.as_view(), name='get_grad_supervision'),
+    path('graduate_supervision/', views.Get_Grad_Supervision.as_view(), name='get_grad_supervision'),
 ]

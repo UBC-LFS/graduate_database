@@ -32,7 +32,6 @@
   >
     <thead>
       <tr>
-        <th>UID</th>
         <th data-sortable="true">First <br /> Name</th>
         <th data-sortable="true">Last <br /> Name</th>
         <th>CWL</th>
@@ -51,7 +50,6 @@
     <tbody>
       {% for prof in professors %}
         <tr>
-          <td>{{ prof.id }}</td>
           <td>{{ prof.first_name }}</td>
           <td>{{ prof.last_name }}</td>
           <td>{{ prof.username }}</td>
@@ -67,7 +65,7 @@
           </td>
           <td>
             {% for role in prof.profile.roles.all %}
-              {% include 'core/subpages/_role.html' with data=role.name type='new-line' %}
+              {% include 'core/subpages/_role.html' with data=role.slug %}
             {% empty %}
               None
             {% endfor %}
@@ -79,55 +77,7 @@
             <span class="d-none">{{ prof.graduate_supervision_set.count }}</span>
             {% if prof.graduate_supervision_set.count > 0 %}
 
-              <button class="btn btn-xs btn-info" type="button" data-toggle="modal" data-target="#grad-supervision-modal-{{ prof.id }}">
-                {{ prof.graduate_supervision_set.count }}
-              </button>
-
-              <div class="modal fade" id="grad-supervision-modal-{{ prof.id }}" tabindex="-1" role="dialog" aria-labelledby="grad-supervision-modal-label-{{ prof.id }}" aria-hidden="true">
-                <div class="modal-dialog modal-lg" role="document">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h5 class="modal-title text-info" id="grad-supervision-modal-label-{{ prof.id }}">Graduate Supervision</h5>
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    </div>
-                    <div class="modal-body text-left">
-
-                      <h6 class="d-inline-block mb-4">
-                        Professor Full Name:
-                        <a class="d-inline" href="{% url 'gp_admin:get_grad_supervision' %}?first_name={{ prof.first_name }}&last_name={{ prof.last_name }}">{{ prof.get_full_name }}</a>
-                      </h6>
-
-                      <div class="float-right">
-                        <a href="{% url 'gp_admin:get_grad_supervision' %}?page=1&first_name={{ prof.first_name }}&last_name={{ prof.last_name }}&t=students">View more</a>
-                      </div>
-
-                      <table class="modal-table table">
-                        <thead>
-                          <tr>
-                            <th>GSID</th>
-                            <th>Professor Role</th>
-                            <th>Student</th>
-                            <th>Created on</th>
-                            <th>Updated on</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {% for gs in prof.graduate_supervision_set.all %}
-                          <tr>
-                            <td>{{ gs.id }}</td>
-                            <td>{{ gs.professor_role.name }}</td>
-                            <td>{{ gs.student.get_full_name }}</td>
-                            <td>{{ gs.created_on }}</td>
-                            <td>{{ gs.updated_on }}</td>
-                          </tr>
-                          {% endfor %}
-                        </tbody>
-                      </table>
-
-                    </div>
-                  </div>
-                </div>
-              </div>
+              {% include 'gp_admin/subpages/_grad_supervision.html' with item=prof path='get_professors' %}
 
             {% else %}
 

@@ -33,7 +33,7 @@ def get_student_by_sn(sn):
 
 
 def get_students_by_name(name):
-    studs = Student.objects.filter( Q(first_name__icontains=name) | Q(last_name__icontains=name) )
+    studs = Student.objects.filter( Q(first_name__icontains=name) | Q(last_name__icontains=name) ).distinct()
     return studs if studs.exists() else None
 
 
@@ -45,24 +45,22 @@ def get_sis_students_by_day(when):
 
     elif when == 'week_ago':
         week_ago = day - timedelta(days=7)
-        created = Student.objects.filter(sis_created_on__range=[week_ago, day])
-        updated = Student.objects.filter(sis_updated_on__range=[week_ago, day], sis_updated_on__gt=F('sis_created_on')) 
+        created = Student.objects.filter(sis_created_on__range=[week_ago, day]).distinct()
+        updated = Student.objects.filter(sis_updated_on__range=[week_ago, day], sis_updated_on__gt=F('sis_created_on')).distinct()
         
         return created, updated, week_ago
 
-    created = Student.objects.filter(sis_created_on=day)
-    updated = Student.objects.filter(sis_updated_on=day, sis_updated_on__gt=F('sis_created_on'))
+    created = Student.objects.filter(sis_created_on=day).distinct()
+    updated = Student.objects.filter(sis_updated_on=day, sis_updated_on__gt=F('sis_created_on')).distinct()
 
     return created, updated, day
 
 
 # Professor
 
-def get_professors(program=None):
+def get_professors():
     ''' Get all professors '''
-    if program is not None:
-        pass
-    return User.objects.filter(profile__roles__in=[get_role_by_slug('graduate-advisor'), get_role_by_slug('supervisor')]).order_by('last_name', 'first_name')
+    return User.objects.filter(profile__roles__in=[get_role_by_slug('program-advisor-director'), get_role_by_slug('supervisor')]).order_by('last_name', 'first_name').distinct()
 
 
 def get_professor_by_id(id):
@@ -81,16 +79,16 @@ def get_professor_by_username(username):
         raise Http404
 
 
-# Graduate Supervision
+# Program Supervision
 
-def get_grad_supervision_by_id(id):
+def get_program_supervision_by_id(id):
     try:
         return Graduate_Supervision.objects.get(id=id)
     except Graduate_Supervision.DoesNotExist:
         raise Http404
 
 
-def get_grad_supervision_by_stud_id_and_prof_id(stud_id, prof_id):
+def get_program_supervision_by_stud_id_and_prof_id(stud_id, prof_id):
     try:
         return Graduate_Supervision.objects.get(student__id=stud_id, professor__id=prof_id)
     except Graduate_Supervision.DoesNotExist:
@@ -104,15 +102,15 @@ def get_reminders():
 def sent_reminders():
     return Sent_Reminder.objects.all()
 
-def get_grad_supervision_view(username):
+def get_program_supervision_view(username):
     prof = get_professor_by_username(username)
 
-    prof.is_grad_advisor = False
+    prof.is_program_advisor_director = False
     prof.colleages = None
-    if prof.profile.roles.filter(slug='graduate-advisor').exists():
-        prof.is_grad_advisor = True
+    if prof.profile.roles.filter(slug='program-advisor-director').exists():
+        prof.is_program_advisor_director = True
         programs = [program for program in prof.profile.programs.all()]
-        prof.colleages = User.objects.filter( Q(profile__programs__in=programs) & Q(profile__roles__in=[get_role_by_slug('graduate-advisor'), get_role_by_slug('supervisor')]) ).exclude(id=prof.id).order_by('last_name', 'first_name')
+        prof.colleages = User.objects.filter( Q(profile__programs__in=programs) & Q(profile__roles__in=[get_role_by_slug('program-advisor-director'), get_role_by_slug('supervisor')]) ).exclude(id=prof.id).order_by('last_name', 'first_name').distinct()
 
     return prof
 
@@ -168,8 +166,8 @@ def redirect_to_index_page(roles):
     if 'superadmin' in roles or 'admin' in roles:
         return '/admin/'
 
-    elif 'graduate-advisor' in roles:
-        return '/graduate-advisor/'    
+    elif 'program-advisor-director' in roles:
+        return '/program-advisor-director/'
 
     elif 'supervisor' in roles:
         return '/supervisor/'
@@ -188,8 +186,8 @@ def get_roles(user):
         elif role.slug == 'admin':
             roles.append('admin')
 
-        elif role.slug == 'graduate-advisor':
-            roles.append('graduate-advisor')
+        elif role.slug == 'program-advisor-director':
+            roles.append('program-advisor-director')
 
         elif role.slug == 'supervisor':
             roles.append('supervisor')
@@ -377,8 +375,7 @@ def get_filtered_items(request, all_list, path):
         all_list = all_list.filter(email__icontains=email_q)
 
     page = request.GET.get('page', 1)
-    #paginator = Paginator(all_list, settings.PAGE_SIZE)
-    paginator = Paginator(all_list, 2)
+    paginator = Paginator(all_list, settings.PAGE_SIZE)
 
     try:
         items = paginator.page(page)

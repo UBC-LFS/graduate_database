@@ -35,7 +35,6 @@
   >
     <thead>
       <tr>
-        <th>UID</th>
         <th data-sortable="true">First <br /> Name</th>
         <th data-sortable="true">Last <br /> Name</th>
         <th>Preferred <br /> Name</th>
@@ -51,7 +50,6 @@
     <tbody>
       {% for user in users %}
         <tr>
-          <td>{{ user.id }}</td>
           <td>{{ user.last_name }}</td>
           <td>{{ user.first_name }}</td>
           <td>{{ user.profile.preferred_name }}</td>
@@ -59,7 +57,7 @@
           <td>{{ user.email }}</td>
           <td>
             {% for role in user.profile.roles.all %}
-              {% include 'core/subpages/_role.html' with data=role.name type='new-line' %}
+              {% include 'core/subpages/_role.html' with data=role.slug %}
             {% empty %}
               None
             {% endfor %}

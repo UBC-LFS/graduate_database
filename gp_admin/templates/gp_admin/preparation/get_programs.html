@@ -37,7 +37,6 @@
     <table class="table table-bordered table-hover table-striped table-responsive-md fs-sm">
       <thead>
         <tr>
-          <th>PID</th>
           <th>Name</th>
           <th>Code</th>
           <th>Created on</th>
@@ -48,7 +47,6 @@
       <tbody>
         {% for program in programs %}
           <tr>
-            <td>{{ program.id }}</td>
             <td>{{ program.name }}</td>
             <td>{{ program.code }}</td>
             <td>{{ program.created_on }}</td>

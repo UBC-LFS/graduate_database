@@ -21,7 +21,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('accounts/', include('accounts.urls')),
     path('admin/', include('gp_admin.urls')),
-    path('graduate-advisor/', include('gp_grad_advisor.urls')),
+    path('program-advisor-director/', include('gp_program_advisor_director.urls')),
     path('supervisor/', include('gp_supervisor.urls')),
     path('guest/', include('gp_guest.urls')),
 

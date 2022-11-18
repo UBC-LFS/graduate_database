@@ -7,9 +7,9 @@ $(document).ready(function() {
     $('#nav-admin').addClass('active');
     $('#view-admin').addClass('active');
 
-  } else if (role[1] === 'graduate-advisor') {
-    $('#nav-graduate-advisor').addClass('active');
-    $('#view-graduate-advisor').addClass('active');
+  } else if (role[1] === 'program-advisor-director') {
+    $('#nav-program-advisor-director').addClass('active');
+    $('#view-program-advisor-director').addClass('active');
 
   } else if (role[1] === 'supervisor') {
     $('#nav-supervisor').addClass('active');

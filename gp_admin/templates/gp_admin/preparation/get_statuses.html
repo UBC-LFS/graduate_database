@@ -37,7 +37,6 @@
     <table class="table table-bordered table-hover table-striped table-responsive-md fs-sm">
       <thead>
         <tr>
-          <th>PID</th>
           <th>Name</th>
           <th>Created on</th>
           <th>Updated on</th>
@@ -47,7 +46,6 @@
       <tbody>
         {% for status in statuses %}
           <tr>
-            <td>{{ status.id }}</td>
             <td>{{ status.name }}</td>
             <td>{{ status.created_on }}</td>
             <td>{{ status.updated_on }}</td>

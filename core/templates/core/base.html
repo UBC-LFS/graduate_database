@@ -34,7 +34,7 @@
 										Current View
 										(<div class="d-inline-block current-view">
 											<span id="view-admin" class="d-none">Admin</span>
-											<span id="view-graduate-advisor" class="d-none">Graduate Advisor</span>
+											<span id="view-program-advisor-director" class="d-none">Program Advisor / Director</span>
 											<span id="view-supervisor" class="d-none">Supervisor</span>
 											<span id="view-guest" class="d-none">Guest</span>
 										</div>)
@@ -44,8 +44,8 @@
 											<a id="nav-admin" class="dropdown-item" href="{% url 'gp_admin:index' %}">Admin</a>
 										{% endif %}
 
-										{% if 'graduate-advisor' in user_roles %}
-											<a id="nav-graduate-advisor" class="dropdown-item" href="{% url 'gp_grad_advisor:index' %}">Graduate Advisor</a>
+										{% if 'program-advisor-director' in user_roles %}
+											<a id="nav-program-advisor-director" class="dropdown-item" href="{% url 'gp_program_advisor_director:index' %}">Program Advisor / Director</a>
 										{% endif %}
 
 										{% if 'supervisor' in user_roles %}

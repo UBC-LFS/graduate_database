@@ -350,7 +350,7 @@ class Assign_Student(View):
 
         # Create
         create_profs = list(profs_set - set(existing_profs))
-        create_grad_supervision = []
+        create_program_supervision = []
         if len(create_profs):
             for prof_id in create_profs:
                 prof_role_id = items[prof_id]
@@ -359,29 +359,29 @@ class Assign_Student(View):
                     messages.error(request, 'An error occurred while saving changes. Please select a Professor Role.')
                     return HttpResponseRedirect(request.POST.get('current_page'))
 
-                create_grad_supervision.append(Graduate_Supervision(
+                create_program_supervision.append(Graduate_Supervision(
                     student = stud,
                     professor = api.get_professor_by_id(prof_id),
                     professor_role = api.get_professor_role_by_id(prof_role_id)
                 ))
 
-        if len(create_grad_supervision) > 0:
-            Graduate_Supervision.objects.bulk_create(create_grad_supervision)
+        if len(create_program_supervision) > 0:
+            Graduate_Supervision.objects.bulk_create(create_program_supervision)
 
         # Update
         update_profs = set(existing_profs).intersection(profs_set)
 
-        update_grad_supervision = []
+        update_program_supervision = []
         if len(update_profs) > 0:
             for prof_id in update_profs:
                 if existing_items[prof_id] != items[prof_id]:
-                    gs = api.get_grad_supervision_by_stud_id_and_prof_id(stud.id, prof_id)
+                    gs = api.get_program_supervision_by_stud_id_and_prof_id(stud.id, prof_id)
                     gs.professor_role = api.get_professor_role_by_id(items[prof_id])
                     gs.updated_on = date.today()
-                    update_grad_supervision.append(gs)
+                    update_program_supervision.append(gs)
 
-        if len(update_grad_supervision) > 0:
-            Graduate_Supervision.objects.bulk_update(update_grad_supervision, [
+        if len(update_program_supervision) > 0:
+            Graduate_Supervision.objects.bulk_update(update_program_supervision, [
                 'professor_role',
                 'updated_on'
             ])
@@ -393,7 +393,7 @@ class Assign_Student(View):
             for prof_id in delete_profs:
                 Graduate_Supervision.objects.filter(professor__id=prof_id).delete()
 
-        messages.success(request, 'Success! Graduate Supervision ({0}, Student #: {1}) saved.'.format(stud.get_full_name(), stud.student_number))
+        messages.success(request, 'Success! Program Supervision ({0}, Student #: {1}) saved.'.format(stud.get_full_name(), stud.student_number))
         return HttpResponseRedirect(request.POST.get('current_page'))
 
 
@@ -467,13 +467,13 @@ class Edit_Professor(View):
 
 
 @method_decorator([never_cache, login_required, admin_access_only], name='dispatch')
-class Get_Grad_Supervision(View):
+class Get_Program_Supervision(View):
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
         prof_list = api.get_professors()
 
-        tab = request.GET.get('t')
+        tab = request.GET.get('t', 'students')
 
         first_name_q = request.GET.get('first_name')
         last_name_q = request.GET.get('last_name')
@@ -494,12 +494,12 @@ class Get_Grad_Supervision(View):
             professors = paginator.page(paginator.num_pages)
 
         for prof in professors:
-            prof.is_grad_advisor = False
+            prof.is_program_advisor_director = False
             prof.colleages = None
-            if prof.profile.roles.filter(slug='graduate-advisor').exists():
-                prof.is_grad_advisor = True
+            if prof.profile.roles.filter(slug='program-advisor-director').exists():
+                prof.is_program_advisor_director = True
                 programs = [program for program in prof.profile.programs.all()]
-                prof.colleages = User.objects.filter( Q(profile__programs__in=programs) & Q(profile__roles__in=[api.get_role_by_slug('graduate-advisor'), api.get_role_by_slug('supervisor')]) ).exclude(id=prof.id).order_by('last_name', 'first_name')
+                prof.colleages = User.objects.filter( Q(profile__programs__in=programs) & Q(profile__roles__in=[api.get_role_by_slug('program-advisor-director'), api.get_role_by_slug('supervisor')]) ).exclude(id=prof.id).order_by('last_name', 'first_name').distinct()
 
         tab_url = request.path + '?page=' + str(page)
         if bool(first_name_q):
@@ -507,7 +507,7 @@ class Get_Grad_Supervision(View):
         if bool(last_name_q):
             tab_url += '&last_name=' + last_name_q
 
-        return render(request, 'gp_admin/data_tables/get_grad_supervision.html', {
+        return render(request, 'gp_admin/data_tables/get_program_supervision.html', {
             'supervisors': professors,
             'total_supervisors': len(prof_list),
             'tab': tab,
@@ -519,7 +519,7 @@ class Get_Grad_Supervision(View):
 
 
 @method_decorator([never_cache, login_required, admin_access_only], name='dispatch')
-class Add_Grad_Supervision(View):
+class Add_Program_Supervision(View):
 
     @method_decorator(require_GET)
     def get(self, request, *args, **kwargs):
@@ -528,7 +528,7 @@ class Add_Grad_Supervision(View):
         if 'next=' not in parse_result.query:
             raise Http404
 
-        return render(request, 'gp_admin/data_tables/add_grad_supervision.html', {
+        return render(request, 'gp_admin/data_tables/add_program_supervision.html', {
             'prof': api.get_professor_by_username(kwargs.get('username')),
             'form': Grad_Supervision_Form(),
             'prof_roles': Professor_Role.objects.all(),
@@ -543,12 +543,12 @@ class Add_Grad_Supervision(View):
         if form.is_valid():
             res = form.save()
             if res:
-                messages.success(request, 'Success! Graduate Supervision ({0} {1}) added.'.format(res.student.first_name, res.student.last_name))
+                messages.success(request, 'Success! Program Supervision ({0} {1}) added.'.format(res.student.first_name, res.student.last_name))
             else:
                 messages.error(request, 'An error occurred while saving data.')
         else:
             messages.error(request, 'An error occurred. Form is invalid. {0}'.format( api.get_error_messages(form.errors.get_json_data()) ))
-        return HttpResponseRedirect( reverse('gp_admin:add_grad_supervision', args=[kwargs.get('username')]) + '?next=' + request.POST.get('next') )
+        return HttpResponseRedirect( reverse('gp_admin:add_program_supervision', args=[kwargs.get('username')]) + '?next=' + request.POST.get('next') )
 
 
 @login_required(login_url=settings.LOGIN_URL)
@@ -577,31 +577,31 @@ def search_students(request):
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @require_http_methods(['POST'])
 @admin_access_only
-def edit_grad_supervision(request, username):
-    gs = api.get_grad_supervision_by_id(request.POST.get('graduate_supervision'))
+def edit_program_supervision(request, username):
+    gs = api.get_program_supervision_by_id(request.POST.get('graduate_supervision'))
     form = Grad_Supervision_Form(request.POST, instance=gs)
     if form.is_valid():
         res = form.save()
         if res:
-            messages.success(request, 'Success! Graduate Supervision ({0} {1}) updated.'.format(res.student.first_name, res.student.last_name))
+            messages.success(request, 'Success! Program Supervision ({0} {1}) updated.'.format(res.student.first_name, res.student.last_name))
         else:
             messages.error(request, 'An error occurred while updating data.')
     else:
         messages.error(request, 'An error occurred. Form is invalid. {0}'.format(form.errors))
-    return HttpResponseRedirect( reverse('gp_admin:add_grad_supervision', args=[username]) + '?next=' + request.POST.get('next') )
+    return HttpResponseRedirect( reverse('gp_admin:add_program_supervision', args=[username]) + '?next=' + request.POST.get('next') )
 
 
 @login_required(login_url=settings.LOGIN_URL)
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 @require_http_methods(['POST'])
 @admin_access_only
-def delete_grad_supervision(request, username):
-    gs = api.get_grad_supervision_by_id(request.POST.get('graduate_supervision'))
+def delete_program_supervision(request, username):
+    gs = api.get_program_supervision_by_id(request.POST.get('graduate_supervision'))
     if gs.delete():
-        messages.success(request, 'Success! Graduate Supervision ({0} {1}) deleted.'.format(gs.student.first_name, gs.student.last_name))
+        messages.success(request, 'Success! Program Supervision ({0} {1}) deleted.'.format(gs.student.first_name, gs.student.last_name))
     else:
-        messages.error(request, 'An error occurred while deleting this graduate supervision.')
-    return HttpResponseRedirect( reverse('gp_admin:add_grad_supervision', args=[username]) + '?next=' + request.POST.get('next') )
+        messages.error(request, 'An error occurred while deleting this Program Supervision.')
+    return HttpResponseRedirect( reverse('gp_admin:add_program_supervision', args=[username]) + '?next=' + request.POST.get('next') )
 
 
 @method_decorator([never_cache, login_required, admin_access_only], name='dispatch')
